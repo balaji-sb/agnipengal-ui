@@ -6,23 +6,19 @@ export function middleware(req: NextRequest) {
   
   // Protect /admin routes
   if (url.pathname.startsWith('/admin')) {
-    const basicAuth = req.headers.get('authorization');
-
-    if (basicAuth) {
-      const authValue = basicAuth.split(' ')[1];
-      const [user, pwd] = atob(authValue).split(':');
-
-      if (user === 'admin' && pwd === 'admin123') { // Hardcoded for demo
+    // Allow public access to login page
+    if (url.pathname === '/admin/login') {
+        // Optional: Redirect to dashboard if already logged in? 
+        // For now, let it be accessible.
         return NextResponse.next();
-      }
     }
 
-    return new NextResponse('Auth Required', {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Basic realm="Secure Area"',
-      },
-    });
+    const token = req.cookies.get('token')?.value;
+
+    if (!token) {
+        // Redirect to login page
+        return NextResponse.redirect(new URL('/admin/login', req.url));
+    }
   }
 
   return NextResponse.next();

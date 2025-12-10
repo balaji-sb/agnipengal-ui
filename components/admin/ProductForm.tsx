@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios'; // Replaced by centralized api
+import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +14,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ initialData, isEditing = false }: ProductFormProps) {
   const router = useRouter();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -43,7 +44,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
   }, [initialData]);
 
   useEffect(() => {
-    axios.get('/api/categories').then(res => setCategories(res.data.data));
+    api.get('/categories').then(res => setCategories(res.data.data));
   }, []);
 
   const handleChange = (e: any) => {
@@ -68,9 +69,9 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
         }
 
         if (isEditing && initialData) {
-            await axios.put(`/api/products/${initialData._id}`, payload);
+            await api.put(`/products/${initialData._id}`, payload);
         } else {
-            await axios.post('/api/products', payload);
+            await api.post('/products', payload);
         }
         
         router.push('/admin/products');
