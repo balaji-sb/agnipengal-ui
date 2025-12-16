@@ -1,6 +1,5 @@
 import React from 'react';
-// import dbConnect from '@/lib/db';
-// import CategoryModel from '@/lib/models/Category';
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

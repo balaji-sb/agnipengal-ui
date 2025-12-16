@@ -1,8 +1,4 @@
 import React from 'react';
-// import dbConnect from '@/lib/db';
-// import CarouselModel from '@/lib/models/Carousel';
-// import ProductModel from '@/lib/models/Product';
-// import CategoryModel from '@/lib/models/Category';
 import Carousel from '@/components/shop/Carousel';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryCard from '@/components/shop/CategoryCard';

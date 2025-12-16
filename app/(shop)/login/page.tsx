@@ -101,6 +101,7 @@ export default function LoginPage() {
                   onChange={e => setFormData({...formData, password: e.target.value})}
                 />
               </div>
+             
             </div>
           </div>
 
@@ -117,12 +118,12 @@ export default function LoginPage() {
               </label>
             </div>
 
-            <div className="text-sm">
-              <a href="#" className="font-medium text-pink-600 hover:text-pink-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
+ <div className="text-right mt-1">
+                  <Link href="/forgot-password" className="text-sm font-medium text-pink-600 hover:text-pink-500">
+                      Forgot your password?
+                  </Link>
+              </div>
+           </div>
 
           <div>
             <button

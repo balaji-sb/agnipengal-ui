@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock } from 'lucide-react';
+import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 import api from '@/lib/api';
 
 export default function AdminLoginPage() {
@@ -11,6 +12,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAdminAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +22,8 @@ export default function AdminLoginPage() {
     try {
       const res = await api.post('/auth/admin-login', { email, password });
       if (res.data.success) {
-          // Note: Cookie should be set by backend.
-          // Check if response has token if manually setting (unlikely if httpOnly)
-          // Just redirect
-          router.push('/admin');
-          router.refresh();
+          login(res.data.user);
+          // router.push('/admin'); // Handled by login()
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');

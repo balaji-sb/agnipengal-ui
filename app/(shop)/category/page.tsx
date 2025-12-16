@@ -1,6 +1,5 @@
 import React from 'react';
-// import dbConnect from '@/lib/db';
-// import CategoryModel from '@/lib/models/Category';
+
 import CategoryCard from '@/components/shop/CategoryCard';
 import Link from 'next/link';
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { Plus, Edit, Trash, Loader2, Search } from 'lucide-react';
+import ImportProductsButton from '@/components/admin/ImportProductsButton';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -43,13 +44,16 @@ export default function AdminProductsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Products</h1>
-        <Link 
-            href="/admin/products/new" 
-            className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
-        >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New
-        </Link>
+        <div className="flex space-x-3">
+             <ImportProductsButton onSuccess={() => fetchProducts()} />
+            <Link 
+                href="/admin/products/new" 
+                className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
+            >
+                <Plus className="w-4 h-4 mr-2" />
+                Add New
+            </Link>
+        </div>
       </div>
 
       <div className="mb-6 relative">

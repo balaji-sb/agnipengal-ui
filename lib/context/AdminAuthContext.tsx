@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -9,42 +8,40 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin';
+  role: 'admin';
 }
 
-interface AuthContextType {
-  user: User | null;
+interface AdminAuthContextType {
+  admin: User | null;
   loading: boolean;
   login: (userData: any) => void;
-  register: (userData: any) => void; // Or just rely on component to call api and then reload
   logout: () => void;
   checkAuth: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({
-    user: null,
+const AdminAuthContext = createContext<AdminAuthContextType>({
+    admin: null,
     loading: true,
     login: () => {},
-    register: () => {},
     logout: () => {},
     checkAuth: () => {},
 });
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [admin, setAdmin] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const checkAuth = async () => {
     try {
-        const res = await api.get('/auth/me');
+        const res = await api.get('/auth/admin/me');
         if (res.data.success) {
-            setUser(res.data.user);
+            setAdmin(res.data.user);
         } else {
-            setUser(null);
+            setAdmin(null);
         }
     } catch (error) {
-        setUser(null);
+        setAdmin(null);
     } finally {
         setLoading(false);
     }
@@ -55,22 +52,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = (userData: User) => {
-    setUser(userData);
-    router.push('/');
+    setAdmin(userData);
+    router.push('/admin');
     router.refresh(); 
-  };
-
-  const register = (userData: User) => {
-      setUser(userData);
-      router.push('/');
-      router.refresh();
   };
 
   const logout = async () => {
     try {
-        await api.post('/auth/logout');
-        setUser(null);
-        router.push('/login');
+        await api.post('/auth/admin/logout');
+        setAdmin(null);
+        router.push('/admin/login');
         router.refresh();
     } catch (error) {
         console.error('Logout failed', error);
@@ -78,10 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, checkAuth }}>
+    <AdminAuthContext.Provider value={{ admin, loading, login, logout, checkAuth }}>
       {children}
-    </AuthContext.Provider>
+    </AdminAuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAdminAuth = () => useContext(AdminAuthContext);

@@ -6,14 +6,15 @@ export function middleware(req: NextRequest) {
   
   // Protect /admin routes
   if (url.pathname.startsWith('/admin')) {
-    // Allow public access to login page
+    // For now, let it be accessible to avoid redirect loops on login page if context isn't perfectly synced,
+    // BUT we need to protect dashboard.
+    // The login page is /admin/login.
+    
     if (url.pathname === '/admin/login') {
-        // Optional: Redirect to dashboard if already logged in? 
-        // For now, let it be accessible.
         return NextResponse.next();
     }
 
-    const token = req.cookies.get('token')?.value;
+    const token = req.cookies.get('admin_token')?.value;
 
     if (!token) {
         // Redirect to login page

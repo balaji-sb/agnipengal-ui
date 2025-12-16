@@ -1,6 +1,4 @@
 import React from 'react';
-// import dbConnect from '@/lib/db';
-// import ProductModel from '@/lib/models/Product';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductSort from '@/components/shop/ProductSort';
 import ProductFilter from '@/components/shop/ProductFilter';

@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Package, ShoppingBag, Layers, Image as ImageIcon, User, LogOut, Settings } from 'lucide-react';
-import api from '@/lib/api';
+import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 
 const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -17,15 +17,10 @@ const menuItems = [
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { logout } = useAdminAuth();
 
     const handleLogout = async () => {
-        try {
-            await api.post('/auth/logout');
-            router.push('/admin/login');
-            router.refresh();
-        } catch (error) {
-            console.error('Logout failed', error);
-        }
+        logout();
     };
 
     return (
@@ -58,12 +53,13 @@ export default function Sidebar() {
                 </div>
                 <nav className="space-y-2">
                     <Link 
-                        href="/admin/profile" 
-                        className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition ${pathname === '/admin/profile' ? 'bg-pink-600' : 'hover:bg-gray-800 text-gray-400'}`}
+                        href="/admin/settings" 
+                        className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition ${pathname === '/admin/settings' ? 'bg-pink-600' : 'hover:bg-gray-800 text-gray-400'}`}
                     >
-                        <User className="w-4 h-4" />
-                        <span>Profile</span>
+                        <Settings className="w-4 h-4" />
+                        <span>Settings</span>
                     </Link>
+
                     <button 
                         onClick={handleLogout}
                         className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-red-900/20 hover:text-red-400 text-gray-400 transition"

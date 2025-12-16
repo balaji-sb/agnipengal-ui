@@ -1,7 +1,5 @@
 
 import React from 'react';
-// import dbConnect from '@/lib/db';
-// import ProductModel from '@/lib/models/Product';
 import ProductForm from '@/components/admin/ProductForm';
 import api from '@/lib/api';
 
