@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Country, State, City } from 'country-state-city';
 import { useAuth } from '@/lib/context/AuthContext';
 import api from '@/lib/api';
+import { MapPin, Plus, CheckCircle2, Circle } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -25,6 +26,11 @@ export default function CheckoutPage() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+
+  // Address Selection State
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [isNewAddress, setIsNewAddress] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -86,74 +92,93 @@ export default function CheckoutPage() {
     };
 
     try {
-      // 1. Create Order
-      const { data } = await api.post('/orders', {
-        customer: {
-            ...finalFormData,
-            city: selectedCity 
-        },
-        user:user && user._id,
-        totalAmount: totalPrice,
-        items: items.map(item => ({
-            product: item.product,
-            quantity: item.quantity,
-            price: item.product.price 
-        })),
-      });
-
-      if (!data.success) throw new Error(data.error);
-
-      // 2. Open Razorpay
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_RiwMBWx7bvaFOi', 
-        amount: data.amount, // Already in paisa from backend
-        currency: 'INR',
-        name: "Mahi's Vriksham Boutique",
-        description: 'Order Payment',
-        order_id: data.orderId, // Matches backend response key
-        handler: async function (response: any) {
-             try {
-                setProcessingPayment(true); // Start full screen loader
-                const verifyRes = await api.post('/payment/verify', {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                });
-
-                if (verifyRes.data.success) {
-                    clearCart();
-                    router.push('/checkout/success');
-                    // Keep loader true until redirect happens
-                } else {
-                    alert('Payment verification failed');
-                    setProcessingPayment(false);
-                }
-             } catch (error) {
-                 console.error('Verification error', error);
-                 alert('Payment verification failed. Please contact support.');
-                 setProcessingPayment(false);
-             }
-        },
-
-        prefill: {
-          name: formData.name,
-          email: formData.email,
-          contact: fullMobile,
-        },
-        theme: {
-          color: '#D946EF',
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-
+      // Save to Session Storage
+      sessionStorage.setItem('checkoutAddress', JSON.stringify(finalFormData));
+      router.push('/checkout/summary');
     } catch (error: any) {
-      console.error('Checkout failed', error);
-      alert('Checkout failed: ' + error.message);
+      console.error('Checkout navigation failed', error);
+      alert('Something went wrong');
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+      // Fetch user's saved addresses
+      const fetchAddresses = async () => {
+          if (user) {
+              try {
+                  const res = await api.get('/addresses');
+                  if (res.data.success && res.data.data.length > 0) {
+                      setSavedAddresses(res.data.data);
+                      // Auto-select default address if available
+                      const defaultAddr = res.data.data.find((a: any) => a.isDefault);
+                      if (defaultAddr) {
+                          handleAddressSelect(defaultAddr);
+                      } else {
+                          handleAddressSelect(res.data.data[0]);
+                      }
+                  } else {
+                      setIsNewAddress(true);
+                  }
+              } catch (error) {
+                  console.error('Failed to fetch addresses', error);
+                  setIsNewAddress(true);
+              }
+          }
+      };
+      fetchAddresses();
+  }, [user]);
+
+  const handleAddressSelect = (address: any) => {
+      setSelectedAddressId(address._id);
+      setIsNewAddress(false);
+
+      // Map Country Name to Code
+      const allCountries = Country.getAllCountries();
+      const countryObj = allCountries.find(c => c.name.toLowerCase() === address.country.toLowerCase());
+      const countryCode = countryObj ? countryObj.isoCode : '';
+      
+      setSelectedCountry(countryCode);
+
+      // Map State Name to Code
+      let stateCode = '';
+      if (countryCode) {
+          const allStates = State.getStatesOfCountry(countryCode);
+          const stateObj = allStates.find(s => s.name.toLowerCase() === address.state.toLowerCase());
+          stateCode = stateObj ? stateObj.isoCode : '';
+          setSelectedState(stateCode);
+      }
+      
+      // City (just set name as we use value logic)
+      // Note: We need to trigger city update after state is set, but React state is async.
+      // However, the 'useEffect' for cities list depends on selectedState.
+      // And we set selectedCity value directly.
+      // Ideally we would verify city exists in the list, but for now we trust the stored name.
+      setSelectedCity(address.city);
+      
+      setFormData(prev => ({
+          ...prev,
+          address: address.street,
+          pincode: address.zipCode,
+          // Keep name/email/mobile from user profile if not in address? 
+          // Address model doesn't store name/phone yet (simplified).
+          // So we keep existing inputs for those or user profile defaults.
+      }));
+  };
+
+  const handleNewAddressSelect = () => {
+      setSelectedAddressId(null);
+      setIsNewAddress(true);
+      // Reset form fields related to address, strictly
+      setFormData(prev => ({
+          ...prev,
+          address: '',
+          pincode: ''
+      }));
+      setSelectedCountry('');
+      setSelectedState('');
+      setSelectedCity('');
   };
 
   const countries = Country.getAllCountries();
@@ -167,6 +192,63 @@ export default function CheckoutPage() {
 
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
         <form onSubmit={handleCheckout} className="space-y-6">
+
+            {/* Address Selection Section */}
+            {savedAddresses.length > 0 && (
+                <div className="mb-8">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+                        <MapPin className="w-5 h-5 mr-2 text-pink-600" />
+                        Select Delivery Address
+                    </h2>
+                    <div className="grid grid-cols-1 gap-4">
+                        {savedAddresses.map((addr) => (
+                            <div 
+                                key={addr._id}
+                                onClick={() => handleAddressSelect(addr)}
+                                className={`relative p-4 rounded-xl border-2 cursor-pointer transition flex items-start space-x-3 ${
+                                    selectedAddressId === addr._id 
+                                        ? 'border-pink-600 bg-pink-50/50' 
+                                        : 'border-gray-100 hover:border-pink-200'
+                                }`}
+                            >
+                                <div className={`mt-1 ${selectedAddressId === addr._id ? 'text-pink-600' : 'text-gray-300'}`}>
+                                    {selectedAddressId === addr._id ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                                </div>
+                                <div>
+                                    <div className="font-medium text-gray-900 flex items-center">
+                                        {addr.isDefault && (
+                                            <span className="bg-pink-100 text-pink-700 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full mr-2">Default</span>
+                                        )}
+                                        {addr.name}
+                                    </div>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+
+                        {/* New Address Option */}
+                        <div 
+                            onClick={handleNewAddressSelect}
+                            className={`relative p-4 rounded-xl border-2 cursor-pointer transition flex items-center space-x-3 ${
+                                isNewAddress
+                                    ? 'border-pink-600 bg-pink-50/50' 
+                                    : 'border-gray-100 hover:border-pink-200'
+                            }`}
+                        >
+                             <div className={`mt-0 ${isNewAddress ? 'text-pink-600' : 'text-gray-300'}`}>
+                                {isNewAddress ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                            </div>
+                            <span className="font-medium text-gray-900 flex items-center">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Add New Address
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -193,8 +275,9 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input 
+                    required
                     type="email" name="email" 
                     value={formData.email} onChange={handleChange}
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition"
@@ -285,7 +368,7 @@ export default function CheckoutPage() {
                  >
                      {loading ? (
                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                     ) : 'Pay Now'}
+                     ) : 'Proceed to Summary'}
                  </button>
             </div>
         </form>

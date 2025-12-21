@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import { Plus, Edit, Trash, Loader2, Search } from 'lucide-react';
+import { Plus, Edit, Trash, Loader2, Search, Star, ImageIcon, X } from 'lucide-react';
 import ImportProductsButton from '@/components/admin/ImportProductsButton';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const fetchProducts = (query = '') => {
     setLoading(true);
@@ -71,10 +72,12 @@ export default function AdminProductsPage() {
         <table className="w-full text-left">
             <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
+                    <th className="p-4 font-medium text-gray-500">Image</th>
                     <th className="p-4 font-medium text-gray-500">Name</th>
                     <th className="p-4 font-medium text-gray-500">Category</th>
                     <th className="p-4 font-medium text-gray-500">Price</th>
                     <th className="p-4 font-medium text-gray-500">Stock</th>
+                    <th className="p-4 font-medium text-gray-500">Rating</th>
                     <th className="p-4 font-medium text-gray-500">Action</th>
                 </tr>
             </thead>
@@ -83,6 +86,23 @@ export default function AdminProductsPage() {
                     <tr><td colSpan={5} className="p-8 text-center text-gray-500">Loading...</td></tr>
                 ) : products.map((product: any) => (
                     <tr key={product._id} className="hover:bg-gray-50 transition">
+                        <td className="p-4">
+                            <div 
+                                className="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+                                onClick={() => product.images && product.images[0] && setSelectedImage(product.images[0])}
+                            >
+                                {product.images && product.images[0] ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img 
+                                        src={product.images[0]} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <ImageIcon className="w-6 h-6 text-gray-300" />
+                                )}
+                            </div>
+                        </td>
                         <td className="p-4 font-medium text-gray-900">
                             {product.name}
                             <div className="text-xs text-gray-400">{product.subcategory}</div>
@@ -90,6 +110,13 @@ export default function AdminProductsPage() {
                         <td className="p-4 text-gray-700">{product.category?.name || '-'}</td>
                         <td className="p-4 text-gray-700">₹{product.price}</td>
                         <td className="p-4 text-gray-700">{product.stock}</td>
+                        <td className="p-4">
+                            <div className="flex items-center space-x-1">
+                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                <span className="font-medium text-gray-900">{product.rating?.toFixed(1) || '0.0'}</span>
+                                <span className="text-xs text-gray-400">({product.numReviews || 0})</span>
+                            </div>
+                        </td>
                         <td className="p-4 flex space-x-2">
                              <Link href={`/admin/products/${product._id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded inline-flex">
                                 <Edit className="w-4 h-4" />
@@ -106,6 +133,29 @@ export default function AdminProductsPage() {
             <div className="p-8 text-center text-gray-500">No products found.</div>
         )}
       </div>
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <div 
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+        >
+            <div className="relative max-w-3xl max-h-[90vh] bg-white rounded-lg p-2" onClick={e => e.stopPropagation()}>
+                <button 
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute -top-4 -right-4 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition text-gray-600"
+                >
+                    <X className="w-6 h-6" />
+                </button>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                    src={selectedImage} 
+                    alt="Preview" 
+                    className="max-w-full max-h-[85vh] object-contain rounded"
+                />
+            </div>
+        </div>
+      )}
     </div>
   );
 }

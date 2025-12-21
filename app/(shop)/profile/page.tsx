@@ -3,277 +3,283 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { LogOut, Package, Star, Eye } from 'lucide-react';
+import Link from 'next/link';
+import { 
+    LogOut, Package, Star, MapPin, 
+    ArrowRight, Clock, ShieldCheck, User 
+} from 'lucide-react';
 import api from '@/lib/api';
-import ReviewModal from '@/components/shop/ReviewModal';
-import ViewReviewModal from '@/components/shop/ViewReviewModal';
-
-interface ReviewData {
-    rating: number;
-    comment: string;
-    createdAt: string;
-    product: string;
-}
 
 export default function ProfilePage() {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
-  const [orders, setOrders] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
   
-  // Write Review Modal State
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<{ _id: string; name: string; orderId?: string } | null>(null);
-
-  // View Review Modal State
-  const [viewReviewModalOpen, setViewReviewModalOpen] = useState(false);
-  const [viewReviewData, setViewReviewData] = useState<{ productName: string; review: ReviewData } | null>(null);
-
-  const [reviewedProducts, setReviewedProducts] = useState<Map<string, ReviewData>>(new Map());
+  const [stats, setStats] = useState({
+      totalOrders: 0,
+      activeOrders: 0,
+      totalReviews: 0
+  });
+  const [recentOrder, setRecentOrder] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) {
         router.push('/login');
     }
     
-    // Fetch Orders
-    const fetchOrders = async () => {
-        if (user) {
-            try {
-                const res = await api.get('/orders/myorders');
-                if (res.data.success) {
-                    setOrders(res.data.data);
-                }
-            } catch (error) {
-                console.error('Failed to fetch orders', error);
-            } finally {
-                setLoadingOrders(false);
-            }
-        }
-    };
-
-    // Fetch User Reviews to check what has been reviewed
-    const fetchUserReviews = async () => {
-        if (user) {
-            try {
-                const res = await api.get('/reviews/me');
-                if (res.data.success) {
-                    const reviewMap = new Map<string, ReviewData>();
-                    res.data.data.forEach((r: any) => {
-                        // Key is now combination of orderId and productId to support multiple reviews per product in different orders
-                        if (r.product && r.orderId) {
-                            reviewMap.set(`${r.orderId}_${r.product}`, r);
-                        } else if (r.product) { 
-                            // Fallback for old reviews without orderId (though we are adding it now)
-                             reviewMap.set(r.product as string, r);
-                        }
-                    });
-                    setReviewedProducts(reviewMap);
-                }
-            } catch (error) {
-                console.error('Failed to fetch user reviews', error);
-            }
-        }
-    };
-
     if (user) {
-        fetchOrders();
-        fetchUserReviews();
+        fetchDashboardData();
     }
   }, [user, authLoading, router]);
 
-  const refreshReviews = async () => {
-      // Helper to refresh reviews after submission
+  const fetchDashboardData = async () => {
       try {
-          const res = await api.get('/reviews/me');
-          if (res.data.success) {
-                const reviewMap = new Map<string, ReviewData>();
-                res.data.data.forEach((r: any) => {
-                    if (r.product && r.orderId) {
-                        reviewMap.set(`${r.orderId}_${r.product}`, r);
-                    } else if (r.product) {
-                         reviewMap.set(r.product as string, r);
-                    }
-                });
-                setReviewedProducts(reviewMap);
+          const [ordersRes, reviewsRes] = await Promise.all([
+              api.get('/orders/myorders'),
+              api.get('/reviews/me')
+          ]);
+
+          if (ordersRes.data.success) {
+              const orders = ordersRes.data.data;
+              setStats(prev => ({
+                  ...prev,
+                  totalOrders: orders.length,
+                  activeOrders: orders.filter((o: any) => 
+                      !['delivered', 'cancelled', 'returned'].includes(o.orderStatus?.toLowerCase())
+                  ).length
+              }));
+              
+              if (orders.length > 0) {
+                  setRecentOrder(orders[0]); // Assuming API returns sorted by date desc
+              }
           }
+
+          if (reviewsRes.data.success) {
+               setStats(prev => ({
+                  ...prev,
+                  totalReviews: reviewsRes.data.data.length
+              }));
+          }
+
       } catch (error) {
-          console.error('Failed to refresh reviews', error);
+          console.error('Failed to fetch dashboard data', error);
+      } finally {
+          setLoading(false);
       }
   };
 
-  const openReviewModal = (product: any, orderId: string) => {
-      const productData = {
-          _id: product._id,
-          name: product.name
-      };
-      setSelectedProduct({ ...productData, orderId });
-      setReviewModalOpen(true);
-  };
-
-  const openViewReviewModal = (productName: string, review: ReviewData) => {
-      setViewReviewData({ productName, review });
-      setViewReviewModalOpen(true);
-  };
-
-
-  if (authLoading) return <div className="p-8 text-center">Loading...</div>;
+  if (authLoading || loading) return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+              <div className="w-16 h-16 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-500 font-medium">Loading your dashboard...</p>
+          </div>
+      </div>
+  );
 
   if (!user) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-            <button onClick={logout} className="flex items-center text-red-600 hover:text-red-700 font-medium px-4 py-2 hover:bg-red-50 rounded-lg transition">
-                <LogOut className="w-5 h-5 mr-1" />
+    <div className="max-w-6xl mx-auto px-4 py-8 lg:py-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h1 className="text-4xl font-black text-gray-900 mb-2">
+                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-violet-600">{user.name.split(' ')[0]}</span>!
+                </h1>
+                <p className="text-gray-500 text-lg">Here's what's happening with your account today.</p>
+            </div>
+            <button 
+                onClick={logout} 
+                className="flex items-center text-gray-500 hover:text-red-600 font-medium px-5 py-2.5 hover:bg-red-50 rounded-full transition-all border border-gray-200 hover:border-red-100 bg-white shadow-sm"
+            >
+                <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
             </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
-            <h2 className="text-xl font-bold mb-4">Account Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                     <label className="block text-sm font-medium text-gray-500">Name</label>
-                     <p className="text-lg font-medium">{user.name}</p>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <Package className="w-7 h-7" />
                 </div>
                 <div>
-                     <label className="block text-sm font-medium text-gray-500">Email</label>
-                     <p className="text-lg font-medium">{user.email}</p>
+                    <p className="text-gray-500 font-medium text-sm uppercase tracking-wider">Total Orders</p>
+                    <p className="text-3xl font-black text-gray-900">{stats.totalOrders}</p>
+                </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                    <Clock className="w-7 h-7" />
+                </div>
+                <div>
+                    <p className="text-gray-500 font-medium text-sm uppercase tracking-wider">Pending Orders</p>
+                    <p className="text-3xl font-black text-gray-900">{stats.activeOrders}</p>
+                </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-full bg-pink-50 flex items-center justify-center text-pink-600">
+                    <Star className="w-7 h-7" />
+                </div>
+                <div>
+                    <p className="text-gray-500 font-medium text-sm uppercase tracking-wider">My Reviews</p>
+                    <p className="text-3xl font-black text-gray-900">{stats.totalReviews}</p>
                 </div>
             </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-             <h2 className="text-xl font-bold mb-6 flex items-center">
-                <Package className="w-6 h-6 mr-2 text-pink-600" />
-                Order History
-             </h2>
-             
-             {loadingOrders ? (
-                 <div className="text-center py-8 text-gray-500">Loading orders...</div>
-             ) : orders.length > 0 ? (
-                 <div className="space-y-6">
-                    {orders.map((order: any) => (
-                        <div key={order._id} className="border border-gray-100 rounded-lg p-6 hover:shadow-md transition">
-                            <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 pb-4 border-b border-gray-50">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Recent Activity Section */}
+            <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                        <h2 className="text-xl font-bold text-gray-900">Recent Order</h2>
+                        {recentOrder && (
+                            <Link href="/profile/orders" className="text-sm font-bold text-pink-600 hover:text-pink-700 hover:underline">
+                                View All Orders
+                            </Link>
+                        )}
+                    </div>
+                    
+                    {recentOrder ? (
+                        <div className="p-6">
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 pb-6 border-b border-gray-100 gap-4">
                                 <div>
-                                    <span className="text-sm text-gray-500">Order ID:</span>
-                                    <span className="ml-2 font-mono text-sm font-bold text-gray-700">#{order._id.substring(0, 8)}</span>
-                                    <div className="text-sm text-gray-500 mt-1">
-                                        {new Date(order.createdAt).toLocaleDateString()}
-                                    </div>
-                                </div>
-                                <div className="mt-2 md:mt-0 flex items-center gap-3">
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${order.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                            PAYMENT: {order.status}
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="text-2xl font-bold text-gray-900">#{recentOrder._id.substring(0, 8)}</span>
+                                        <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase ${
+                                            recentOrder.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                        }`}>
+                                            {recentOrder.orderStatus}
                                         </span>
-                                        {order.orderStatus && (
-                                            <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 uppercase">
-                                                STATUS: {order.orderStatus}
-                                            </span>
-                                        )}
                                     </div>
-                                    <span className="font-bold text-lg text-gray-900">₹{order.totalAmount}</span>
+                                    <p className="text-gray-500 flex items-center gap-2 text-sm">
+                                        <Clock className="w-4 h-4" />
+                                        Placed on {new Date(recentOrder.createdAt).toLocaleDateString(undefined, {
+                                            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                                        })}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-gray-500 mb-1">Total Amount</p>
+                                    <p className="text-2xl font-bold text-gray-900">₹{recentOrder.totalAmount}</p>
                                 </div>
                             </div>
-                            
-                            <div className="space-y-4">
-                                {order.items.map((item: any, idx: number) => {
-                                    // Check if this specific product in this specific order has a review
-                                    // We check for orderId_productId first, then fallback to productId (for legacy)
-                                    // But since we want to enable per-order, we mainly care about the order match.
-                                    let review = undefined;
-                                    if (item.product) {
-                                         review = reviewedProducts.get(`${order._id}_${item.product._id}`);
-                                         // If not found by specific key, maybe check generic key? 
-                                         // No, if we want per-order, we should strictly check per-order or we'll hide buttons mistakenly.
-                                         // However, for old reviews without orderId, we might want to show them?
-                                         // For now, strict check is safer for "enable per order".
-                                         if (!review && reviewedProducts.has(item.product._id)) {
-                                             // This handles legacy reviews where we just stored by Product ID in the map
-                                             // But wait, my map logic above keys by productID if orderId is missing.
-                                             // So this is covered.
-                                             review = reviewedProducts.get(item.product._id);
-                                         }
-                                    }
 
-                                    const isDelivered = order.orderStatus?.toLowerCase() === 'delivered';
-                                    
-                                    return (
-                                        <div key={idx} className="flex justify-between items-center text-sm bg-gray-50 p-3 rounded-lg">
-                                            <div>
-                                                <span className="font-medium text-gray-900 block">{item.product?.name || item.name || 'Unknown Product'}</span>
-                                                <span className="text-gray-500">Qty: {item.quantity}</span>
+                            <div className="space-y-4 mb-6">
+                                {recentOrder.items.slice(0, 2).map((item: any, idx: number) => (
+                                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-12 w-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center">
+                                                <Package className="w-6 h-6 text-gray-300" />
                                             </div>
-                                            <div className="flex items-center gap-4">
-                                                <span className="font-medium text-gray-900">₹{item.price}</span>
-                                                {/* Only show review UI if delivered */}
-                                                {isDelivered && item.product && (
-                                                    review ? (
-                                                        <button 
-                                                            onClick={() => openViewReviewModal(item.product.name, review)}
-                                                            className="group flex flex-col items-end hover:bg-gray-100 p-2 rounded-lg transition"
-                                                            title="Click to view your review"
-                                                        >
-                                                            <span className="text-gray-500 text-xs font-medium flex items-center gap-1 mb-1 group-hover:text-pink-600 transition">
-                                                                <Eye className="w-3 h-3" />
-                                                                View Review
-                                                            </span>
-                                                            <div className="flex text-yellow-400">
-                                                                {[...Array(5)].map((_, i) => (
-                                                                    <Star 
-                                                                        key={i} 
-                                                                        className={`w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-300'}`} 
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                        </button>
-                                                    ) : (
-                                                        <button 
-                                                            onClick={() => openReviewModal(item.product, order._id)}
-                                                            className="text-pink-600 hover:text-pink-700 font-medium text-xs flex items-center gap-1 hover:underline"
-                                                        >
-                                                            <Star className="w-3 h-3" />
-                                                            Write Review
-                                                        </button>
-                                                    )
-                                                )}
+                                            <div>
+                                                <p className="font-bold text-gray-900">{item.product?.name || item.name}</p>
+                                                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                        <p className="font-bold text-gray-900">₹{item.price}</p>
+                                    </div>
+                                ))}
+                                {recentOrder.items.length > 2 && (
+                                    <p className="text-center text-sm text-gray-500 italic">
+                                        + {recentOrder.items.length - 2} more items
+                                    </p>
+                                )}
+                            </div>
+
+                            <Link 
+                                href="/profile/orders" 
+                                className="block w-full py-3 text-center font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+                            >
+                                View Order Details
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="p-12 text-center">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                                <Package className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">No orders yet</h3>
+                            <p className="text-gray-500 mb-6">Start shopping to see your recent activity here.</p>
+                            <Link 
+                                href="/products" 
+                                className="inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-pink-600 hover:bg-pink-700 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                            >
+                                Start Shopping
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Quick Actions Sidebar */}
+            <div className="space-y-6">
+                 {/* Account Card */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-pink-500 to-violet-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                             {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                             <p className="font-bold text-gray-900 text-lg">{user.name}</p>
+                             <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            <ShieldCheck className="w-4 h-4 text-green-600" />
+                            <span>Verified Customer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 className="text-lg font-bold text-gray-900 px-1">Quick Actions</h3>
+                <div className="grid grid-cols-1 gap-4">
+                    <Link href="/profile/orders" className="group flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-pink-300 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <Package className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-gray-900">My Orders</p>
+                                <p className="text-xs text-gray-500">Track, return, or buy things again</p>
                             </div>
                         </div>
-                    ))}
-                 </div>
-             ) : (
-                 <div className="text-center py-12 bg-gray-50 rounded-lg">
-                    <p className="text-gray-500">No recent orders found.</p>
-                 </div>
-             )}
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-pink-600 transform group-hover:translate-x-1 transition-all" />
+                    </Link>
+
+                    <Link href="/profile/addresses" className="group flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-pink-300 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-4">
+                             <div className="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors">
+                                <MapPin className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-gray-900">My Addresses</p>
+                                <p className="text-xs text-gray-500">Edit addresses for orders</p>
+                            </div>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-pink-600 transform group-hover:translate-x-1 transition-all" />
+                    </Link>
+
+                     {/* Placeholder for future Account Settings link */}
+                     <button  className="group w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl opacity-60 cursor-not-allowed">
+                        <div className="flex items-center gap-4">
+                             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
+                                <User className="w-5 h-5" />
+                            </div>
+                            <div className="text-left">
+                                <p className="font-bold text-gray-900">Account Settings</p>
+                                <p className="text-xs text-gray-500">Coming soon</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
         </div>
-
-        {selectedProduct && (
-            <ReviewModal 
-                isOpen={reviewModalOpen} 
-                onClose={() => setReviewModalOpen(false)} 
-                product={selectedProduct} 
-                orderId={(selectedProduct as any).orderId}
-                onSuccess={refreshReviews}
-            />
-        )}
-
-        {viewReviewData && (
-            <ViewReviewModal
-                isOpen={viewReviewModalOpen}
-                onClose={() => setViewReviewModalOpen(false)}
-                productName={viewReviewData.productName}
-                review={viewReviewData.review}
-            />
-        )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
     const [selectedImage, setSelectedImage] = useState(images[0] || '/placeholder.png');
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isZoomed, setIsZoomed] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -58,9 +59,13 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
                     {images.map((img, idx) => (
                         <button 
                             key={idx} 
-                            onClick={() => setSelectedImage(img)}
+                            onClick={() => {
+                                setSelectedImage(img)
+                                setSelectedImageIndex(idx)
+                            }
+                            }
                             className={`relative aspect-square bg-gray-50 rounded-xl overflow-hidden border-2 transition-all ${
-                                selectedImage === img 
+                                selectedImageIndex === idx 
                                     ? 'border-pink-500 ring-2 ring-pink-500/20' 
                                     : 'border-transparent hover:border-gray-200'
                             }`}

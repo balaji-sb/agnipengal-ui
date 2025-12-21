@@ -80,10 +80,7 @@ export default function CartPage() {
                         <span>Subtotal</span>
                         <span>₹{totalPrice}</span>
                     </div>
-                    <div className="flex justify-between text-gray-600">
-                        <span>Shipping</span>
-                        <span className="text-green-600">Free</span>
-                    </div>
+
                     <div className="border-t border-gray-100 pt-4 flex justify-between font-bold text-lg text-gray-900">
                         <span>Total</span>
                         <span>₹{totalPrice}</span>

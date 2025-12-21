@@ -1,15 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import OrderRow from './OrderRow';
 import ExportOrdersButton from './ExportOrdersButton';
 
 interface OrderManagerProps {
     orders: any[];
+    pagination?: {
+        total: number;
+        pages: number;
+        page: number;
+        limit: number;
+    };
 }
 
-export default function OrderManager({ orders }: OrderManagerProps) {
+export default function OrderManager({ orders, pagination }: OrderManagerProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('ALL');
   const [orderStatus, setOrderStatus] = useState('ALL');
@@ -113,6 +123,29 @@ export default function OrderManager({ orders }: OrderManagerProps) {
             </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {pagination && pagination.pages > 1 && (
+        <div className="mt-6 flex justify-center items-center gap-2">
+            <button
+                disabled={pagination.page <= 1}
+                onClick={() => router.push(`/admin/orders?page=${pagination.page - 1}`)}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
+            >
+                <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="text-sm text-gray-600 font-medium">
+                Page {pagination.page} of {pagination.pages}
+            </span>
+            <button
+                disabled={pagination.page >= pagination.pages}
+                onClick={() => router.push(`/admin/orders?page=${pagination.page + 1}`)}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
+            >
+                <ChevronRight className="w-5 h-5" />
+            </button>
+        </div>
+      )}
     </div>
   );
 }

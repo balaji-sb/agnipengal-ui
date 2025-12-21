@@ -75,7 +75,7 @@ export default function RegisterPage() {
                   type="text"
                   autoComplete="name"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 focus:bg-white"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 "
                   placeholder="Full Name"
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 focus:bg-white"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 "
                   placeholder="Email address"
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 focus:bg-white"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50 "
                   placeholder="Password"
                   value={formData.password}
                   onChange={e => setFormData({...formData, password: e.target.value})}

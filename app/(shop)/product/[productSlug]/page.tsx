@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductGallery from '@/components/shop/ProductGallery';
 import ProductReviews from '@/components/shop/ProductReviews'; // New Component
+import ProductViewTracker from '@/components/shop/ProductViewTracker';
 import { ShieldCheck, Truck, RotateCcw } from 'lucide-react'; // Added icons
 
 export const dynamic = 'force-dynamic';
@@ -42,6 +43,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-16">
+        <ProductViewTracker productId={product._id} />
         {/* Left: Gallery */}
         <ProductGallery images={product.images} productName={product.name} />
 

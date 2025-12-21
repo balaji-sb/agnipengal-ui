@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from '@/lib/api'; // Using the axios instance
-import { Eye, X, Check, Truck, Package, AlertCircle } from 'lucide-react';
+import { Eye, X, Check, Truck, Package, AlertCircle, Loader2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 const ORDER_STATUSES = [
@@ -91,17 +91,24 @@ export default function OrderRow({ order }: OrderRowProps) {
                 </span>
             </td>
             <td className="p-4">
-                <select 
-                    value={orderStatus} 
-                    onChange={handleStatusChange}
-                    disabled={loading}
-                    className={`px-3 py-1 rounded-full text-xs font-bold border-none cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none appearance-none pr-8 relative ${statusColors[orderStatus as keyof typeof statusColors] || 'bg-gray-100 text-gray-700'}`}
-                    style={{ backgroundImage: 'none' }} 
-                >
-                    {ORDER_STATUSES.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                    ))}
-                </select>
+                <div className="flex items-center gap-2">
+                    <select 
+                        value={orderStatus} 
+                        onChange={handleStatusChange}
+                        disabled={loading}
+                        className={`px-3 py-1 rounded-full text-xs font-bold border-none cursor-pointer focus:ring-2 focus:ring-offset-1 outline-none appearance-none pr-8 relative ${statusColors[orderStatus as keyof typeof statusColors] || 'bg-gray-100 text-gray-700'} ${loading ? 'opacity-70 cursor-wait' : ''}`}
+                        style={{ backgroundImage: 'none' }} 
+                    >
+                        {ORDER_STATUSES.map(s => (
+                            <option key={s} value={s}>{s}</option>
+                        ))}
+                    </select>
+                    {loading && (
+                        <div className="animate-spin text-pink-600">
+                           <Loader2 className="w-4 h-4" />
+                        </div>
+                    )}
+                </div>
             </td>
             <td className="p-4 font-bold text-gray-900">₹{order.totalAmount}</td>
             <td className="p-4">
@@ -205,7 +212,25 @@ export default function OrderRow({ order }: OrderRowProps) {
                                     </tbody>
                                     <tfoot className="bg-gray-50 border-t">
                                         <tr>
-                                            <td colSpan={3} className="p-3 text-right font-bold text-gray-900">Total Amount</td>
+                                            <td colSpan={3} className="p-2 text-right text-gray-600">Subtotal</td>
+                                            <td className="p-2 text-right font-medium text-gray-900">₹{order.subTotal || order.totalAmount}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={3} className="p-2 text-right text-gray-600">Shipping Charge</td>
+                                            <td className="p-2 text-right font-medium text-gray-900">
+                                                {order.shippingCharge ? `+₹${order.shippingCharge}` : 'Free'}
+                                            </td>
+                                        </tr>
+                                        {order.discount > 0 && (
+                                            <tr>
+                                                <td colSpan={3} className="p-2 text-right text-green-600">
+                                                    Discount {order.couponCode ? <span className="text-xs border border-green-200 bg-green-50 px-1 rounded ml-1">{order.couponCode}</span> : ''}
+                                                </td>
+                                                <td className="p-2 text-right font-medium text-green-600">-₹{order.discount}</td>
+                                            </tr>
+                                        )}
+                                        <tr className="border-t border-gray-200">
+                                            <td colSpan={3} className="p-3 text-right font-bold text-gray-900 text-lg">Total Amount</td>
                                             <td className="p-3 text-right font-bold text-pink-600 text-lg">₹{order.totalAmount}</td>
                                         </tr>
                                     </tfoot>

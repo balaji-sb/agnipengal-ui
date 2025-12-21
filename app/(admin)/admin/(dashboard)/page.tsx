@@ -1,6 +1,6 @@
 import api from '@/lib/api';
 import { getAuthHeaders } from '@/lib/api-server'; // Keeping in case we add auth check later
-import { IndianRupee, ShoppingBag, Package } from 'lucide-react';
+import { IndianRupee, ShoppingBag, Package, MessageSquare, Layers } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
@@ -10,7 +10,7 @@ async function getStats() {
         return res.data.data;
     } catch (error) {
         console.error('Dashboard Stats Error:', error);
-        return { orderCount: 0, productCount: 0, totalRevenue: 0 };
+        return { orderCount: 0, productCount: 0, totalRevenue: 0, reviewCount: 0, categoryCount: 0 };
     }
 }
 
@@ -24,7 +24,7 @@ export default async function AdminDashboard() {
         <p className="text-gray-500 mt-1">Welcome back, here's what's happening today.</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
          {/* Total Revenue */}
          <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group hover:shadow-xl transition-all">
             <div className="absolute -right-4 -top-4 opacity-10 transform group-hover:scale-110 transition-transform">
@@ -64,6 +64,34 @@ export default async function AdminDashboard() {
                 </div>
                 <h3 className="text-amber-100 font-medium mb-1">Total Products</h3>
                 <p className="text-4xl font-bold">{stats.productCount}</p>
+            </div>
+         </div>
+         
+         {/* Total Reviews */}
+         <div className="bg-gradient-to-br from-violet-500 to-purple-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group hover:shadow-xl transition-all">
+             <div className="absolute -right-4 -top-4 opacity-10 transform group-hover:scale-110 transition-transform">
+                <MessageSquare size={120} />
+            </div>
+            <div className="relative z-10">
+                <div className="p-3 bg-white/20 rounded-xl w-fit mb-4 backdrop-blur-sm">
+                    <MessageSquare size={24} className="text-white" />
+                </div>
+                <h3 className="text-violet-100 font-medium mb-1">Total Reviews</h3>
+                <p className="text-4xl font-bold">{stats.reviewCount}</p>
+            </div>
+         </div>
+
+         {/* Categories */}
+         <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group hover:shadow-xl transition-all">
+             <div className="absolute -right-4 -top-4 opacity-10 transform group-hover:scale-110 transition-transform">
+                <Layers size={120} />
+            </div>
+            <div className="relative z-10">
+                <div className="p-3 bg-white/20 rounded-xl w-fit mb-4 backdrop-blur-sm">
+                    <Layers size={24} className="text-white" />
+                </div>
+                <h3 className="text-emerald-100 font-medium mb-1">Categories</h3>
+                <p className="text-4xl font-bold">{stats.categoryCount}</p>
             </div>
          </div>
       </div>

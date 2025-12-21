@@ -6,18 +6,27 @@ import api from '@/lib/api';
 import { getAuthHeaders } from '@/lib/api-server';
 import OrderManager from '@/components/admin/OrderManager';
 
-async function getOrders() {
+async function getOrders(page = 1) {
   try {
       const headers = await getAuthHeaders();
-      const res = await api.get('/orders', { headers });
-      return res.data.data || [];
+      const res = await api.get(`/orders?page=${page}&limit=10`, { headers });
+      return { 
+          orders: res.data.data || [], 
+          pagination: res.data.pagination || { total: 0, pages: 1, page: 1, limit: 10 } 
+      };
   } catch (error) {
-      return [];
+      return { orders: [], pagination: { total: 0, pages: 1, page: 1, limit: 10 } };
   }
 }
 
-export default async function AdminOrdersPage() {
-  const orders = await getOrders();
+export default async function AdminOrdersPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    const resolvedParams = await searchParams;
+    const page = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page) : 1;
+    const { orders, pagination } = await getOrders(page);
 
-  return <OrderManager orders={orders} />;
+    return <OrderManager orders={orders} pagination={pagination} />;
 }
