@@ -4,11 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText } from 'lucide-react';
 import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 
 const menuItems = [
-    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard }, // Re-adding Dashboard as it was in the original and not explicitly removed by the instruction's snippet, but the snippet itself didn't include it. I will keep it for now and adjust based on the instruction's snippet.
+    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard }, 
     { label: 'Products', href: '/admin/products', icon: Package },
     { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
     { label: 'Categories', href: '/admin/categories', icon: Grid },
@@ -16,6 +16,8 @@ const menuItems = [
     { label: 'Carousel', href: '/admin/carousel', icon: ImageIcon },
     { label: 'Payments', href: '/admin/payments', icon: CreditCard },
     { label: 'Coupons', href: '/admin/coupons', icon: Tag },
+    { label: 'Email Templates', href: '/admin/email-templates', icon: Mail },
+    { label: 'CMS Pages', href: '/admin/cms', icon: FileText },
 ];
 
 export default function Sidebar() {

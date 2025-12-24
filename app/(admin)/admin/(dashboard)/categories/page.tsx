@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Edit, Trash2, X, Save, Search } from 'lucide-react';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -221,9 +222,15 @@ export default function AdminCategoriesPage() {
                             <label className="block text-sm font-medium mb-1">Slug</label>
                             <input required value={catSlug} onChange={e => setCatSlug(e.target.value)} className="w-full p-2 border rounded" placeholder="slug" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Image URL</label>
-                            <input value={catImage} onChange={e => setCatImage(e.target.value)} className="w-full p-2 border rounded" placeholder="Optional" />
+                        <div className="mb-4">
+                            <ImageUpload 
+                                value={catImage} 
+                                onChange={(url) => {
+                                    if (typeof url === 'string') setCatImage(url);
+                                }} 
+                                label="Category Image"
+                                folder="categories"
+                            />
                         </div>
                         
                         <button type="submit" className="w-full bg-pink-600 text-white py-2 rounded-lg font-bold hover:bg-pink-700 transition flex items-center justify-center">

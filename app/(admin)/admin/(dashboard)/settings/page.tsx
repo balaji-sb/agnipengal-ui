@@ -18,7 +18,8 @@ export default function SettingsPage() {
         whatsappApiUrl: '',
         whatsappApiKey: '',
         shippingCharge: 50,
-        freeShippingThreshold: 500
+        freeShippingThreshold: 500,
+        adminCommissionRate: 5
     });
 
     const [homepageSections, setHomepageSections] = useState<any[]>([]);
@@ -41,7 +42,8 @@ export default function SettingsPage() {
                     whatsappApiUrl: data.whatsappApiUrl || '',
                     whatsappApiKey: data.whatsappApiKey || '',
                     shippingCharge: data.shippingCharge || 50,
-                    freeShippingThreshold: data.freeShippingThreshold || 500
+                    freeShippingThreshold: data.freeShippingThreshold || 500,
+                    adminCommissionRate: data.adminCommissionRate || 5
                 });
 
                 // Initialize homepage sections if they don't exist
@@ -237,6 +239,18 @@ export default function SettingsPage() {
                                 />
                             </div>
                          </div>
+                            <div>
+                                <label className="pt-6 block text-sm font-medium text-gray-700 mb-1">
+                                    Admin CommissionRate (%)
+                                </label>
+                                <input
+                                    type="number"
+                                    name="adminCommissionRate"
+                                    value={formData.adminCommissionRate}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition"
+                                />
+                            </div>
                     </div>
 
                     <div className="pt-6 border-t border-gray-100">

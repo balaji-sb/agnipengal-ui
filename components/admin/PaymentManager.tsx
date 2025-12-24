@@ -20,9 +20,16 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
     const router = useRouter();
     const [payments, setPayments] = useState(initialPayments);
     const [search, setSearch] = useState(initialSearch || '');
+    const [commissionRate, setCommissionRate] = useState(5); // Default 5%
 
     useEffect(() => {
         setPayments(initialPayments);
+        // Fetch current commission settings from Config
+        api.get('/config').then(res => {
+            if (res.data.success && res.data.data.adminCommissionRate !== undefined) {
+                setCommissionRate(parseFloat(res.data.data.adminCommissionRate));
+            }
+        }).catch(err => console.error('Failed to fetch commission settings', err));
     }, [initialPayments]);
 
 
@@ -37,8 +44,19 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
     };
 
     const handleRefundClick = (payment: any) => {
+        const total = payment.totalAmount;
+        
+        // Calculation Logic
+        const gatewayFee = total * 0.02; // 2% of Total
+        const gstOnFee = gatewayFee * 0.18; // 18% GST on 2% Fee
+        const adminCommission = total * (commissionRate / 100); // Dynamic Admin Commission
+        
+        const totalDeductions = gatewayFee + gstOnFee + adminCommission;
+        const netRefund = total - totalDeductions;
+
         setSelectedPaymentId(payment.paymentId);
-        setRefundAmount(payment.totalAmount.toString());
+        // Round to 2 decimal places
+        setRefundAmount(Math.max(0, netRefund).toFixed(2));
         setRefundReason('');
     };
 
@@ -193,6 +211,9 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
                                 onChange={(e) => setRefundAmount(e.target.value)}
                                 className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
                             />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Auto-calculated: Total - (2% Gateway + 18% GST on Gateway + {commissionRate}% Admin Comm)
+                            </p>
                         </div>
 
                         <div className="mb-4">

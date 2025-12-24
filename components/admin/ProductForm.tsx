@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface ProductFormProps {
     initialData?: any;
@@ -25,18 +26,18 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
     stock: '',
     category: '',
     subcategory: '',
-    images: '',
+    images: [] as string[],
     isFeatured: false,
     attributes: '', // Display as simple text for Material default
     ...initialData // Override defaults if data provided
   });
 
-  // If initial Data has images array, join it back to string
+  // If initial Data has images array, use it directly
   useEffect(() => {
       if (initialData) {
           setFormData({
               ...initialData,
-              images: initialData.images ? initialData.images.join(', ') : '',
+              images: initialData.images || [],
               attributes: initialData.attributes ? (initialData.attributes.Material || '') : '', // Extract Material for demo
               category: initialData.category?._id || initialData.category, // Handle populated vs id
           });
@@ -58,7 +59,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
     try {
         const payload = {
             ...formData,
-            images: formData.images.split(',').map((s: string) => s.trim()).filter((s: string) => s),
+            // images is already an array of strings
             attributes: formData.attributes ? { Material: formData.attributes } : {}, 
         };
 
@@ -150,8 +151,13 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
             </div>
             
              <div>
-                <label className="block text-sm font-medium mb-1">Image URLs (Comma separated)</label>
-                <input required name="images" value={formData.images} onChange={handleChange} className="w-full p-2 border rounded" placeholder="https://..., https://..." />
+                <ImageUpload 
+                    label="Product Images"
+                    multiple={true}
+                    folder="products"
+                    value={formData.images} 
+                    onChange={(urls) => setFormData({ ...formData, images: urls as string[] })}
+                />
             </div>
 
             <div>

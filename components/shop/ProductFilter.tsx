@@ -1,11 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import ReactSlider from 'react-slider';
 
 export default function ProductFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const MIN_PRICE = 0;
+  const MAX_PRICE = 10000; // Define a reasonable max price or fetch from backend if possible
+
+  const currentMinPrice = Number(searchParams.get('minPrice')) || MIN_PRICE;
+  const currentMaxPrice = Number(searchParams.get('maxPrice')) || MAX_PRICE;
+
+  const [priceRange, setPriceRange] = useState([currentMinPrice, currentMaxPrice]);
+
+  useEffect(() => {
+    setPriceRange([
+      Number(searchParams.get('minPrice')) || MIN_PRICE,
+      Number(searchParams.get('maxPrice')) || MAX_PRICE
+    ]);
+  }, [searchParams]);
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -17,31 +33,48 @@ export default function ProductFilter() {
     router.push(`?${params.toString()}`);
   };
 
-  const currentMinPrice = searchParams.get('minPrice') || '';
-  const currentMaxPrice = searchParams.get('maxPrice') || '';
+  const handleSliderChange = (values: number[]) => {
+    setPriceRange(values);
+  };
+
+  const handleSliderCommit = (values: number[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('minPrice', values[0].toString());
+    params.set('maxPrice', values[1].toString());
+    router.push(`?${params.toString()}`);
+  };
+
   const currentStock = searchParams.get('inStock') === 'true';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Price Range */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Price</h3>
-        <div className="flex items-center space-x-2">
-          <input
-            type="number"
-            placeholder="Min"
-            className="w-20 p-2 border rounded-md text-sm"
-            value={currentMinPrice}
-            onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-          />
-          <span className="text-gray-500">-</span>
-          <input
-            type="number"
-            placeholder="Max"
-            className="w-20 p-2 border rounded-md text-sm"
-            value={currentMaxPrice}
-            onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-          />
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Price Range</h3>
+        <div className="px-2">
+            <ReactSlider
+                className="h-1 bg-gray-200 rounded-full cursor-pointer"
+                thumbClassName="w-5 h-5 bg-pink-600 rounded-full cursor-grab focus:outline-none -mt-2 shadow-sm border-2 border-white"
+                trackClassName="bg-pink-600 h-1 rounded-full"
+                value={priceRange}
+                min={MIN_PRICE}
+                max={MAX_PRICE}
+                onChange={handleSliderChange}
+                onAfterChange={handleSliderCommit}
+                pearling
+                minDistance={100}
+            />
+        </div>
+        <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center gap-1 border border-gray-300 rounded px-2 py-1 bg-gray-50">
+                 <span className="text-xs text-gray-500">Min</span>
+                 <span className="text-sm font-medium text-gray-900">₹{priceRange[0]}</span>
+            </div>
+             <span className="text-gray-400">-</span>
+            <div className="flex items-center gap-1 border border-gray-300 rounded px-2 py-1 bg-gray-50">
+                 <span className="text-xs text-gray-500">Max</span>
+                 <span className="text-sm font-medium text-gray-900">₹{priceRange[1]}</span>
+            </div>
         </div>
       </div>
 

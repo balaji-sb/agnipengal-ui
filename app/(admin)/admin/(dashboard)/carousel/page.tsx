@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import api from '@/lib/api';
-import { Plus, Trash, Image as ImageIcon, Link as LinkIcon, AlertCircle } from 'lucide-react';
+import { Plus, Trash, Image as ImageIcon, Link as LinkIcon, AlertCircle, Upload, Loader2, X } from 'lucide-react';
+import axios from 'axios';
 
 interface CarouselItem {
     _id: string;
@@ -22,6 +23,7 @@ export default function AdminCarouselPage() {
   const [link, setLink] = useState('');
   const [order, setOrder] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
   
   // Edit State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -56,6 +58,28 @@ export default function AdminCarouselPage() {
       setOrder(item.order || 0);
       setEditingId(item._id);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'carousel');
+
+    setUploading(true);
+    try {
+        const res = await api.post('/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        setImage(res.data.data.imageUrl);
+    } catch (error) {
+        console.error('Upload failed', error);
+        alert('Image upload failed');
+    } finally {
+        setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -125,16 +149,47 @@ export default function AdminCarouselPage() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700">Image URL</label>
-                        <div className="relative">
-                            <input 
-                                required 
-                                value={image} 
-                                onChange={e => setImage(e.target.value)} 
-                                className="w-full pl-10 p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
-                                placeholder="https://..."
-                            />
-                            <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                        <label className="block text-sm font-medium mb-1 text-gray-700">Image</label>
+                        <div className="space-y-3">
+                            {image && (
+                                <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 group">
+                                    <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setImage('')}
+                                        className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <div className="flex items-center gap-2">
+                                <label className={`flex-1 flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-pink-500 hover:bg-pink-50 transition-all ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden" 
+                                        disabled={uploading}
+                                    />
+                                    {uploading ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin text-pink-600" />
+                                            <span className="text-gray-500 font-medium">Uploading...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="w-5 h-5 text-gray-500" />
+                                            <span className="text-gray-500 font-medium">Upload Image</span>
+                                        </>
+                                    )}
+                                </label>
+                            </div>
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3" />
+                                Recommended size: 1920x600px
+                            </p>
                         </div>
                     </div>
                     <div>
