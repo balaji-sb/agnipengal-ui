@@ -3,6 +3,8 @@ import { Montserrat,Quicksand,Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/context/CartContext";
 import { AuthProvider } from "@/lib/context/AuthContext";
+import { WishlistProvider } from "@/lib/context/WishlistContext";
+import { Toaster } from "react-hot-toast";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 const quicksand = Quicksand({ subsets: ["latin"] });
@@ -29,7 +31,10 @@ export default function RootLayout({
       <body className={plusJakarta.className}>
         <AuthProvider>
         <CartProvider>
+        <WishlistProvider>
             {children}
+            <Toaster position="bottom-right" />
+        </WishlistProvider>
         </CartProvider>
         </AuthProvider>
       </body>

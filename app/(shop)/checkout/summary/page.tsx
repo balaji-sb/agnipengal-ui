@@ -127,28 +127,25 @@ export default function OrderSummaryPage() {
 
               // Open Razorpay
               const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_RiwMBWx7bvaFOi', 
-                amount: data.amount, // Already in paisa from backend
+                key: data.key, // Key from server response
+                amount: data.amount,
                 currency: 'INR',
                 name: "Mahi's Vriksham Boutique",
                 description: 'Order Payment',
-                order_id: data.orderId, // Matches backend response key
+                order_id: data.orderId,
                 handler: async (response: any) => {
                      try {
                         console.log('Razorpay response received', response);
-                        setProcessingPayment(true); // Start full screen loader
+                        setProcessingPayment(true);
                         const verifyRes = await api.post('/payment/verify', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature
                         });
         
-                        console.log('Verification response', verifyRes.data);
-
                         if (verifyRes.data.success) {
-                            console.log('Payment success, clearing cart and redirecting');
+                            console.log('Payment success');
                             clearCart();
-                            // Use window.location.href for reliable redirect after payment
                             window.location.href = '/checkout/success';
                             sessionStorage.removeItem('checkoutAddress');
                         } else {

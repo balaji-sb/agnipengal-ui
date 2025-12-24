@@ -5,8 +5,8 @@ import HomeCategories from '@/components/shop/sections/HomeCategories';
 import RecentHistory from '@/components/shop/sections/RecentHistory';
 import BuyAgain from '@/components/shop/sections/BuyAgain';
 import api from '@/lib/api';
-import { Package } from 'lucide-react';
-
+import { Package, Sparkles } from 'lucide-react';
+import * as Motion from 'framer-motion/client'; // Server Component compatible import
 
 // Force dynamic to ensure data is fresh
 export const dynamic = 'force-dynamic';
@@ -56,7 +56,7 @@ async function getData() {
       };
 
   } catch (error) {
-      console.error('Home Page Data Fetch Error:', error);
+      console.error('Home Page data fetch error:', error);
       return { 
           sections: [], carouselItems: [], categories: [], 
           latestProducts: [], featuredProducts: [], dealsProducts: [] 
@@ -86,40 +86,53 @@ export default async function Home() {
       switch (section.type) {
           case 'banner':
               return (
-                  <section key={section.id} className="container mx-auto px-4 py-8">
+                  <section key={section.id} className="container mx-auto px-4 py-6 md:py-10 relative z-10">
                       <Carousel items={safeCarouselItems} />
                   </section>
               );
           case 'categories':
-              return <HomeCategories key={section.id} categories={categories} title={section.title} />;
+              return (
+                <div key={section.id} className="relative z-10">
+                    <HomeCategories categories={categories} title={section.title} />
+                </div>
+              );
           case 'latest_products':
               return (
-                  <ProductGridSection 
-                      key={section.id} 
-                      title={section.title || 'New Arrivals'} 
-                      products={latestProducts} 
-                      link="/products?sort=newest"
-                  />
+                  <div key={section.id} className="relative z-10">
+                    <ProductGridSection 
+                        title={section.title || 'New Arrivals'} 
+                        products={latestProducts} 
+                        link="/products?sort=newest"
+                    />
+                  </div>
               );
           case 'featured_products':
               return (
-                  <ProductGridSection 
-                    key={section.id} 
-                    title={section.title || 'Featured Collections'} 
-                    products={featuredProducts} 
-                    link="/products?feature=true" 
-                  />
+                  <div key={section.id} className="relative z-10">
+                      <div className="absolute inset-0 bg-gradient-to-r from-pink-50/50 to-violet-50/50 -skew-y-3 z-0 transform scale-y-110" />
+                      <div className="relative z-10">
+                        <ProductGridSection 
+                            title={section.title || 'Featured Collections'} 
+                            products={featuredProducts} 
+                            link="/products?feature=true" 
+                        />
+                      </div>
+                  </div>
               );
           case 'deals_of_day':
-              // Only render if there are deals
               if (dealsProducts.length === 0) return null;
               return (
-                  <ProductGridSection 
-                    key={section.id} 
-                    title={section.title || 'Deals of the Day'} 
-                    products={dealsProducts} 
-                    link="/products?deals=true" 
-                  />
+                  <div key={section.id} className="relative z-10 py-8">
+                     <div className="container mx-auto px-4 mb-4 flex items-center gap-2">
+                         <Sparkles className="w-6 h-6 text-yellow-500 animate-pulse" />
+                         <span className="text-sm font-bold text-yellow-600 uppercase tracking-widest">Limited Time Offers</span>
+                     </div>
+                      <ProductGridSection 
+                        title={section.title || 'Deals of the Day'} 
+                        products={dealsProducts} 
+                        link="/products?deals=true" 
+                      />
+                  </div>
               );
           case 'buy_again':
               return <BuyAgain key={section.id} />;
@@ -131,14 +144,26 @@ export default async function Home() {
   };
 
   return (
-    <div className="bg-gray-50/50 min-h-screen pb-20">
-      {sections.map((section: any) => renderSection(section))}
+    <div className="bg-gray-50 min-h-screen pb-20 overflow-x-hidden relative">
+      {/* Decorative Background Blobs */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-pink-200/30 rounded-full blur-[100px] animate-blob" />
+          <div className="absolute top-[20%] right-[-10%] w-[35%] h-[35%] bg-violet-200/30 rounded-full blur-[100px] animate-blob animation-delay-2000" />
+          <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-indigo-200/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
+      </div>
+
+      <div className="relative z-10 space-y-8 md:space-y-16">
+        {sections.map((section: any) => renderSection(section))}
+      </div>
       
-      {/* If no sections defined/enabled, show fallback or check if config failed */}
+      {/* Empty State */}
       {sections.length === 0 && (
-           <div className="container mx-auto px-4 py-20 text-center">
-                <Package className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <h2 className="text-xl font-bold text-gray-500">Store is getting ready...</h2>
+           <div className="container mx-auto px-4 py-40 text-center relative z-10">
+                <div className="bg-white/50 backdrop-blur-sm p-12 rounded-3xl inline-block border border-white/50 shadow-xl">
+                    <Package className="w-20 h-20 mx-auto text-gray-300 mb-6" />
+                    <h2 className="text-2xl font-bold text-gray-400">Store is getting ready...</h2>
+                    <p className="text-gray-400 mt-2">Check back soon for amazing products!</p>
+                </div>
            </div>
       )}
     </div>
