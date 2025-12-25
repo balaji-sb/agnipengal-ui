@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 async function getStats() {
     try {
         const headers = await getAuthHeaders();
-        const res = await api.get('/admin/stats', { headers });
+        const res = await api.get('/admin/stats', { headers }); // Backend route remains /admin
         return res.data.data;
     } catch (error) {
         console.error('Dashboard Stats Error:', error);

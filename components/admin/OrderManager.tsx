@@ -129,7 +129,7 @@ export default function OrderManager({ orders, pagination }: OrderManagerProps) 
         <div className="mt-6 flex justify-center items-center gap-2">
             <button
                 disabled={pagination.page <= 1}
-                onClick={() => router.push(`/admin/orders?page=${pagination.page - 1}`)}
+                onClick={() => router.push(`/portal-secure-admin/orders?page=${pagination.page - 1}`)}
                 className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
             >
                 <ChevronLeft className="w-5 h-5" />
@@ -139,7 +139,7 @@ export default function OrderManager({ orders, pagination }: OrderManagerProps) 
             </span>
             <button
                 disabled={pagination.page >= pagination.pages}
-                onClick={() => router.push(`/admin/orders?page=${pagination.page + 1}`)}
+                onClick={() => router.push(`/portal-secure-admin/orders?page=${pagination.page + 1}`)}
                 className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
             >
                 <ChevronRight className="w-5 h-5" />

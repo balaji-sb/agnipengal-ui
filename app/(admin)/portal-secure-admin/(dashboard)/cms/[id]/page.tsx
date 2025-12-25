@@ -33,7 +33,7 @@ export default function CMSPageEditor() {
         .catch(err => {
           console.error(err);
           setLoading(false);
-          // router.push('/admin/cms');
+          // router.push('/portal-secure-admin/cms');
         });
     }
   }, [id, isNew, router]);
@@ -48,7 +48,7 @@ export default function CMSPageEditor() {
       } else {
         await axios.put(`/api/cms/${id}`, formData);
       }
-      router.push('/admin/cms');
+      router.push('/portal-secure-admin/cms');
     } catch (error: any) {
         alert(error.response?.data?.message || 'Failed to save page');
         setSaving(false);
@@ -62,7 +62,7 @@ export default function CMSPageEditor() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6">
-        <Link href="/admin/cms" className="mr-4 text-gray-500 hover:text-gray-700">
+        <Link href="/portal-secure-admin/cms" className="mr-4 text-gray-500 hover:text-gray-700">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-bold text-gray-800">

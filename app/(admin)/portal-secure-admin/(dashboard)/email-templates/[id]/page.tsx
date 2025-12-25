@@ -37,7 +37,7 @@ export default function EmailTemplateEditor() {
         .catch(err => {
           console.error(err);
           setLoading(false);
-          // router.push('/admin/email-templates');
+          // router.push('/portal-secure-admin/email-templates');
         });
     }
   }, [id, isNew, router]);
@@ -57,7 +57,7 @@ export default function EmailTemplateEditor() {
       } else {
         await axios.put(`/api/email-templates/${id}`, payload);
       }
-      router.push('/admin/email-templates');
+      router.push('/portal-secure-admin/email-templates');
     } catch (error: any) {
         alert(error.response?.data?.message || 'Failed to save template');
         setSaving(false);
@@ -71,7 +71,7 @@ export default function EmailTemplateEditor() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6">
-        <Link href="/admin/email-templates" className="mr-4 text-gray-500 hover:text-gray-700">
+        <Link href="/portal-secure-admin/email-templates" className="mr-4 text-gray-500 hover:text-gray-700">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <h1 className="text-2xl font-bold text-gray-800">

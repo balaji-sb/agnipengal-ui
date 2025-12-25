@@ -15,7 +15,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (userData: any) => void;
+  login: (userData: any, token?: string) => void;
   register: (userData: any) => void; // Or just rely on component to call api and then reload
   logout: () => void;
   checkAuth: () => void;
@@ -42,9 +42,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(res.data.user);
         } else {
             setUser(null);
+            localStorage.removeItem('authToken');
         }
     } catch (error) {
         setUser(null);
+        localStorage.removeItem('authToken');
     } finally {
         setLoading(false);
     }
@@ -54,13 +56,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuth();
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token?: string) => {
     setUser(userData);
+    if (token) {
+        localStorage.setItem('authToken', token);
+    }
     router.push('/');
     router.refresh(); 
   };
 
   const register = (userData: User) => {
+      // Registration doesn't return token usually (verification needed)
       setUser(userData);
       router.push('/');
       router.refresh();
@@ -70,10 +76,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
         await api.post('/auth/logout');
         setUser(null);
+        localStorage.removeItem('authToken');
         router.push('/login');
         router.refresh();
     } catch (error) {
         console.error('Logout failed', error);
+        // Force logout locally even if API fails
+        setUser(null);
+        localStorage.removeItem('authToken');
+        router.push('/login');
     }
   };
 

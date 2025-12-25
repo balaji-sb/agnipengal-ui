@@ -4,20 +4,21 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText, HelpCircle,Ticket } from 'lucide-react';
 import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 
 const menuItems = [
-    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard }, 
-    { label: 'Products', href: '/admin/products', icon: Package },
-    { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-    { label: 'Categories', href: '/admin/categories', icon: Grid },
-    { label: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
-    { label: 'Carousel', href: '/admin/carousel', icon: ImageIcon },
-    { label: 'Payments', href: '/admin/payments', icon: CreditCard },
-    { label: 'Coupons', href: '/admin/coupons', icon: Tag },
-    { label: 'Email Templates', href: '/admin/email-templates', icon: Mail },
-    { label: 'CMS Pages', href: '/admin/cms', icon: FileText },
+    { label: 'Dashboard', href: '/portal-secure-admin', icon: LayoutDashboard }, 
+    { label: 'Products', href: '/portal-secure-admin/products', icon: Package },
+    { label: 'Orders', href: '/portal-secure-admin/orders', icon: ShoppingBag },
+    { label: 'Categories', href: '/portal-secure-admin/categories', icon: Grid },
+    { label: 'Reviews', href: '/portal-secure-admin/reviews', icon: MessageSquare },
+    { label: 'CMS', href: '/portal-secure-admin/cms', icon: FileText },
+    { label: 'Payments', href: '/portal-secure-admin/payments', icon: CreditCard },
+    { label: 'Email Templates', href: '/portal-secure-admin/email-templates', icon: Mail },
+    { label: 'FAQs', href: '/portal-secure-admin/faqs', icon: HelpCircle },
+    { label: 'Support Tickets', href: '/portal-secure-admin/support', icon: MessageSquare },
+    { label: 'Coupons', href: '/portal-secure-admin/coupons', icon: Ticket }
 ];
 
 export default function Sidebar() {

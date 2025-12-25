@@ -22,8 +22,8 @@ export default function AdminLoginPage() {
     try {
       const res = await api.post('/auth/admin-login', { email, password });
       if (res.data.success) {
-          login(res.data.user);
-          // router.push('/admin'); // Handled by login()
+          login(res.data.user, res.data.token);
+          // router.push('/portal-secure-admin'); // Handled by login()
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');

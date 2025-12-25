@@ -56,7 +56,7 @@ export default function CouponsPage() {
                     <Tag className="w-6 h-6" /> Coupons
                 </h1>
                 <Link 
-                    href="/admin/coupons/new"
+                    href="/portal-secure-admin/coupons/new"
                     className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
                 >
                     <Plus className="w-4 h-4" /> Create Coupon

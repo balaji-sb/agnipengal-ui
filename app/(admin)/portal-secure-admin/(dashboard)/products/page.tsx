@@ -48,7 +48,7 @@ export default function AdminProductsPage() {
         <div className="flex space-x-3">
              <ImportProductsButton onSuccess={() => fetchProducts()} />
             <Link 
-                href="/admin/products/new" 
+                href="/portal-secure-admin/products/new" 
                 className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
             >
                 <Plus className="w-4 h-4 mr-2" />
@@ -118,7 +118,7 @@ export default function AdminProductsPage() {
                             </div>
                         </td>
                         <td className="p-4 flex space-x-2">
-                             <Link href={`/admin/products/${product._id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded inline-flex">
+                             <Link href={`/portal-secure-admin/products/${product._id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded inline-flex">
                                 <Edit className="w-4 h-4" />
                             </Link>
                             <button onClick={() => handleDelete(product._id)} className="p-2 text-red-600 hover:bg-red-50 rounded">

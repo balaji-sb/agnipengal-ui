@@ -1,5 +1,7 @@
 import { cookies } from 'next/headers';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+
 // Helper to get auth headers for Server Components
 export const getAuthHeaders = async () => {
     const cookieStore = await cookies();
@@ -12,3 +14,22 @@ export const getAuthHeaders = async () => {
     
     return cookiesList.length > 0 ? { Cookie: cookiesList.join('; ') } : {};
 };
+
+const api = {
+    get: async (url: string) => {
+        const fullUrl = `${API_BASE_URL}${url}`;
+        const headers = await getAuthHeaders();
+        const res = await fetch(fullUrl, {
+            headers: { 
+                ...headers, 
+                'Content-Type': 'application/json' 
+            },
+            cache: 'no-store'
+        });
+        return {
+            data: await res.json()
+        };
+    }
+}
+
+export default api;

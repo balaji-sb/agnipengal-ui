@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 // import axios from 'axios'; // Replaced by centralized api
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Loader2 } from 'lucide-react';
+import { Save, ArrowLeft, Loader2, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import ImageUpload from '@/components/admin/ImageUpload';
 
@@ -18,6 +18,11 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
+  // Custom state for dynamic attributes
+  const [attributeList, setAttributeList] = useState<{ key: string; value: string }[]>([
+      { key: 'Material', value: '' } // Default one
+  ]);
+
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -28,8 +33,8 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
     subcategory: '',
     images: [] as string[],
     isFeatured: false,
-    attributes: '', // Display as simple text for Material default
-    ...initialData // Override defaults if data provided
+    isDeal: false, // Added isDeal
+    ...initialData
   });
 
   // If initial Data has images array, use it directly
@@ -38,9 +43,19 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
           setFormData({
               ...initialData,
               images: initialData.images || [],
-              attributes: initialData.attributes ? (initialData.attributes.Material || '') : '', // Extract Material for demo
               category: initialData.category?._id || initialData.category, // Handle populated vs id
           });
+          
+          // Populate attributes
+          if (initialData.attributes) {
+              const attrs = Object.entries(initialData.attributes).map(([key, value]) => ({
+                  key,
+                  value: value as string
+              }));
+              if (attrs.length > 0) {
+                  setAttributeList(attrs);
+              }
+          }
       }
   }, [initialData]);
 
@@ -50,17 +65,50 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
 
   const handleChange = (e: any) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setFormData({ ...formData, [e.target.name]: value });
+    setFormData(prev => {
+        const newData = { ...prev, [e.target.name]: value };
+        
+        // Auto-generate slug if name changes and not in edit mode (or simple helper)
+        if (e.target.name === 'name' && !isEditing) {
+            newData.slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        }
+        
+        return newData;
+    });
+  };
+
+  // Attribute handlers
+  const handleAttributeChange = (index: number, field: 'key' | 'value', value: string) => {
+      const list = [...attributeList];
+      list[index][field] = value;
+      setAttributeList(list);
+  };
+
+  const addAttribute = () => {
+      setAttributeList([...attributeList, { key: '', value: '' }]);
+  };
+
+  const removeAttribute = (index: number) => {
+      const list = [...attributeList];
+      list.splice(index, 1);
+      setAttributeList(list);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
+        // Convert attributes list to object
+        const attributesObj: any = {};
+        attributeList.forEach(item => {
+            if (item.key && item.value) {
+                attributesObj[item.key] = item.value;
+            }
+        });
+
         const payload = {
             ...formData,
-            // images is already an array of strings
-            attributes: formData.attributes ? { Material: formData.attributes } : {}, 
+            attributes: attributesObj, 
         };
 
         if (payload.category === '') {
@@ -75,7 +123,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
             await api.post('/products', payload);
         }
         
-        router.push('/admin/products');
+        router.push('/portal-secure-admin/products');
         router.refresh();
     } catch (error) {
         console.error(error);
@@ -86,10 +134,10 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto pb-20">
         <div className="flex items-center mb-6 text-gray-500 hover:text-gray-800 transition w-fit">
             <ArrowLeft className="w-4 h-4 mr-1" />
-            <Link href="/admin/products">Back to Products</Link>
+            <Link href="/portal-secure-admin/products">Back to Products</Link>
         </div>
 
         <h1 className="text-2xl font-bold mb-6">{isEditing ? 'Edit Product' : 'Add New Product'}</h1>
@@ -160,14 +208,49 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
                 />
             </div>
 
+            {/* Dynamic Attributes */}
             <div>
-                <label className="block text-sm font-medium mb-1">Material (Attribute)</label>
-                <input name="attributes" value={formData.attributes} onChange={handleChange} className="w-full p-2 border rounded" placeholder="e.g. Silk" />
+                <label className="block text-sm font-medium mb-2">Attributes</label>
+                <div className="space-y-3">
+                    {attributeList.map((attr, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                            <input 
+                                placeholder="Key (e.g. Material)" 
+                                value={attr.key} 
+                                onChange={(e) => handleAttributeChange(index, 'key', e.target.value)}
+                                className="flex-1 p-2 border rounded text-sm"
+                            />
+                            <input 
+                                placeholder="Value (e.g. Silk)" 
+                                value={attr.value} 
+                                onChange={(e) => handleAttributeChange(index, 'value', e.target.value)}
+                                className="flex-1 p-2 border rounded text-sm"
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => removeAttribute(index)}
+                                className="p-2 text-red-500 hover:bg-red-50 rounded"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <button type="button" onClick={addAttribute} className="mt-2 text-sm text-pink-600 font-medium flex items-center hover:text-pink-700">
+                    <Plus className="w-4 h-4 mr-1" /> Add Attribute
+                </button>
             </div>
 
-            <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded border border-gray-100 w-fit">
-                <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="rounded w-4 h-4 text-pink-600" />
-                <span className="text-sm font-medium">Feature this product (Show on Home)</span>
+            <div className="flex flex-wrap gap-4">
+                <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded border border-gray-100 w-fit">
+                    <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="rounded w-4 h-4 text-pink-600 focus:ring-pink-500" />
+                    <span className="text-sm font-medium">Feature this product</span>
+                </div>
+                
+                <div className="flex items-center space-x-2 bg-yellow-50 p-3 rounded border border-yellow-100 w-fit">
+                    <input type="checkbox" name="isDeal" checked={formData.isDeal} onChange={handleChange} className="rounded w-4 h-4 text-yellow-600 focus:ring-yellow-500" />
+                    <span className="text-sm font-medium text-yellow-800">Deal of the Day</span>
+                </div>
             </div>
 
             <button type="submit" disabled={loading} className="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition flex items-center justify-center">

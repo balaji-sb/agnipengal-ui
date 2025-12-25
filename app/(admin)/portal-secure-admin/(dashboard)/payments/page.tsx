@@ -11,10 +11,11 @@ async function getPayments(page = 1, search = '') {
         const res = await api.get(`/payments?page=${page}&limit=10&search=${search}`, { headers });
         return {
             payments: res.data.data || [],
+            stats: res.data.stats || [],
             pagination: res.data.pagination || { total: 0, pages: 1, page: 1, limit: 10 }
         };
     } catch (error) {
-        return { payments: [], pagination: { total: 0, pages: 1, page: 1, limit: 10 } };
+        return { payments: [], stats: [], pagination: { total: 0, pages: 1, page: 1, limit: 10 } };
     }
 }
 
@@ -26,7 +27,7 @@ export default async function AdminPaymentsPage({
     const resolvedParams = await searchParams;
     const page = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page) : 1;
     const search = typeof resolvedParams.search === 'string' ? resolvedParams.search : '';
-    const { payments, pagination } = await getPayments(page, search);
+    const { payments, stats, pagination } = await getPayments(page, search);
 
-    return <PaymentManager payments={payments} pagination={pagination} search={search} />;
+    return <PaymentManager payments={payments} stats={stats} pagination={pagination} search={search} />;
 }

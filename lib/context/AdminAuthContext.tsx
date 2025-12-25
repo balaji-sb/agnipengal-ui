@@ -14,7 +14,7 @@ interface User {
 interface AdminAuthContextType {
   admin: User | null;
   loading: boolean;
-  login: (userData: any) => void;
+  login: (userData: any, token?: string) => void;
   logout: () => void;
   checkAuth: () => void;
 }
@@ -39,9 +39,11 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
             setAdmin(res.data.user);
         } else {
             setAdmin(null);
+            localStorage.removeItem('adminToken');
         }
     } catch (error) {
         setAdmin(null);
+        localStorage.removeItem('adminToken');
     } finally {
         setLoading(false);
     }
@@ -51,9 +53,12 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     checkAuth();
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token?: string) => {
     setAdmin(userData);
-    router.push('/admin');
+    if (token) {
+        localStorage.setItem('adminToken', token);
+    }
+    router.push('/portal-secure-admin');
     router.refresh(); 
   };
 
@@ -61,10 +66,14 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     try {
         await api.post('/auth/admin/logout');
         setAdmin(null);
-        router.push('/admin/login');
+        localStorage.removeItem('adminToken');
+        router.push('/portal-secure-admin/login');
         router.refresh();
     } catch (error) {
         console.error('Logout failed', error);
+        setAdmin(null);
+        localStorage.removeItem('adminToken');
+        router.push('/portal-secure-admin/login');
     }
   };
 

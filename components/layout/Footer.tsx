@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Facebook, Instagram, Youtube, Send, CreditCard, ShieldCheck, Truck } from 'lucide-react';
 
 export default function Footer() {
@@ -92,11 +93,13 @@ export default function Footer() {
                 Support
               </h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="/contact" className="hover:text-pink-400 transition-colors">Contact Us</a></li>
-                <li><a href="/faq" className="hover:text-pink-400 transition-colors">FAQs</a></li>
-                <li><a href="/shipping-policy" className="hover:text-pink-400 transition-colors">Shipping & Returns</a></li>
-                <li><a href="/privacy-policy" className="hover:text-pink-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-pink-400 transition-colors">Terms of Service</a></li>
+                <li><Link href="/pages/about-us" className="text-gray-400 hover:text-white transition">About Us</Link></li>
+              <li><Link href="/pages/terms" className="text-gray-400 hover:text-white transition">Terms & Conditions</Link></li>
+              <li><Link href="/pages/privacy-policy" className="text-gray-400 hover:text-white transition">Privacy Policy</Link></li>
+              <li><Link href="/pages/returns-policy" className="text-gray-400 hover:text-white transition">Returns Policy</Link></li>
+              <li><Link href="/pages/shipping-policy" className="text-gray-400 hover:text-white transition">Shipping Policy</Link></li>
+              <li><Link href="/faq" className="text-gray-400 hover:text-white transition">FAQ</Link></li>
+              <li><Link href="/account/support" className="text-gray-400 hover:text-white transition">Customer Support</Link></li>
               </ul>
             </div>
 

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import axios from '@/lib/api'; // Using the axios instance
 import { Eye, X, Check, Truck, Package, AlertCircle, Loader2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 
 const ORDER_STATUSES = [
   'PROCESSING',
@@ -23,26 +24,55 @@ export default function OrderRow({ order }: OrderRowProps) {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value;
-    if (confirm(`Are you sure you want to change status to ${newStatus}?`)) {
+    const [showTrackingModal, setShowTrackingModal] = useState(false);
+    const [trackingData, setTrackingData] = useState({ courierName: '', trackingNumber: '', trackingUrl: '' });
+    const [pendingStatus, setPendingStatus] = useState('');
+
+    const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newStatus = e.target.value;
+        if (newStatus === 'SHIPPED') {
+            setPendingStatus(newStatus);
+            setShowTrackingModal(true);
+            return;
+        }
+        confirmAndUpdateStatus(newStatus);
+    };
+
+    const confirmAndUpdateStatus = async (newStatus: string, trackingInfo?: any) => {
+        if (!trackingInfo && !confirm(`Are you sure you want to change status to ${newStatus}?`)) {
+            return;
+        }
+        
         setLoading(true);
         try {
-            const res = await axios.put(`/orders/${order._id}`, { status: newStatus });
+            const payload: any = { status: newStatus };
+            if (trackingInfo) {
+                payload.tracking = trackingInfo;
+            }
+
+            const res = await axios.put(`/orders/${order._id}`, payload);
             if (res.data.success) {
                 setOrderStatus(newStatus);
+                setShowTrackingModal(false);
+                toast.success('Order status updated successfully');
             } else {
-                alert('Failed to update status');
-                // revert? but simplified
+                toast.error('Failed to update status');
             }
         } catch (error) {
             console.error(error);
-            alert('Error updating status');
+            toast.error('Error updating status');
         } finally {
             setLoading(false);
         }
-    }
-  };
+    };
+
+    const submitTracking = () => {
+        if (!trackingData.courierName || !trackingData.trackingNumber) {
+            toast.error('Please enter Courier Name and Tracking Number');
+            return;
+        }
+        confirmAndUpdateStatus('SHIPPED', trackingData);
+    };
 
   const statusColors = {
       'PAID': 'bg-green-100 text-green-700',
@@ -121,6 +151,67 @@ export default function OrderRow({ order }: OrderRowProps) {
                 </button>
             </td>
         </tr>
+
+        {showTrackingModal && typeof document !== 'undefined' && createPortal(
+             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+                <div className="bg-white rounded-xl w-full max-w-sm p-6 shadow-xl animate-fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                        <Truck className="w-5 h-5 text-pink-600" />
+                        Shipment Details
+                    </h3>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Courier Name</label>
+                            <input 
+                                type="text" 
+                                value={trackingData.courierName}
+                                onChange={e => setTrackingData({...trackingData, courierName: e.target.value})}
+                                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none"
+                                placeholder="e.g. BlueDart, DTDC"
+                            />
+                        </div>
+                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Tracking Number</label>
+                            <input 
+                                type="text" 
+                                value={trackingData.trackingNumber}
+                                onChange={e => setTrackingData({...trackingData, trackingNumber: e.target.value})}
+                                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none"
+                                placeholder="e.g. 123456789"
+                            />
+                        </div>
+                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Tracking URL (Optional)</label>
+                            <input 
+                                type="text" 
+                                value={trackingData.trackingUrl}
+                                onChange={e => setTrackingData({...trackingData, trackingUrl: e.target.value})}
+                                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none"
+                                placeholder="https://..."
+                            />
+                        </div>
+                        <div className="flex gap-3 justify-end pt-2">
+                            <button 
+                                onClick={() => setShowTrackingModal(false)}
+                                disabled={loading}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={submitTracking}
+                                disabled={loading}
+                                className="px-4 py-2 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                                {loading ? 'Updating...' : 'Confirm Shipment'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+             </div>,
+             document.body
+        )}
 
         {showModal && typeof document !== 'undefined' && createPortal(
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">

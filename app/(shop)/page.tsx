@@ -17,7 +17,7 @@ async function getData() {
       const [configRes, carouselRes, productsRes, categoriesRes] = await Promise.all([
           api.get('/config'),
           api.get('/carousel'),
-          api.get('/products', { params: { limit: 20 } }), // Fetch enough products to filter locally or we could do specific calls
+          api.get('/products', { params: { limit: 100 } }), // Fetch enough products to filter locally
           api.get('/categories')
       ]);
 

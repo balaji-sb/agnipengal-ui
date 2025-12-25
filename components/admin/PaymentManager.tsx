@@ -14,13 +14,18 @@ interface PaymentManagerProps {
         limit: number;
     };
     search?: string;
+    stats?: { _id: string; count: number; totalAmount: number }[];
 }
 
-export default function PaymentManager({ payments: initialPayments, pagination, search: initialSearch }: PaymentManagerProps) {
+export default function PaymentManager({ payments: initialPayments, pagination, search: initialSearch, stats }: PaymentManagerProps) {
     const router = useRouter();
     const [payments, setPayments] = useState(initialPayments);
     const [search, setSearch] = useState(initialSearch || '');
     const [commissionRate, setCommissionRate] = useState(5); // Default 5%
+
+    // Calculate Grand Total from stats
+    const grandTotal = stats?.reduce((acc, curr) => acc + curr.totalAmount, 0) || 0;
+    const totalCount = stats?.reduce((acc, curr) => acc + curr.count, 0) || 0;
 
     useEffect(() => {
         setPayments(initialPayments);
@@ -40,7 +45,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.push(`/admin/payments?search=${search}&page=1`);
+        router.push(`/portal-secure-admin/payments?search=${search}&page=1`);
     };
 
     const handleRefundClick = (payment: any) => {
@@ -88,10 +93,47 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
         }
     };
 
+    const getStatusTheme = (status: string) => {
+        const theme: any = {
+            'DELIVERED': { bg: 'bg-emerald-50', border: 'border-emerald-100', text: 'text-emerald-900', subtext: 'text-emerald-600', icon: 'bg-emerald-100 text-emerald-600' },
+            'SHIPPED': { bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-900', subtext: 'text-blue-600', icon: 'bg-blue-100 text-blue-600' },
+            'PENDING': { bg: 'bg-amber-50', border: 'border-amber-100', text: 'text-amber-900', subtext: 'text-amber-600', icon: 'bg-amber-100 text-amber-600' },
+            'PROCESSING': { bg: 'bg-indigo-50', border: 'border-indigo-100', text: 'text-indigo-900', subtext: 'text-indigo-600', icon: 'bg-indigo-100 text-indigo-600' },
+            'CANCELLED': { bg: 'bg-red-50', border: 'border-red-100', text: 'text-red-900', subtext: 'text-red-600', icon: 'bg-red-100 text-red-600' },
+            'REFUNDED': { bg: 'bg-purple-50', border: 'border-purple-100', text: 'text-purple-900', subtext: 'text-purple-600', icon: 'bg-purple-100 text-purple-600' },
+            'RETURNED': { bg: 'bg-orange-50', border: 'border-orange-100', text: 'text-orange-900', subtext: 'text-orange-600', icon: 'bg-orange-100 text-orange-600' },
+        };
+        return theme[status] || { bg: 'bg-gray-50', border: 'border-gray-100', text: 'text-gray-900', subtext: 'text-gray-500', icon: 'bg-gray-100 text-gray-500' };
+    };
+
     return (
         <div>
-             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-800">Payments</h1>
+            {/* Stats Tiles */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                {/* Grand Total Tile - Gold Theme for Luxury feel */}
+                <div className="bg-gradient-to-br from-yellow-50 to-amber-50 p-4 rounded-xl shadow-sm border border-amber-100">
+                     <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Total Collected</p>
+                     <p className="text-2xl font-black text-amber-900 mt-2">₹{grandTotal.toLocaleString()}</p>
+                     <div className="flex items-center gap-2 mt-2">
+                         <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">ALL TIME</span>
+                         <p className="text-xs text-amber-600 font-medium">{totalCount} Txns</p>
+                     </div>
+                </div>
+                
+                {stats?.map((stat) => {
+                    const theme = getStatusTheme(stat._id);
+                    return (
+                        <div key={stat._id} className={`${theme.bg} p-4 rounded-xl shadow-sm border ${theme.border} hover:shadow-md transition-shadow duration-200`}>
+                            <p className={`text-xs font-bold ${theme.subtext} uppercase tracking-wider`}>{stat._id}</p>
+                            <p className={`text-lg font-black ${theme.text} mt-2`}>₹{stat.totalAmount.toLocaleString()}</p>
+                            <p className={`text-xs ${theme.subtext} font-medium mt-1`}>{stat.count} Orders</p>
+                        </div>
+                    );
+                })}
+            </div>
+
+             <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-800">Payments List</h1>
                  <form onSubmit={handleSearch} className="relative">
                     <input
                         type="text"
@@ -175,7 +217,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
                     <div className="flex items-center gap-2">
                         <button
                             disabled={pagination.page <= 1}
-                            onClick={() => router.push(`/admin/payments?search=${search}&page=${pagination.page - 1}`)}
+                            onClick={() => router.push(`/portal-secure-admin/payments?search=${search}&page=${pagination.page - 1}`)}
                             className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
                             aria-label="Previous Page"
                         >
@@ -186,7 +228,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
                         </span>
                         <button
                             disabled={pagination.page >= pagination.pages}
-                            onClick={() => router.push(`/admin/payments?search=${search}&page=${pagination.page + 1}`)}
+                            onClick={() => router.push(`/portal-secure-admin/payments?search=${search}&page=${pagination.page + 1}`)}
                             className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
                             aria-label="Next Page"
                         >
