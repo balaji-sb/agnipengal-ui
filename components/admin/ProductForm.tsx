@@ -65,7 +65,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
 
   const handleChange = (e: any) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setFormData(prev => {
+    setFormData((prev: any) => {
         const newData = { ...prev, [e.target.name]: value };
         
         // Auto-generate slug if name changes and not in edit mode (or simple helper)

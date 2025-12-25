@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base URL configuration
 // In development, this points to the backend server directly
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

@@ -68,7 +68,7 @@ export default function NewTicketPage() {
             }
         } catch (error) {
             console.error('Error creating ticket:', error);
-            toast.error('Failed to create ticket: ' + (error.response?.data?.error || 'Unknown error'));
+            toast.error('Failed to create ticket: ' + (error || 'Unknown error'));
         } finally {
             setLoading(false);
         }
