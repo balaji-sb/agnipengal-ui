@@ -17,6 +17,7 @@ export default function SettingsPage() {
         adminWhatsapp: '',
         whatsappApiUrl: '',
         whatsappApiKey: '',
+        whatsappPhoneNumberId: '',
         shippingCharge: 50,
         freeShippingThreshold: 500,
         adminCommissionRate: 5
@@ -41,6 +42,7 @@ export default function SettingsPage() {
                     adminWhatsapp: data.adminWhatsapp || '',
                     whatsappApiUrl: data.whatsappApiUrl || '',
                     whatsappApiKey: data.whatsappApiKey || '',
+                    whatsappPhoneNumberId: data.whatsappPhoneNumberId || '',
                     shippingCharge: data.shippingCharge || 50,
                     freeShippingThreshold: data.freeShippingThreshold || 500,
                     adminCommissionRate: data.adminCommissionRate || 5
@@ -279,6 +281,19 @@ export default function SettingsPage() {
                                     value={formData.whatsappApiUrl}
                                     onChange={handleChange}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    WhatsApp Phone Number ID
+                                </label>
+                                <input
+                                    type="text"
+                                    name="whatsappPhoneNumberId"
+                                    value={formData.whatsappPhoneNumberId}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition"
+                                    placeholder="Enter Phone Number ID from Meta Dashboard"
                                 />
                             </div>
                             <div>
