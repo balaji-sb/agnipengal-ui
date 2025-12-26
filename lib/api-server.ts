@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 
 // Helper to get auth headers for Server Components
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {
