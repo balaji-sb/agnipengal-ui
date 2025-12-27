@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
+import axios from '@/lib/api';
 import { Plus, Edit, Trash, Loader2, Search, Star, ImageIcon, X } from 'lucide-react';
 import ImportProductsButton from '@/components/admin/ImportProductsButton';
 

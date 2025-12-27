@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
+import axios from '@/lib/api';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 

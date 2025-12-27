@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { Upload, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/api';
 
 interface ImportProductsButtonProps {
     onSuccess: () => void;

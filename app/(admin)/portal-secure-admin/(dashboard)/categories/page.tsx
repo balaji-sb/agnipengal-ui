@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '@/lib/api';
 import { Plus, Edit, Trash2, X, Save, Search } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 
