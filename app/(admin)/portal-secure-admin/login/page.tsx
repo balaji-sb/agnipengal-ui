@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
     try {
       const res = await api.post('/auth/admin-login', { email, password });
       if (res.data.success) {
-          login(res.data.user, res.data.token);
+          login(res.data.user, res.data.admin_token);
           // router.push('/portal-secure-admin'); // Handled by login()
       }
     } catch (err: any) {

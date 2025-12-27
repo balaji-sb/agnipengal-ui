@@ -53,10 +53,10 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     checkAuth();
   }, []);
 
-  const login = (userData: User, admin_token?: string) => {
+  const login = (userData: User, token?: string) => {
     setAdmin(userData);
-    if (admin_token) {
-        localStorage.setItem('adminToken', admin_token);
+    if (token) {
+        localStorage.setItem('adminToken', token);
     }
     router.push('/portal-secure-admin');
     router.refresh(); 
