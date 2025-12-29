@@ -4,7 +4,7 @@ import axios from 'axios';
 // In development, this points to the backend server directly
 const API_BASE_URL = typeof window === 'undefined' 
   ? (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api')
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api');
+  : '/api'; // Use Next.js proxy for client-side requests
 
 const api = axios.create({
   baseURL: API_BASE_URL,
