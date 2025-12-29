@@ -58,8 +58,9 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     if (token) {
         localStorage.setItem('adminToken', token);
     }
-    router.push('/portal-secure-admin');
-    router.refresh(); 
+    // router.push('/portal-secure-admin');
+    // router.refresh(); 
+    window.location.href = '/portal-secure-admin';
   };
 
   const logout = async () => {
