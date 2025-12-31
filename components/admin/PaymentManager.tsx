@@ -49,7 +49,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
     };
 
     const handleRefundClick = (payment: any) => {
-        const total = payment.totalAmount;
+        const total = payment.subTotal;
         
         // Calculation Logic
         const gatewayFee = total * 0.02; // 2% of Total

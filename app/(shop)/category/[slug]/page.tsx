@@ -44,8 +44,17 @@ export default async function SubCategoryPage({ params }: { params: Promise<{ sl
                 href={`/category/${category.slug}/${sub.slug}`}
                 className="group block p-8 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-pink-200 transition-all text-center"
             >
-                <div className="w-16 h-16 mx-auto mb-4 bg-pink-50 rounded-full flex items-center justify-center group-hover:bg-pink-100 transition-colors">
-                    <span className="text-2xl text-pink-500 font-bold">{sub.name[0]}</span>
+                <div className="w-20 h-20 mx-auto mb-4 bg-pink-50 rounded-full overflow-hidden flex items-center justify-center group-hover:bg-pink-100 transition-colors border-2 border-transparent group-hover:border-pink-200 shadow-sm relative">
+                    {sub.image ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img 
+                            src={sub.image} 
+                            alt={sub.name} 
+                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                        />
+                    ) : (
+                        <span className="text-3xl text-pink-500 font-bold">{sub.name[0]}</span>
+                    )}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">
                     {sub.name}

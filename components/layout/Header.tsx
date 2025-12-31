@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Menu, X, Search, User, Heart } from 'lucide-react';
+import { ShoppingCart, Menu, X, Search, User, Heart, MapPin } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useAuth } from '@/lib/context/AuthContext';
 import { usePathname } from 'next/navigation';
@@ -139,6 +139,9 @@ export default function Header() {
                                <Link href="/profile/wishlist" className="block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2">
                                    <Heart className="w-4 h-4" /> Wishlist
                                </Link>
+                               <Link href="/profile/addresses" className="block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2">
+                                   <MapPin className="w-4 h-4" /> Saved Addresses
+                               </Link>
                            </div>
                            <div className="border-t border-gray-100 py-2 bg-gray-50/50">
                                <button 
@@ -206,6 +209,26 @@ export default function Header() {
               </Link>
             ))}
             
+            {user && (
+                <>
+                <div className="border-t border-gray-100 my-4 pt-4">
+                  <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">My Account</p>
+                  <Link href="/profile" className="block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3">
+                    <User className="w-5 h-5" /> Profile
+                  </Link>
+                  <Link href="/profile/orders" className="block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3">
+                    <ShoppingCart className="w-5 h-5" /> Orders
+                  </Link>
+                  <Link href="/profile/addresses" className="block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3">
+                    <MapPin className="w-5 h-5" /> Addresses
+                  </Link>
+                  <Link href="/profile/wishlist" className="block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3">
+                    <Heart className="w-5 h-5" /> Wishlist
+                  </Link>
+                </div>
+                </>
+            )}
+
             {!user && (
                  <Link
                     href="/login"

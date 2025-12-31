@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import axios from '@/lib/api';
+import api from '@/lib/api';    
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
@@ -25,7 +25,7 @@ export default function CMSPageEditor() {
 
   useEffect(() => {
     if (!isNew) {
-      axios.get(`/api/cms/${id}`)
+      api.get(`/cms/${id}`)
         .then(res => {
           setFormData(res.data);
           setLoading(false);
@@ -44,9 +44,9 @@ export default function CMSPageEditor() {
 
     try {
       if (isNew) {
-        await axios.post('/api/cms', formData);
+        await api.post('/cms', formData);
       } else {
-        await axios.put(`/api/cms/${id}`, formData);
+        await api.put(`/cms/${id}`, formData);
       }
       router.push('/portal-secure-admin/cms');
     } catch (error: any) {

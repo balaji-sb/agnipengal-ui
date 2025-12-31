@@ -5,7 +5,7 @@ import ProductCard from '@/components/shop/ProductCard';
 import ProductGallery from '@/components/shop/ProductGallery';
 import ProductReviews from '@/components/shop/ProductReviews'; // New Component
 import ProductViewTracker from '@/components/shop/ProductViewTracker';
-import { ShieldCheck, Truck, RotateCcw } from 'lucide-react'; // Added icons
+import { ShieldCheck, Truck, RotateCcw, Star } from 'lucide-react'; // Added icons
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +56,17 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <h1 className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                     {product.name}
                 </h1>
+                
+                {/* Rating Summary */}
+                <div className="mt-2 flex items-center gap-2">
+                    <div className="flex bg-pink-600 text-white px-2 py-0.5 rounded text-sm font-bold items-center gap-1">
+                        <span>{product.rating?.toFixed(1) || 0}</span>
+                        <Star className="w-3 h-3 fill-current" />
+                    </div>
+                    <a href="#reviews" className="text-sm text-gray-500 hover:text-pink-600 hover:underline">
+                        {product.numReviews || 0} ratings
+                    </a>
+                </div>
                 <div className="mt-4 flex items-end gap-4">
                     <p className="text-3xl font-bold text-gray-900">
                         ₹{product.price.toLocaleString('en-IN')}
@@ -110,7 +121,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* Reviews Section */}
-      <ProductReviews productId={product._id} />
+      <div id="reviews">
+        <ProductReviews productId={product._id} />
+      </div>
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (

@@ -146,14 +146,14 @@ export default function Carousel({ items }: CarouselProps) {
                             <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
                             <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                             <div className="absolute inset-0 z-0 bg-white group-hover:scale-x-0 transition-transform duration-300 origin-left" />
-                            <span className="absolute inset-0 z-10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-3">
+                            <span className="absolute inset-0 z-10 flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-3">
                                 Shop Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </span>
                         </Link>
                         
-                        <button className="px-8 py-4 rounded-full border border-white/30 hover:bg-white/10 text-white font-medium backdrop-blur-sm transition-all hover:scale-105">
+                        {/* <button className="px-8 py-4 rounded-full border border-white/30 hover:bg-white/10 text-white font-medium backdrop-blur-sm transition-all hover:scale-105">
                             View Details
-                        </button>
+                        </button> */}
                     </motion.div>
                 </div>
             </div>

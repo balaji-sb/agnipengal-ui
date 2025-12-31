@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:local": "next dev",
+    "dev:prod": "NEXT_PUBLIC_API_URL=https://mahis-vriksham-boutique-290764189110.asia-south1.run.app/api next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

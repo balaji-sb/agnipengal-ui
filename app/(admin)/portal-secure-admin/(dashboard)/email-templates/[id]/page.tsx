@@ -26,7 +26,7 @@ export default function EmailTemplateEditor() {
 
   useEffect(() => {
     if (!isNew) {
-      axios.get(`/api/email-templates/${id}`)
+      axios.get(`/email-templates/${id}`)
         .then(res => {
           setFormData({
             ...res.data,
@@ -53,9 +53,9 @@ export default function EmailTemplateEditor() {
 
     try {
       if (isNew) {
-        await axios.post('/api/email-templates', payload);
+        await axios.post('/email-templates', payload);
       } else {
-        await axios.put(`/api/email-templates/${id}`, payload);
+        await axios.put(`/email-templates/${id}`, payload);
       }
       router.push('/portal-secure-admin/email-templates');
     } catch (error: any) {

@@ -249,6 +249,33 @@ export default function OrderRow({ order }: OrderRowProps) {
                              </div>
                         </div>
 
+                        {/* Tracking Info */}
+                        {order.tracking && (
+                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                                    <Truck className="w-4 h-4" /> Shipment Details
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-blue-500">Courier</p>
+                                        <p className="font-medium text-blue-900">{order.tracking.courierName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-blue-500">Tracking Number</p>
+                                        <p className="font-medium text-blue-900">{order.tracking.trackingNumber}</p>
+                                    </div>
+                                    {order.tracking.trackingUrl && (
+                                        <div>
+                                            <p className="text-blue-500">Track</p>
+                                            <a href={order.tracking.trackingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline hover:text-blue-900">
+                                                Click to Track
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Customer Info */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>

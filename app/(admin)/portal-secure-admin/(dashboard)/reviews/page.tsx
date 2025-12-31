@@ -21,6 +21,7 @@ interface Review {
     comment: string;
     orderId: string;
     createdAt: string;
+    media?: { url: string; type: 'image' | 'video' }[];
 }
 
 export default function ReviewsPage() {
@@ -193,9 +194,23 @@ export default function ReviewsPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-sm text-gray-600 line-clamp-2 max-w-xs" title={review.comment}>
+                                            <p className="text-sm text-gray-600 line-clamp-2 max-w-xs mb-2" title={review.comment}>
                                                 {review.comment}
                                             </p>
+                                            {review.media && review.media.length > 0 && (
+                                                <div className="flex gap-2">
+                                                    {review.media.map((item, idx) => (
+                                                        <div key={idx} className="w-10 h-10 rounded border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0 cursor-pointer" onClick={() => window.open(item.url, '_blank')}>
+                                                            {item.type === 'video' ? (
+                                                                <video src={item.url} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                // eslint-disable-next-line @next/next/no-img-element
+                                                                <img src={item.url} alt="Att" className="w-full h-full object-cover" />
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
                                             {review.orderId}

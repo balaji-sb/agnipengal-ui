@@ -12,7 +12,13 @@ export const getAuthHeaders = async (): Promise<Record<string, string>> => {
     if (token) cookiesList.push(`token=${token}`);
     if (adminToken) cookiesList.push(`admin_token=${adminToken}`);
     
-    return cookiesList.length > 0 ? { Cookie: cookiesList.join('; ') } : {};
+    if (cookiesList.length > 0) {
+        console.log('Attaching cookies to server-side request:', cookiesList.map(c => c.split('=')[0]));
+        return { Cookie: cookiesList.join('; ') };
+    } else {
+        console.warn('No authentication cookies found in server component request.');
+        return {};
+    }
 };
 
 const api = {

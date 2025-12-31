@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from '@/lib/api';
+import api from '@/lib/api';
 import { Plus, Edit, Trash2, X, Save, Search } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 
@@ -21,11 +21,12 @@ export default function AdminCategoriesPage() {
   // Subcategory Form (Only when editing)
   const [subName, setSubName] = useState('');
   const [subSlug, setSubSlug] = useState('');
+  const [subImage, setSubImage] = useState('');
   const [editingSubId, setEditingSubId] = useState<string | null>(null);
 
   const fetchCategories = (query = '') => {
     setLoading(true);
-    axios.get(`/api/categories?search=${query}`).then(res => {
+    api.get(`/categories?search=${query}`).then(res => {
         setCategories(res.data.data);
         setLoading(false);
     });
@@ -48,6 +49,7 @@ export default function AdminCategoriesPage() {
     setCatImage('');
     setSubName('');
     setSubSlug('');
+    setSubImage('');
     setEditingSubId(null);
   };
 
@@ -58,13 +60,16 @@ export default function AdminCategoriesPage() {
     setCatImage(cat.image || '');
     setSubName('');
     setSubSlug('');
+    setSubImage('');
     setEditingSubId(null);
   };
+
+// ... existing methods ...
 
   const handleDeleteCategory = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category?')) return;
     try {
-        await axios.delete(`/api/categories/${id}`);
+        await api.delete(`/categories/${id}`);
         fetchCategories();
         if (editingCategory?._id === id) resetForm();
     } catch (error) {
@@ -77,9 +82,9 @@ export default function AdminCategoriesPage() {
     try {
         const payload = { name: catName, slug: catSlug, image: catImage };
         if (editingCategory) {
-            await axios.put(`/api/categories/${editingCategory._id}`, payload);
+            await api.put(`/categories/${editingCategory._id}`, payload);
         } else {
-            await axios.post('/api/categories', payload);
+            await api.post('/categories', payload);
         }
         fetchCategories();
         resetForm();
@@ -95,23 +100,24 @@ export default function AdminCategoriesPage() {
     if (!editingCategory) return;
     
     try {
-        const payload = { name: subName, slug: subSlug, subId: editingSubId };
-        const url = `/api/categories/${editingCategory._id}/subcategories`;
+        const payload = { name: subName, slug: subSlug, image: subImage, subId: editingSubId };
+        const url = `/categories/${editingCategory._id}/subcategories`;
         
         if (editingSubId) {
-            await axios.put(url, payload);
+            await api.put(url, payload);
         } else {
-            await axios.post(url, payload);
+            await api.post(url, payload);
         }
         
-        // Refresh categories and update local state to reflect changes immediately in UI
-        const res = await axios.get('/api/categories');
+        // Refresh categories and update local state
+        const res = await api.get('/categories');
         setCategories(res.data.data);
         const updatedCat = res.data.data.find((c: any) => c._id === editingCategory._id);
         if (updatedCat) setEditingCategory(updatedCat);
         
         setSubName('');
         setSubSlug('');
+        setSubImage('');
         setEditingSubId(null);
     } catch (error: any) {
         alert(error.response?.data?.error || 'Failed to save subcategory');
@@ -123,9 +129,9 @@ export default function AdminCategoriesPage() {
      if (!editingCategory) return;
      
      try {
-         await axios.delete(`/api/categories/${editingCategory._id}/subcategories?subId=${subId}`);
+         await api.delete(`/categories/${editingCategory._id}/subcategories?subId=${subId}`);
          
-         const res = await axios.get('/api/categories');
+         const res = await api.get('/categories');
          setCategories(res.data.data);
          const updatedCat = res.data.data.find((c: any) => c._id === editingCategory._id);
          if (updatedCat) setEditingCategory(updatedCat);
@@ -137,12 +143,14 @@ export default function AdminCategoriesPage() {
   const startEditSub = (sub: any) => {
       setSubName(sub.name);
       setSubSlug(sub.slug);
+      setSubImage(sub.image || '');
       setEditingSubId(sub._id);
   };
 
   const cancelEditSub = () => {
       setSubName('');
       setSubSlug('');
+      setSubImage('');
       setEditingSubId(null);
   };
 
@@ -177,13 +185,25 @@ export default function AdminCategoriesPage() {
                             {categories.map((cat: any) => (
                                 <tr key={cat._id} className={`hover:bg-gray-50 ${editingCategory?._id === cat._id ? 'bg-pink-50' : ''}`}>
                                     <td className="p-4 font-medium">
-                                        {cat.name}
-                                        <div className="text-xs text-gray-400">{cat.slug}</div>
+                                        <div className="flex items-center gap-3">
+                                            {cat.image && (
+                                                <img src={cat.image} alt={cat.name} className="w-10 h-10 object-cover rounded text-xs" />
+                                            )}
+                                            <div>
+                                                {cat.name}
+                                                <div className="text-xs text-gray-400">{cat.slug}</div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td className="p-4 text-sm text-gray-500">
-                                        <div className="flex flex-wrap gap-1">
+                                        <div className="flex flex-wrap gap-2">
                                             {cat.subcategories.map((sub: any) => (
-                                                <span key={sub._id} className="bg-gray-100 px-2 py-1 rounded-md border border-gray-200">{sub.name}</span>
+                                                <div key={sub._id} className="bg-gray-100 px-2 py-1 rounded-md border border-gray-200 flex items-center gap-2">
+                                                    {sub.image && (
+                                                        <img src={sub.image} alt={sub.name} className="w-5 h-5 object-cover rounded-sm" />
+                                                    )}
+                                                    <span>{sub.name}</span>
+                                                </div>
                                             ))}
                                         </div>
                                     </td>
@@ -248,9 +268,14 @@ export default function AdminCategoriesPage() {
                             <ul className="space-y-2 mb-4">
                                 {editingCategory.subcategories.map((sub: any) => (
                                     <li key={sub._id} className="flex justify-between items-center bg-gray-50 p-2 rounded border border-gray-100">
-                                        <div>
-                                            <span className="font-medium">{sub.name}</span>
-                                            <span className="text-xs text-gray-400 ml-2">({sub.slug})</span>
+                                        <div className="flex items-center gap-3">
+                                            {sub.image && (
+                                                <img src={sub.image} alt={sub.name} className="w-8 h-8 object-cover rounded" />
+                                            )}
+                                            <div>
+                                                <span className="font-medium block">{sub.name}</span>
+                                                <span className="text-xs text-gray-400">({sub.slug})</span>
+                                            </div>
                                         </div>
                                         <div className="flex items-center space-x-1">
                                             <button onClick={() => startEditSub(sub)} className="text-blue-500 p-1 hover:bg-blue-50 rounded"><Edit size={14}/></button>
@@ -266,10 +291,21 @@ export default function AdminCategoriesPage() {
                             {/* Add/Edit Subcategory Form */}
                             <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <h4 className="text-sm font-bold mb-2 text-gray-600">{editingSubId ? 'Edit Subcategory' : 'Add Subcategory'}</h4>
-                                <form onSubmit={handleSaveSubcategory} className="space-y-2">
+                                <form onSubmit={handleSaveSubcategory} className="space-y-3">
                                      <input required value={subName} onChange={e => setSubName(e.target.value)} className="w-full p-2 text-sm border rounded" placeholder="Name" />
                                      <input required value={subSlug} onChange={e => setSubSlug(e.target.value)} className="w-full p-2 text-sm border rounded" placeholder="Slug" />
                                      
+                                     <div className="bg-white p-2 rounded border border-gray-200">
+                                         <ImageUpload 
+                                            value={subImage} 
+                                            onChange={(url) => {
+                                                if (typeof url === 'string') setSubImage(url);
+                                            }} 
+                                            label="Subcategory Image"
+                                            folder="subcategories"
+                                        />
+                                     </div>
+
                                      <div className="flex space-x-2">
                                          <button type="submit" className="flex-1 bg-gray-800 text-white py-1.5 rounded text-sm font-medium hover:bg-gray-900">
                                              {editingSubId ? 'Update' : 'Add'}

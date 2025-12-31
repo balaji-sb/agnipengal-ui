@@ -13,6 +13,7 @@ interface ReviewData {
     comment: string;
     createdAt: string;
     product: string;
+    media?: { url: string; type: 'image' | 'video' }[];
 }
 
 export default function OrdersPage() {
@@ -132,12 +133,34 @@ export default function OrdersPage() {
                                             PAYMENT: {order.status}
                                         </span>
                                         {order.orderStatus && (
-                                            <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 uppercase">
-                                                STATUS: {order.orderStatus}
-                                            </span>
+                                            (() => {
+                                                const status = order.orderStatus.toUpperCase();
+                                                let colorClass = 'bg-gray-100 text-gray-800';
+                                                
+                                                switch(status) {
+                                                    case 'PENDING': colorClass = 'bg-yellow-100 text-yellow-800'; break;
+                                                    case 'PROCESSING': colorClass = 'bg-blue-100 text-blue-800'; break;
+                                                    case 'SHIPPED': colorClass = 'bg-indigo-100 text-indigo-800'; break;
+                                                    case 'DELIVERED': colorClass = 'bg-green-100 text-green-800'; break;
+                                                    case 'CANCELLED': colorClass = 'bg-red-100 text-red-800'; break;
+                                                    case 'RETURNED': colorClass = 'bg-orange-100 text-orange-800'; break;
+                                                }
+
+                                                return (
+                                                    <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase ${colorClass}`}>
+                                                        STATUS: {order.orderStatus}
+                                                    </span>
+                                                );
+                                            })()
                                         )}
                                     </div>
                                     <span className="font-bold text-lg text-gray-900">₹{order.totalAmount}</span>
+                                    <button 
+                                        onClick={() => router.push(`/profile/orders/${order._id}`)}
+                                        className="text-pink-600 hover:text-pink-700 font-medium text-sm flex items-center gap-1 hover:underline ml-4"
+                                    >
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
                             

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import axios from '@/lib/api';
+import api from '@/lib/api';
 import { Plus, Edit, Trash, Loader2, Search, Star, ImageIcon, X } from 'lucide-react';
 import ImportProductsButton from '@/components/admin/ImportProductsButton';
 
@@ -14,7 +14,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = (query = '') => {
     setLoading(true);
-    axios.get(`/api/products?search=${query}`).then(res => {
+    api.get(`/products?search=${query}`).then(res => {
         setProducts(res.data.data);
         setLoading(false);
     }).catch(err => {
@@ -34,7 +34,7 @@ export default function AdminProductsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
     try {
-        await axios.delete(`/api/products/${id}`);
+        await api.delete(`/products/${id}`);
         fetchProducts();
     } catch (error) {
         alert('Failed to delete product');

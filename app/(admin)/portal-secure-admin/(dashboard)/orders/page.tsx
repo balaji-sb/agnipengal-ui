@@ -10,11 +10,17 @@ async function getOrders(page = 1) {
   try {
       const headers = await getAuthHeaders();
       const res = await api.get(`/orders?page=${page}&limit=10`, { headers });
+      console.log(res.data);
       return { 
           orders: res.data.data || [], 
           pagination: res.data.pagination || { total: 0, pages: 1, page: 1, limit: 10 } 
       };
-  } catch (error) {
+  } catch (error: any) {
+      console.error('Failed to fetch orders:', error);
+      if (error.response) {
+          console.error('Response data:', error.response.data);
+          console.error('Response status:', error.response.status);
+      }
       return { orders: [], pagination: { total: 0, pages: 1, page: 1, limit: 10 } };
   }
 }

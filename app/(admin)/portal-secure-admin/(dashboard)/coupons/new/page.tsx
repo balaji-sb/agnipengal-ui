@@ -30,7 +30,7 @@ export default function NewCouponPage() {
             const { data } = await api.post('/coupons/create', formData);
             if (data.success) {
                 alert('Coupon created successfully');
-                router.push('/admin/coupons');
+                router.push('/portal-secureadmin/coupons');
             }
         } catch (error: any) {
             console.error('Error creating coupon', error);
@@ -42,7 +42,7 @@ export default function NewCouponPage() {
 
     return (
         <div className="p-6 max-w-2xl mx-auto">
-            <Link href="/admin/coupons" className="inline-flex items-center text-gray-500 hover:text-gray-800 mb-6">
+            <Link href="/portal-secure-admin/coupons" className="inline-flex items-center text-gray-500 hover:text-gray-800 mb-6">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Coupons
             </Link>
             

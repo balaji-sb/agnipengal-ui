@@ -55,7 +55,18 @@ export default function ProductFilter() {
             <ReactSlider
                 className="h-1 bg-gray-200 rounded-full cursor-pointer"
                 thumbClassName="w-5 h-5 bg-pink-600 rounded-full cursor-grab focus:outline-none -mt-2 shadow-sm border-2 border-white"
-                trackClassName="bg-pink-600 h-1 rounded-full"
+                renderTrack={(props, state) => {
+                    const { key, ...restProps } = props;
+                    // State index 1 is the middle track (selected range)
+                    const isSelected = state.index === 1;
+                    return (
+                        <div 
+                            key={key} 
+                            {...restProps} 
+                            className={`h-1 rounded-full ${isSelected ? 'bg-pink-600' : 'bg-gray-200'}`} 
+                        />
+                    );
+                }}
                 value={priceRange}
                 min={MIN_PRICE}
                 max={MAX_PRICE}

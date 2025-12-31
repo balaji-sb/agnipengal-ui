@@ -11,6 +11,7 @@ interface ViewReviewModalProps {
         rating: number;
         comment: string;
         createdAt: string;
+        media?: { url: string; type: 'image' | 'video' }[];
     };
 }
 
@@ -19,7 +20,7 @@ export default function ViewReviewModal({ isOpen, onClose, productName, review }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 className="text-lg font-bold text-gray-900">Your Review</h3>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition">
@@ -27,7 +28,7 @@ export default function ViewReviewModal({ isOpen, onClose, productName, review }
                     </button>
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto">
                     <div className="mb-6 text-center">
                         <p className="text-sm text-gray-500 mb-2">For product</p>
                         <h4 className="font-semibold text-gray-900 text-lg">{productName}</h4>
@@ -44,13 +45,32 @@ export default function ViewReviewModal({ isOpen, onClose, productName, review }
                         </div>
                     </div>
 
-                    <div className="relative bg-gray-50 rounded-xl p-6">
+                    <div className="relative bg-gray-50 rounded-xl p-6 mb-6">
                         <Quote className="absolute top-4 left-4 w-6 h-6 text-gray-300 -scale-x-100 opacity-50" />
                         <p className="text-gray-700 italic text-center relative z-10 font-medium leading-relaxed">
                             "{review.comment}"
                         </p>
                         <Quote className="absolute bottom-4 right-4 w-6 h-6 text-gray-300 opacity-50" />
                     </div>
+
+                    {/* Media Display */}
+                    {review.media && review.media.length > 0 && (
+                        <div className="mb-6">
+                            <p className="text-sm font-medium text-gray-700 mb-3">Attachments</p>
+                            <div className="grid grid-cols-2 gap-3">
+                                {review.media.map((item, idx) => (
+                                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-black/5">
+                                        {item.type === 'video' ? (
+                                            <video src={item.url} controls className="w-full h-full object-cover" />
+                                        ) : (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={item.url} alt="Review attachment" className="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onClick={() => window.open(item.url, '_blank')} />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="mt-6 text-center">
                         <p className="text-xs text-gray-400">Posted on {new Date(review.createdAt).toLocaleDateString()}</p>

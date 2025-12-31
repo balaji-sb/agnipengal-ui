@@ -11,7 +11,7 @@ export default function EmailTemplatesPage() {
 
   const fetchTemplates = () => {
     setLoading(true);
-    axios.get('/api/email-templates').then(res => {
+    axios.get('/email-templates').then(res => {
         setTemplates(res.data);
         setLoading(false);
     }).catch(err => {
@@ -27,7 +27,7 @@ export default function EmailTemplatesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this template?')) return;
     try {
-        await axios.delete(`/api/email-templates/${id}`);
+        await axios.delete(`/email-templates/${id}`);
         fetchTemplates();
     } catch (error) {
         alert('Failed to delete template');

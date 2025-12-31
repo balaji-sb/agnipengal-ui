@@ -151,7 +151,17 @@ export default function ProfilePage() {
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className="text-2xl font-bold text-gray-900">#{recentOrder._id.substring(0, 8)}</span>
                                         <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase ${
-                                            recentOrder.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                            (() => {
+                                                switch(recentOrder.orderStatus?.toUpperCase()) {
+                                                    case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+                                                    case 'PROCESSING': return 'bg-blue-100 text-blue-800';
+                                                    case 'SHIPPED': return 'bg-indigo-100 text-indigo-800';
+                                                    case 'DELIVERED': return 'bg-green-100 text-green-800';
+                                                    case 'CANCELLED': return 'bg-red-100 text-red-800';
+                                                    case 'RETURNED': return 'bg-orange-100 text-orange-800';
+                                                    default: return 'bg-gray-100 text-gray-800';
+                                                }
+                                            })()
                                         }`}>
                                             {recentOrder.orderStatus}
                                         </span>
@@ -173,8 +183,13 @@ export default function ProfilePage() {
                                 {recentOrder.items.slice(0, 2).map((item: any, idx: number) => (
                                     <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-12 w-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center">
-                                                <Package className="w-6 h-6 text-gray-300" />
+                                            <div className="h-12 w-12 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img 
+                                                    src={item.product?.images?.[0] || item.image || '/placeholder.png'} 
+                                                    alt={item.product?.name || item.name} 
+                                                    className="w-full h-full object-cover"
+                                                />
                                             </div>
                                             <div>
                                                 <p className="font-bold text-gray-900">{item.product?.name || item.name}</p>
@@ -192,7 +207,7 @@ export default function ProfilePage() {
                             </div>
 
                             <Link 
-                                href="/profile/orders" 
+                                href={`/profile/orders/${recentOrder._id}`} 
                                 className="block w-full py-3 text-center font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
                             >
                                 View Order Details
