@@ -14,7 +14,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = (query = '') => {
     setLoading(true);
-    api.get(`/products?search=${query}`).then(res => {
+    api.get(`/products?search=${query}&ignoreDeals=true`).then(res => {
         setProducts(res.data.data);
         setLoading(false);
     }).catch(err => {
@@ -108,7 +108,12 @@ export default function AdminProductsPage() {
                             <div className="text-xs text-gray-400">{product.subcategory}</div>
                         </td>
                         <td className="p-4 text-gray-700">{product.category?.name || '-'}</td>
-                        <td className="p-4 text-gray-700">₹{product.price}</td>
+                        <td className="p-4 text-gray-700">
+                            <div>
+                                <span className={product.offerPrice > 0 ? 'line-through text-gray-400 text-xs mr-1' : ''}>₹{product.price}</span>
+                                {product.offerPrice > 0 && <span className="font-bold text-pink-600">₹{product.offerPrice}</span>}
+                            </div>
+                        </td>
                         <td className="p-4 text-gray-700">{product.stock}</td>
                         <td className="p-4">
                             <div className="flex items-center space-x-1">

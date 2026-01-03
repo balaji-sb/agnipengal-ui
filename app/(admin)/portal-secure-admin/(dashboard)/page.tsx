@@ -1,6 +1,6 @@
 import api from '@/lib/api';
 import { getAuthHeaders } from '@/lib/api-server'; // Keeping in case we add auth check later
-import { IndianRupee, ShoppingBag, Package, MessageSquare, Layers } from 'lucide-react';
+import { IndianRupee, ShoppingBag, Package, MessageSquare, Layers, Tag } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
@@ -10,7 +10,7 @@ async function getStats() {
         return res.data.data;
     } catch (error) {
         console.error('Dashboard Stats Error:', error);
-        return { orderCount: 0, productCount: 0, totalRevenue: 0, reviewCount: 0, categoryCount: 0 };
+        return { orderCount: 0, productCount: 0, totalRevenue: 0, reviewCount: 0, categoryCount: 0, comboCount: 0, dealCount: 0 };
     }
 }
 
@@ -92,6 +92,34 @@ export default async function AdminDashboard() {
                 </div>
                 <h3 className="text-emerald-100 font-medium mb-1">Categories</h3>
                 <p className="text-4xl font-bold">{stats.categoryCount}</p>
+            </div>
+         </div>
+
+         {/* Combos */}
+         <div className="bg-gradient-to-br from-purple-500 to-fuchsia-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group hover:shadow-xl transition-all">
+             <div className="absolute -right-4 -top-4 opacity-10 transform group-hover:scale-110 transition-transform">
+                <Layers size={120} />
+            </div>
+            <div className="relative z-10">
+                <div className="p-3 bg-white/20 rounded-xl w-fit mb-4 backdrop-blur-sm">
+                    <Layers size={24} className="text-white" />
+                </div>
+                <h3 className="text-purple-100 font-medium mb-1">Total Combos</h3>
+                <p className="text-4xl font-bold">{stats.comboCount}</p>
+            </div>
+         </div>
+
+         {/* Deals */}
+         <div className="bg-gradient-to-br from-red-500 to-rose-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group hover:shadow-xl transition-all">
+             <div className="absolute -right-4 -top-4 opacity-10 transform group-hover:scale-110 transition-transform">
+                <Tag size={120} />
+            </div>
+            <div className="relative z-10">
+                <div className="p-3 bg-white/20 rounded-xl w-fit mb-4 backdrop-blur-sm">
+                    <Tag size={24} className="text-white" />
+                </div>
+                <h3 className="text-red-100 font-medium mb-1">Active Deals</h3>
+                <p className="text-4xl font-bold">{stats.dealCount}</p>
             </div>
          </div>
       </div>

@@ -40,7 +40,14 @@ export default function CartPage() {
                     <div className="flex-1 text-center sm:text-left">
                         <h3 className="text-lg font-semibold text-gray-900">{item.product.name}</h3>
                         <p className="text-gray-500 text-sm">{item.product.category?.name}</p>
-                        <p className="text-pink-600 font-bold mt-1">₹{item.product.price}</p>
+                        {item.product.offerPrice && item.product.offerPrice > 0 ? (
+                            <div className="mt-1">
+                                <span className="text-pink-600 font-bold mr-2">₹{item.product.offerPrice}</span>
+                                <span className="text-gray-400 text-sm line-through">₹{item.product.price}</span>
+                            </div>
+                        ) : (
+                            <p className="text-pink-600 font-bold mt-1">₹{item.product.price}</p>
+                        )}
                     </div>
 
                     <div className="flex items-center border border-gray-300 rounded-lg">

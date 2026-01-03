@@ -28,6 +28,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
     slug: '',
     description: '',
     price: '',
+    offerPrice: '', // Added offerPrice
     stock: '',
     category: '',
     subcategory: '',
@@ -158,6 +159,10 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
                 <div>
                     <label className="block text-sm font-medium mb-1">Price (₹)</label>
                     <input required type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-2 border rounded" />
+                </div>
+                 <div>
+                    <label className="block text-sm font-medium mb-1">Offer Price (₹)</label>
+                    <input type="number" name="offerPrice" value={formData.offerPrice} onChange={handleChange} className="w-full p-2 border rounded" placeholder="Optional" />
                 </div>
                  <div>
                     <label className="block text-sm font-medium mb-1">Stock</label>

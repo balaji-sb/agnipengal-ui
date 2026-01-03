@@ -5,7 +5,7 @@ import api from '@/lib/api';
 
 async function getProduct(id: string) {
   try {
-      const res = await api.get(`/products/${id}`);
+      const res = await api.get(`/products/${id}?ignoreDeals=true`);
       return res.data.data;
   } catch (error) {
       return null;

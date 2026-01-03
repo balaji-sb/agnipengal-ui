@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Eye, Heart } from 'lucide-react';
+import { ShoppingCart, Eye, Heart, Sparkles } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 
@@ -13,9 +13,11 @@ interface ProductCardProps {
     name: string;
     slug: string;
     price: number;
+    offerPrice?: number; // Added offerPrice
     images: string[];
     category: { name: string, slug: string } | string;
     stock: number;
+    activeDeal?: { name: string };
   };
 }
 
@@ -31,6 +33,17 @@ export default function ProductCard({ product }: ProductCardProps) {
          {isOutOfStock && (
              <div className="absolute top-3 right-3 z-20 bg-gray-900/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                  Out of Stock
+             </div>
+         )}
+         {!isOutOfStock && product.activeDeal && (
+             <div className="absolute top-3 left-3 z-20 bg-yellow-400/90 backdrop-blur text-gray-900 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                 <Sparkles className="w-3 h-3" />
+                 {product.activeDeal.name}
+             </div>
+         )}
+         {!isOutOfStock && !product.activeDeal && product.offerPrice && product.offerPrice > 0 && product.offerPrice < product.price && (
+             <div className="absolute top-3 left-3 z-20 bg-pink-600/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                {Math.round(((product.price - product.offerPrice) / product.price) * 100)}% OFF
              </div>
          )}
         <Link href={`/product/${product.slug}`} className={`block h-full w-full ${isOutOfStock ? 'pointer-events-none' : ''}`}>
@@ -95,9 +108,16 @@ export default function ProductCard({ product }: ProductCardProps) {
             </h3>
         </Link>
         <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-3">
-            <span className={`text-xl font-bold font-mono tracking-tighter ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}>
-                ₹{product.price}
-            </span>
+            <div className="flex items-center gap-2">
+                <span className={`text-xl font-bold font-mono tracking-tighter ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}>
+                    ₹{(product.offerPrice && product.offerPrice > 0 ? product.offerPrice : product.price).toLocaleString('en-IN')}
+                </span>
+                {product.offerPrice && product.offerPrice > 0 && (
+                    <span className="text-xs text-gray-400 line-through">
+                        ₹{product.price.toLocaleString('en-IN')}
+                    </span>
+                )}
+            </div>
             {/* Rating Stars could go here */}
         </div>
       </div>

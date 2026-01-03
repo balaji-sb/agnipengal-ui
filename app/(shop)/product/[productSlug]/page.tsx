@@ -3,9 +3,10 @@ import AddToCart from '@/components/shop/AddToCart';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductGallery from '@/components/shop/ProductGallery';
-import ProductReviews from '@/components/shop/ProductReviews'; // New Component
+import ProductReviews from '@/components/shop/ProductReviews';
+import ProductShare from '@/components/shop/ProductShare';
 import ProductViewTracker from '@/components/shop/ProductViewTracker';
-import { ShieldCheck, Truck, RotateCcw, Star } from 'lucide-react'; // Added icons
+import { ShieldCheck, Truck, RotateCcw, Star } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,9 +54,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <span className="text-sm font-semibold text-pink-600 uppercase tracking-wider bg-pink-50 px-3 py-1 rounded-full">
                     {product.category?.name || 'Category'}
                 </span>
-                <h1 className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                    {product.name}
-                </h1>
+                <div className="flex justify-between items-start mt-4 gap-4">
+                    <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                        {product.name}
+                    </h1>
+                    <ProductShare productName={product.name} productSlug={product.slug} />
+                </div>
                 
                 {/* Rating Summary */}
                 <div className="mt-2 flex items-center gap-2">
@@ -69,9 +73,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </div>
                 <div className="mt-4 flex items-end gap-4">
                     <p className="text-3xl font-bold text-gray-900">
-                        ₹{product.price.toLocaleString('en-IN')}
+                        ₹{(product.offerPrice && product.offerPrice > 0 ? product.offerPrice : product.price).toLocaleString('en-IN')}
                     </p>
-                    {/* Optional: Show original price if discounted later */}
+                    {product.offerPrice && product.offerPrice > 0 && (
+                        <>
+                            <p className="text-lg text-gray-400 line-through mb-1">
+                                ₹{product.price.toLocaleString('en-IN')}
+                            </p>
+                            <span className="bg-pink-100 text-pink-700 px-2 py-1 rounded font-bold text-sm mb-1.5">
+                                {Math.round(((product.price - product.offerPrice) / product.price) * 100)}% OFF
+                            </span>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -119,6 +132,24 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
         </div>
       </div>
+
+       {/* Combo Includes Section */}
+       {product.isCombo && product.products && product.products.length > 0 && (
+           <section className="mb-20 border-t border-gray-100 pt-16 bg-pink-50/50 rounded-3xl p-8 lg:p-12">
+               <div className="text-center mb-10">
+                   <span className="text-pink-600 font-bold tracking-wider uppercase text-sm">Great Value Bundle</span>
+                   <h2 className="text-3xl lg:text-4xl font-bold mt-2 text-gray-900">What&apos;s Inside This Combo?</h2>
+                   <p className="text-gray-500 mt-3 max-w-2xl mx-auto">
+                       This bundle includes {product.products.length} premium items curated specially for you.
+                   </p>
+               </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                   {product.products.map((p: any) => (
+                       <ProductCard key={p._id} product={p} />
+                   ))}
+               </div>
+           </section>
+       )}
 
       {/* Reviews Section */}
       <div id="reviews">
