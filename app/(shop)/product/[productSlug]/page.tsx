@@ -12,6 +12,8 @@ export const dynamic = 'force-dynamic';
 
 import api from '@/lib/api';
 
+import { Metadata, ResolvingMetadata } from 'next';
+
 async function getProduct(slug: string) {
   try {
       const res = await api.get(`/products/${slug}`);
@@ -19,6 +21,40 @@ async function getProduct(slug: string) {
   } catch (error) {
       return null;
   }
+}
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ productSlug: string }> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { productSlug } = await params;
+  const product = await getProduct(productSlug);
+
+  if (!product) {
+    return {
+      title: 'Product Not Found',
+    };
+  }
+
+  const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: product.name,
+    description: product.description?.slice(0, 160) || `Buy ${product.name} at Mahi's Vriksham Boutique`,
+    openGraph: {
+      title: product.name,
+      description: product.description?.slice(0, 200),
+      images: [
+        ...(product.images || []).map((url: string) => ({
+          url,
+          width: 800,
+          height: 600,
+          alt: product.name,
+        })),
+        ...previousImages,
+      ],
+    },
+  };
 }
 
 async function getRelatedProducts(category: string, currentId: string) {
@@ -169,6 +205,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
           </section>
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            image: product.image || product.images?.[0],
+            description: product.description,
+            brand: {
+              '@type': 'Brand',
+              name: "Mahi's Vriksham Boutique"
+            },
+            offers: {
+              '@type': 'Offer',
+              url: `https://mahisvrikshamboutique.vercel.app/product/${product.slug || product._id}`,
+              priceCurrency: 'INR',
+              price: product.offerPrice || product.price,
+              availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            }
+          }),
+        }}
+      />
     </div>
   );
 }

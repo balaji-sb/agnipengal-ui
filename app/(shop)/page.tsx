@@ -244,6 +244,33 @@ export default async function Home() {
                 </div>
            </div>
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Store',
+            name: "Mahi's Vriksham Boutique",
+            image: 'https://mahisvrikshamboutique.vercel.app/logo.jpg',
+            description: 'Premium Aari & Sewing Materials for your creative needs.',
+            url: 'https://mahisvrikshamboutique.vercel.app',
+            telephone: '+919876543210', // Update with real number if available
+            address: {
+              '@type': 'PostalAddress',
+              addressCountry: 'IN',
+            },
+            priceRange: '₹₹',
+            sameAs: [
+               // Add social media links here if available
+               // 'https://www.instagram.com/mahisvriksham',
+               'https://www.instagram.com/mahis_vriksham_boutique/',
+               'https://www.facebook.com/mahisvrikshamboutique',
+               'https://www.linkedin.com/company/mahisvrikshamboutique',
+               'https://www.youtube.com/@mahis_vriksham_boutique'
+            ]
+          }),
+        }}
+      />
     </div>
   );
 }
