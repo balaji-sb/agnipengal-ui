@@ -113,7 +113,7 @@ export default async function Home() {
           case 'categories':
               return (
                 <div key={section._id} className="relative z-10">
-                    <HomeCategories categories={categories} title={section.label} />
+                    <HomeCategories categories={categories.slice(0, 5)} title={section.label} />
                 </div>
               );
           case 'product_grid': // Generic product grid type

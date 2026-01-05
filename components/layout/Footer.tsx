@@ -2,11 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Send, CreditCard, ShieldCheck, Truck } from 'lucide-react';
-import api from '@/lib/api'; // Import api client
+import { Send, CreditCard, ShieldCheck, Truck, Loader2 } from 'lucide-react';
+import api from '@/lib/api'; 
+import toast from 'react-hot-toast';
 
 export default function Footer() {
   const [email, setEmail] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const [cmsPages, setCmsPages] = React.useState<any[]>([]);
 
   React.useEffect(() => {
@@ -21,10 +23,21 @@ export default function Footer() {
     fetchPages();
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Thank you for subscribing! (Demo)');
-    setEmail('');
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      await api.post('/subscribers', { email });
+      toast.success('Successfully subscribed to the newsletter!');
+      setEmail('');
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Failed to subscribe. Please try again.';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,15 +64,26 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="relative flex-1 bg-gray-800 border-gray-700 text-white rounded-lg px-5 py-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all placeholder-gray-500"
+                disabled={loading}
+                className="relative flex-1 bg-gray-800 border-gray-700 text-white rounded-lg px-5 py-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 required
               />
               <button 
                 type="submit"
-                className="relative bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+                disabled={loading}
+                className="relative bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
               >
-                <span>Subscribe</span>
-                <Send className="w-4 h-4" />
+                {loading ? (
+                    <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Subscribing...</span>
+                    </>
+                ) : (
+                    <>
+                        <span>Subscribe</span>
+                        <Send className="w-4 h-4" />
+                    </>
+                )}
               </button>
             </form>
           </div>

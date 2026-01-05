@@ -1,17 +1,17 @@
-
 'use client';
 
 import React, { useState } from 'react';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/context/AuthContext';
 import Link from 'next/link';
-import { LogIn, Loader2, Mail, Lock } from 'lucide-react';
+import { LogIn, Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,16 +92,26 @@ export default function LoginPage() {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 pr-10 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 sm:text-sm transition-all bg-gray-50/50"
                   placeholder="Password"
                   value={formData.password}
                   onChange={e => setFormData({...formData, password: e.target.value})}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
-             
             </div>
           </div>
 
@@ -118,11 +128,11 @@ export default function LoginPage() {
               </label>
             </div>
 
- <div className="text-right mt-1">
-                  <Link href="/forgot-password" className="text-sm font-medium text-pink-600 hover:text-pink-500">
-                      Forgot your password?
-                  </Link>
-              </div>
+            <div className="text-right mt-1">
+              <Link href="/forgot-password" className="text-sm font-medium text-pink-600 hover:text-pink-500">
+                  Forgot your password?
+              </Link>
+            </div>
            </div>
 
           <div>

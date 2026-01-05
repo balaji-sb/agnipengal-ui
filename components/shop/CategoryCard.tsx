@@ -24,9 +24,12 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                     className="object-cover transition-transform duration-700 group-hover:scale-110" 
                 />
              ) : (
-                <div className="flex flex-col items-center justify-center">
-                    <span className="text-6xl font-thin text-pink-300/50 group-hover:text-pink-400/50 transition-colors">{category.name[0]}</span>
-                </div>
+                <Image 
+                    src="/logo.jpg" 
+                    alt={category.name} 
+                    fill 
+                    className="object-contain p-8 opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                />
              )}
         </div>
         

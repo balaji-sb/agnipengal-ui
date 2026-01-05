@@ -94,7 +94,7 @@ export default function SearchWithAutocomplete({ className }: { className?: stri
                         setShowDropdown(true);
                     }}
                     onFocus={() => setShowDropdown(true)}
-                    placeholder="Search for sarees..." 
+                    placeholder="Search products..." 
                     className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all placeholder-gray-400 text-gray-700 shadow-sm"
                 />
                 <Search className="absolute left-3.5 top-3 h-4 w-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />

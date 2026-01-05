@@ -225,7 +225,6 @@ export default function OrderRow({ order }: OrderRowProps) {
                     
                     <div className="p-6 space-y-6">
                         {/* Status & Date */}
-                        {/* Status & Date */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl">
                              <div>
                                 <p className="text-sm text-gray-500">Order Date</p>

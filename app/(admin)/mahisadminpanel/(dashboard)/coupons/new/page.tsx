@@ -30,7 +30,7 @@ export default function NewCouponPage() {
             const { data } = await api.post('/coupons/create', formData);
             if (data.success) {
                 alert('Coupon created successfully');
-                router.push('/portal-secureadmin/coupons');
+                router.push('/mahisadminpanel/coupons');
             }
         } catch (error: any) {
             console.error('Error creating coupon', error);

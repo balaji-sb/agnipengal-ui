@@ -21,9 +21,7 @@ export const getAuthHeaders = async (): Promise<Record<string, string>> => {
         console.warn('No authentication cookies found in server component request.');
     }
 
-    if (adminToken) {
-        headers['Authorization'] = `Bearer ${adminToken}`;
-    } else if (token) {
+    if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
     return headers;

@@ -43,6 +43,32 @@ export default function AdminCategoriesPage() {
 
   // --- Handlers ---
 
+  const generateSlug = (text: string) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')     
+      .replace(/[^\w\-]+/g, '') 
+      .replace(/\-\-+/g, '-');
+  };
+
+  const handleCatNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const name = e.target.value;
+      setCatName(name);
+      if (!editingCategory) { 
+          setCatSlug(generateSlug(name));
+      }
+  };
+
+  const handleSubNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const name = e.target.value;
+      setSubName(name);
+      if (!editingSubId) {
+          setSubSlug(generateSlug(name));
+      }
+  };
+
   const resetForm = () => {
     setEditingCategory(null);
     setCatName('');
@@ -240,7 +266,7 @@ export default function AdminCategoriesPage() {
                     <form onSubmit={handleSaveCategory} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Name</label>
-                            <input required value={catName} onChange={e => setCatName(e.target.value)} className="w-full p-2 border rounded" />
+                            <input required value={catName} onChange={handleCatNameChange} className="w-full p-2 border rounded" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Slug</label>
@@ -296,7 +322,7 @@ export default function AdminCategoriesPage() {
                             <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <h4 className="text-sm font-bold mb-2 text-gray-600">{editingSubId ? 'Edit Subcategory' : 'Add Subcategory'}</h4>
                                 <form onSubmit={handleSaveSubcategory} className="space-y-3">
-                                     <input required value={subName} onChange={e => setSubName(e.target.value)} className="w-full p-2 text-sm border rounded" placeholder="Name" />
+                                     <input required value={subName} onChange={handleSubNameChange} className="w-full p-2 text-sm border rounded" placeholder="Name" />
                                      <input required value={subSlug} onChange={e => setSubSlug(e.target.value)} className="w-full p-2 text-sm border rounded" placeholder="Slug" />
                                      
                                      <div className="bg-white p-2 rounded border border-gray-200">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import CategoryCard from '@/components/shop/CategoryCard';
 import MotionSection from '@/components/shop/MotionSection';
+import Image from 'next/image';
 
 interface HomeCategoriesProps {
   categories: any[];
@@ -39,11 +40,27 @@ export default function HomeCategories({ categories, title = 'Shop by Category' 
                             Let's rely on CategoryCard but style it up or inline it since CategoryCard is simple. 
                             Actually, using the detailed design from plan, let's inline a better card or custom wrap.
                         */}
-                         <img 
-                            src={cat.image || '/placeholder.png'} 
+
+                         {cat.image ? (
+                                        <Image 
+                                            src={cat.image} 
+                                            alt={cat.name} 
+                                            fill 
+                                            className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                                        />
+                                     ) : (
+                                        <Image 
+                                            src="/logo.jpg" 
+                                            alt={cat.name} 
+                                            fill 
+                                            className="object-contain p-8 opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                                        />
+                                     )}
+                         {/* <img 
+                            src={cat.image || '/logo.jpg'} 
                             alt={cat.name}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
+                        /> */}
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
                          
                          {/* Floating Label */}
