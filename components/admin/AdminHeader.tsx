@@ -31,7 +31,7 @@ export default function AdminHeader() {
 
                 {/* Settings Link */}
                 <Link 
-                    href="/portal-secure-admin/settings" 
+                    href="/mahisadminpanel/settings" 
                     className="text-gray-500 hover:text-gray-700 transition flex items-center space-x-2"
                     title="Settings"
                 >

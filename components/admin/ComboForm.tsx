@@ -84,7 +84,7 @@ export default function ComboForm({ initialData, isEditing = false }: ComboFormP
             } else {
                 await api.post('/combos', formData);
             }
-            router.push('/portal-secure-admin/combos');
+            router.push('/mahisadminpanel/combos');
             router.refresh();
         } catch (error: any) {
             console.error(error);

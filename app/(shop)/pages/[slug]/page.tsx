@@ -44,7 +44,7 @@ export default async function CMSPage({ params }: { params: Promise<{ slug: stri
             <h1 className="text-4xl font-bold text-gray-900 mb-8">{page.title}</h1>
             {page.content && (
                 <div 
-                    className="prose prose-lg max-w-none text-gray-700 space-y-4"
+                    className="prose prose-lg max-w-none text-gray-700 space-y-4 break-words prose-img:max-w-full prose-img:h-auto prose-a:text-pink-600 prose-headings:font-bold"
                     dangerouslySetInnerHTML={{ __html: page.content }}
                 />
             )}

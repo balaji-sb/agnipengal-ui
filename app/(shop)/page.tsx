@@ -58,9 +58,9 @@ async function getData() {
       const sections = layout.length > 0 ? layout : [
         { sectionId: 'hero_carousel', type: 'carousel', order: 1, isVisible: true },
         { sectionId: 'categories', type: 'categories', order: 2, isVisible: true },
-        { sectionId: 'featured_products', type: 'product_grid', order: 3, isVisible: true, props: { title: 'Featured Collections' } },
+        { sectionId: 'featured_products', type: 'product_grid', order: 3, isVisible: true },
         { sectionId: 'deals', type: 'deals', order: 4, isVisible: true },
-        { sectionId: 'new_arrivals', type: 'product_grid', order: 5, isVisible: true, props: { title: 'New Arrivals' } },
+        { sectionId: 'new_arrivals', type: 'product_grid', order: 5, isVisible: true},
         { sectionId: 'combos', type: 'combos', order: 6, isVisible: true }
       ];
 
@@ -106,7 +106,7 @@ export default async function Home() {
       switch (section.type) {
           case 'carousel': // Match DB type
               return (
-                  <section key={section._id} className="container mx-auto px-4 py-6 md:py-10 relative z-10">
+                  <section key={section._id} className="relative z-10">
                       <Carousel items={safeCarouselItems} />
                   </section>
               );
@@ -230,7 +230,7 @@ export default async function Home() {
           <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-indigo-200/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
       </div>
 
-      <div className="relative z-10 space-y-8 md:space-y-16">
+      <div className="relative z-10 space-y-8 md:space-y-12">
         {sections.map((section: any) => renderSection(section))}
       </div>
       

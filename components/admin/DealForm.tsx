@@ -87,7 +87,7 @@ export default function DealForm({ initialData, isEditing = false }: DealFormPro
             } else {
                 await api.post('/deals', formData);
             }
-            router.push('/portal-secure-admin/deals');
+            router.push('/mahisadminpanel/deals');
             router.refresh();
         } catch (error: any) {
             console.error(error);

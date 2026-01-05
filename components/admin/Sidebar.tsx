@@ -8,21 +8,21 @@ import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Setti
 import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 
 const menuItems = [
-    { label: 'Dashboard', href: '/portal-secure-admin', icon: LayoutDashboard, color: 'text-sky-500' }, 
-    { label: 'Categories', href: '/portal-secure-admin/categories', icon: Grid, color: 'text-violet-500' },
-    { label: 'Products', href: '/portal-secure-admin/products', icon: Package, color: 'text-pink-500' },
-    { label: 'Orders', href: '/portal-secure-admin/orders', icon: ShoppingBag, color: 'text-orange-500' },
-    { label: 'Carousel', href: '/portal-secure-admin/carousel', icon: ImageIcon, color: 'text-emerald-500' },
-    { label: 'Combos', href: '/portal-secure-admin/combos', icon: Layers, color: 'text-purple-500' },
-    { label: 'Deals', href: '/portal-secure-admin/deals', icon: Tag, color: 'text-red-500' },
-    { label: 'Reviews', href: '/portal-secure-admin/reviews', icon: MessageSquare, color: 'text-yellow-500' },
-    { label: 'CMS', href: '/portal-secure-admin/cms', icon: FileText, color: 'text-blue-500' },
-    { label: 'Payments', href: '/portal-secure-admin/payments', icon: CreditCard, color: 'text-green-500' },
-    { label: 'Email Templates', href: '/portal-secure-admin/email-templates', icon: Mail, color: 'text-cyan-500' },
-    { label: 'FAQs', href: '/portal-secure-admin/faqs', icon: HelpCircle, color: 'text-teal-500' },
-    { label: 'Support Tickets', href: '/portal-secure-admin/support', icon: MessageSquare, color: 'text-rose-500' },
-    { label: 'Coupons', href: '/portal-secure-admin/coupons', icon: Ticket, color: 'text-indigo-500' },
-    { label: 'Layout Manager', href: '/portal-secure-admin/layout-manager', icon: Layers, color: 'text-gray-500' }
+    { label: 'Dashboard', href: '/mahisadminpanel', icon: LayoutDashboard, color: 'text-sky-500' }, 
+    { label: 'Categories', href: '/mahisadminpanel/categories', icon: Grid, color: 'text-violet-500' },
+    { label: 'Products', href: '/mahisadminpanel/products', icon: Package, color: 'text-pink-500' },
+    { label: 'Orders', href: '/mahisadminpanel/orders', icon: ShoppingBag, color: 'text-orange-500' },
+    { label: 'Carousel', href: '/mahisadminpanel/carousel', icon: ImageIcon, color: 'text-emerald-500' },
+    { label: 'Combos', href: '/mahisadminpanel/combos', icon: Layers, color: 'text-purple-500' },
+    { label: 'Deals', href: '/mahisadminpanel/deals', icon: Tag, color: 'text-red-500' },
+    { label: 'Reviews', href: '/mahisadminpanel/reviews', icon: MessageSquare, color: 'text-yellow-500' },
+    { label: 'CMS', href: '/mahisadminpanel/cms', icon: FileText, color: 'text-blue-500' },
+    { label: 'Payments', href: '/mahisadminpanel/payments', icon: CreditCard, color: 'text-green-500' },
+    { label: 'Email Templates', href: '/mahisadminpanel/email-templates', icon: Mail, color: 'text-cyan-500' },
+    { label: 'FAQs', href: '/mahisadminpanel/faqs', icon: HelpCircle, color: 'text-teal-500' },
+    { label: 'Support Tickets', href: '/mahisadminpanel/support', icon: MessageSquare, color: 'text-rose-500' },
+    { label: 'Coupons', href: '/mahisadminpanel/coupons', icon: Ticket, color: 'text-indigo-500' },
+    { label: 'Layout Manager', href: '/mahisadminpanel/layout-manager', icon: Layers, color: 'text-gray-500' }
   
 ];
 

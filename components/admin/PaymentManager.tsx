@@ -45,7 +45,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.push(`/portal-secure-admin/payments?search=${search}&page=1`);
+        router.push(`/mahisadminpanel/payments?search=${search}&page=1`);
     };
 
     const handleRefundClick = (payment: any) => {
@@ -217,7 +217,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
                     <div className="flex items-center gap-2">
                         <button
                             disabled={pagination.page <= 1}
-                            onClick={() => router.push(`/portal-secure-admin/payments?search=${search}&page=${pagination.page - 1}`)}
+                            onClick={() => router.push(`/mahisadminpanel/payments?search=${search}&page=${pagination.page - 1}`)}
                             className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
                             aria-label="Previous Page"
                         >
@@ -228,7 +228,7 @@ export default function PaymentManager({ payments: initialPayments, pagination, 
                         </span>
                         <button
                             disabled={pagination.page >= pagination.pages}
-                            onClick={() => router.push(`/portal-secure-admin/payments?search=${search}&page=${pagination.page + 1}`)}
+                            onClick={() => router.push(`/mahisadminpanel/payments?search=${search}&page=${pagination.page + 1}`)}
                             className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-white transition"
                             aria-label="Next Page"
                         >

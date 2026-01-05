@@ -33,15 +33,13 @@ api.interceptors.request.use((config) => {
     // However, for this fix, we will assume 'authToken' is key for customer app and 'adminToken' for admin app.
     // Since they are separate apps (routes), usually one is active.
     
-    // If the path starts with /admin or /portal-secure-admin (on frontend), use adminToken?
+    // If the path starts with /admin or /mahisadminpanel (on frontend), use adminToken?
     // Frontend doesn't know backend paths easily in interceptor if we iterate based on window.location?
     
     if (typeof window !== 'undefined') {
-        // Detect if we are in admin section
-        const isAdminSection = window.location.pathname.startsWith('/portal-secure-admin');
-        const token = isAdminSection 
-            ? localStorage.getItem('adminToken') 
-            : localStorage.getItem('authToken');
+        // For Admin, we rely purely on Cookies (httpOnly) for security.
+        // For Customer, we still use localStorage 'authToken' (or cookies if we migrate that too).
+        const token = localStorage.getItem('authToken');
             
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;

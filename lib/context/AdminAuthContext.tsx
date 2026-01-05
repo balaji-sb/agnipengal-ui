@@ -39,11 +39,11 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
             setAdmin(res.data.user);
         } else {
             setAdmin(null);
-            localStorage.removeItem('adminToken');
+            // localStorage.removeItem('adminToken'); // Relying on Cookie
         }
     } catch (error) {
         setAdmin(null);
-        localStorage.removeItem('adminToken');
+        // localStorage.removeItem('adminToken'); // Relying on Cookie
     } finally {
         setLoading(false);
     }
@@ -55,26 +55,24 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
 
   const login = (userData: User, token?: string) => {
     setAdmin(userData);
-    if (token) {
-        localStorage.setItem('adminToken', token);
-    }
-    // router.push('/portal-secure-admin');
-    // router.refresh(); 
-    window.location.href = '/portal-secure-admin';
+    // if (token) {
+    //     localStorage.setItem('adminToken', token);
+    // }
+    router.push('/mahisadminpanel');
   };
 
   const logout = async () => {
     try {
         await api.post('/auth/admin/logout');
         setAdmin(null);
-        localStorage.removeItem('adminToken');
-        router.push('/portal-secure-admin/login');
+        // localStorage.removeItem('adminToken');
+        router.push('/mahisadminpanel/login');
         router.refresh();
     } catch (error) {
-        console.error('Logout failed', error);
+        await api.post('/auth/admin/logout');
         setAdmin(null);
-        localStorage.removeItem('adminToken');
-        router.push('/portal-secure-admin/login');
+        // localStorage.removeItem('adminToken');
+        router.push('/mahisadminpanel/login');
     }
   };
 

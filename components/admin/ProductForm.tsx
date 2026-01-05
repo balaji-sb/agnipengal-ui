@@ -124,7 +124,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
             await api.post('/products', payload);
         }
         
-        router.push('/portal-secure-admin/products');
+        router.push('/mahisadminpanel/products');
         router.refresh();
     } catch (error) {
         console.error(error);
@@ -138,7 +138,7 @@ export default function ProductForm({ initialData, isEditing = false }: ProductF
     <div className="max-w-4xl mx-auto pb-20">
         <div className="flex items-center mb-6 text-gray-500 hover:text-gray-800 transition w-fit">
             <ArrowLeft className="w-4 h-4 mr-1" />
-            <Link href="/portal-secure-admin/products">Back to Products</Link>
+            <Link href="/mahisadminpanel/products">Back to Products</Link>
         </div>
 
         <h1 className="text-2xl font-bold mb-6">{isEditing ? 'Edit Product' : 'Add New Product'}</h1>
