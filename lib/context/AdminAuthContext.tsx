@@ -41,12 +41,12 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         } else {
             console.log('AdminAuthContext: checkAuth failed (success=false)');
             setAdmin(null);
-            // localStorage.removeItem('adminToken'); // Relying on Cookie
+            localStorage.removeItem('adminToken'); 
         }
     } catch (error) {
         console.error('AdminAuthContext: checkAuth error', error);
         setAdmin(null);
-        // localStorage.removeItem('adminToken'); // Relying on Cookie
+        localStorage.removeItem('adminToken');
     } finally {
         setLoading(false);
     }
@@ -59,9 +59,9 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const login = (userData: User, token?: string) => {
     console.log('AdminAuthContext: login called', userData);
     setAdmin(userData);
-    // if (token) {
-    //     localStorage.setItem('adminToken', token);
-    // }
+    if (token) {
+        localStorage.setItem('adminToken', token);
+    }
     console.log('AdminAuthContext: Redirecting to /mahisadminpanel');
     router.push('/mahisadminpanel');
   };
@@ -70,13 +70,13 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     try {
         await api.post('/auth/admin/logout');
         setAdmin(null);
-        // localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminToken');
         router.push('/mahisadminpanel/login');
         router.refresh();
     } catch (error) {
         await api.post('/auth/admin/logout');
         setAdmin(null);
-        // localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminToken');
         router.push('/mahisadminpanel/login');
     }
   };

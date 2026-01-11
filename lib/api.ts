@@ -37,9 +37,16 @@ api.interceptors.request.use((config) => {
     // Frontend doesn't know backend paths easily in interceptor if we iterate based on window.location?
     
     if (typeof window !== 'undefined') {
-        // For Admin, we rely purely on Cookies (httpOnly) for security.
-        // For Customer, we still use localStorage 'authToken' (or cookies if we migrate that too).
-        const token = localStorage.getItem('authToken');
+        const isAdminPanel = window.location.pathname.startsWith('/mahisadminpanel');
+        let token = null;
+
+        if (isAdminPanel) {
+            token = localStorage.getItem('adminToken');
+        } 
+        
+        if (!token) {
+             token = localStorage.getItem('authToken');
+        }
             
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
