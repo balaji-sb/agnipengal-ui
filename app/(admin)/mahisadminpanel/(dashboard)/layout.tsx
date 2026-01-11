@@ -3,9 +3,8 @@ import React from 'react';
 import Sidebar from '@/components/admin/Sidebar';
 
 import AdminHeader from '@/components/admin/AdminHeader';
-import { useAdminAuth } from '@/lib/context/AdminAuthContext';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -13,25 +12,10 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { admin, loading } = useAdminAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [isMounting, setIsMounting] = useState(true);
 
-  useEffect(() => {
-    setIsMounting(false);
-  }, []);
-
-  useEffect(() => {
-    console.log('AdminLayout: Auth state:', { loading, admin: !!admin, isMounting });
-    if (!loading && !admin && !isMounting) {
-        console.log('AdminLayout: No admin found, redirecting to login');
-        router.push('/mahisadminpanel/login');
-    } else {
-        console.log('AdminLayout: Auth state:', { loading, admin: !!admin, isMounting });
-    }
-  }, [admin, loading, router, isMounting]);
-
-  if (loading || isMounting) {
+  if (status === "loading") {
       return (
           <div className="flex h-screen items-center justify-center bg-gray-50">
               <Loader2 className="w-10 h-10 text-pink-600 animate-spin" />
@@ -40,7 +24,10 @@ export default function AdminLayout({
       );
   }
 
-  if (!admin) return null; // Will redirect
+  if (!session) {
+      // Middleware should capture this, but just in case
+      return null; 
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100">

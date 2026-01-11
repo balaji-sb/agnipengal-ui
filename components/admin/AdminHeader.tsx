@@ -3,13 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { Settings, LogOut, Bell, User } from 'lucide-react';
-import { useAdminAuth } from '@/lib/context/AdminAuthContext';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function AdminHeader() {
-    const { logout, admin } = useAdminAuth();
+    const { data: session } = useSession();
 
     const handleLogout = () => {
-        logout();
+        signOut({ callbackUrl: '/mahisadminpanel/login' });
     };
 
     return (
@@ -41,7 +41,7 @@ export default function AdminHeader() {
                 {/* Profile / Logout Dropdown (Simplified to just logout button for now as per request) */}
                 <div className="flex items-center space-x-4">
                      <div className="flex flex-col items-end mr-2">
-                        <span className="text-sm font-semibold text-gray-800">{admin?.name || 'Admin'}</span>
+                        <span className="text-sm font-semibold text-gray-800">{session?.user?.name || 'Admin'}</span>
                         <span className="text-xs text-gray-500">Administrator</span>
                     </div>
                     

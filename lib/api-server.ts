@@ -1,29 +1,19 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth-options";
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 
-// Helper to get auth headers for Server Components
+
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-    const adminToken = cookieStore.get('admin_token')?.value;
-    
-    const cookiesList = [];
-    if (token) cookiesList.push(`token=${token}`);
-    if (adminToken) cookiesList.push(`admin_token=${adminToken}`);
-    
+    const session = await getServerSession(authOptions);
     const headers: Record<string, string> = {};
 
-    if (cookiesList.length > 0) {
-        console.log('Attaching cookies to server-side request:', cookiesList.map(c => c.split('=')[0]));
-        headers['Cookie'] = cookiesList.join('; ');
+    if (session?.user?.token) {
+        headers['Authorization'] = `Bearer ${session.user.token}`;
     } else {
-        console.warn('No authentication cookies found in server component request.');
+        console.warn('No active session found in server component request.');
     }
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     return headers;
 };
 

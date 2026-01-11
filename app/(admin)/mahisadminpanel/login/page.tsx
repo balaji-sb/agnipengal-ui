@@ -3,31 +3,36 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock } from 'lucide-react';
-import { useAdminAuth } from '@/lib/context/AdminAuthContext';
-import api from '@/lib/api';
+import { signIn } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAdminAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
-      const res = await api.post('/auth/admin-login', { email, password });
-      if (res.data.success) {
-          login(res.data.user, res.data.admin_token);
-          // router.push('/mahisadminpanel'); // Handled by login()
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (result?.error) {
+        toast.error(result.error);
+        setLoading(false);
+      } else {
+        toast.success("Login Successful");
+        router.push('/mahisadminpanel');
+        router.refresh(); // Refresh to update session
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
-    } finally {
+    } catch (error) {
+      toast.error('An unexpected error occurred');
       setLoading(false);
     }
   };
@@ -42,12 +47,6 @@ export default function AdminLoginPage() {
           <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
           <p className="text-gray-500 mt-2">Secure access for administrators</p>
         </div>
-
-        {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">
-                {error}
-            </div>
-        )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>

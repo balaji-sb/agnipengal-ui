@@ -14,7 +14,7 @@ const api = axios.create({
 
 // Helper to get auth headers for Server Components moved to lib/api-server.ts
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
     // Check for tokens in localStorage
     // We check for adminToken first if the request is for admin routes (optional optimization, but simplified here)
     // Actually, we usually don't know if it's an admin request easily, but we can check the URL or just send what we have.
@@ -37,17 +37,22 @@ api.interceptors.request.use((config) => {
     // Frontend doesn't know backend paths easily in interceptor if we iterate based on window.location?
     
     if (typeof window !== 'undefined') {
-        const isAdminPanel = window.location.pathname.startsWith('/mahisadminpanel');
+        const path = window.location.pathname;
+        const isAdminSection = path.startsWith('/mahisadminpanel');
         let token = null;
 
-        if (isAdminPanel) {
-            token = localStorage.getItem('adminToken');
-        } 
-        
-        if (!token) {
-             token = localStorage.getItem('authToken');
+        if (isAdminSection) {
+            // Only load NextAuth session if we are in admin section
+            const { getSession } = await import('next-auth/react');
+            const session = await getSession();
+            if (session?.user?.token) {
+                token = session.user.token;
+            }
+        } else {
+            // Standard User Auth for Shop
+            token = localStorage.getItem('authToken');
         }
-            
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

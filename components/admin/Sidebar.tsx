@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText, HelpCircle,Ticket } from 'lucide-react';
-import { useAdminAuth } from '@/lib/context/AdminAuthContext';
+
 
 const menuItems = [
     { label: 'Dashboard', href: '/mahisadminpanel', icon: LayoutDashboard, color: 'text-sky-500' }, 
