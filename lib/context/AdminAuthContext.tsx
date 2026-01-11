@@ -36,12 +36,15 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     try {
         const res = await api.get('/auth/admin/me');
         if (res.data.success) {
+            console.log('AdminAuthContext: checkAuth success', res.data.user);
             setAdmin(res.data.user);
         } else {
+            console.log('AdminAuthContext: checkAuth failed (success=false)');
             setAdmin(null);
             // localStorage.removeItem('adminToken'); // Relying on Cookie
         }
     } catch (error) {
+        console.error('AdminAuthContext: checkAuth error', error);
         setAdmin(null);
         // localStorage.removeItem('adminToken'); // Relying on Cookie
     } finally {
@@ -54,10 +57,12 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   }, []);
 
   const login = (userData: User, token?: string) => {
+    console.log('AdminAuthContext: login called', userData);
     setAdmin(userData);
     // if (token) {
     //     localStorage.setItem('adminToken', token);
     // }
+    console.log('AdminAuthContext: Redirecting to /mahisadminpanel');
     router.push('/mahisadminpanel');
   };
 

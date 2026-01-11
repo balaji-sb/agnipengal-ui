@@ -23,7 +23,10 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!loading && !admin && !isMounting) {
+        console.log('AdminLayout: No admin found, redirecting to login');
         router.push('/mahisadminpanel/login');
+    } else {
+        console.log('AdminLayout: Auth state:', { loading, admin: !!admin, isMounting });
     }
   }, [admin, loading, router, isMounting]);
 
