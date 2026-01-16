@@ -7,33 +7,37 @@ import { ShoppingCart, Plus, Minus } from 'lucide-react';
 
 interface AddToCartProps {
   product: any;
+  variant?: any;
+  disabled?: boolean;
 }
 
-export default function AddToCart({ product }: AddToCartProps) {
+export default function AddToCart({ product, variant, disabled = false }: AddToCartProps) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+
+  const stock = variant ? variant.stock : product.stock;
 
   const handleDecrement = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
 
   const handleIncrement = () => {
-    if (quantity < product.stock) {
+    if (quantity < stock) {
         setQuantity(quantity + 1);
     }
   };
 
   const handleAddToCart = () => {
-    addItem(product, quantity);
+    addItem(product, quantity, variant);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  if (product.stock === 0) {
+  if (stock === 0 || disabled) {
       return (
           <button disabled className="w-full py-3 bg-gray-200 text-gray-400 rounded-lg font-bold cursor-not-allowed">
-              Out of Stock
+              {disabled ? "Unavailable" : "Out of Stock"}
           </button>
       )
   }
@@ -53,13 +57,13 @@ export default function AddToCart({ product }: AddToCartProps) {
           <button 
             onClick={handleIncrement} 
             className="p-3 hover:bg-gray-50 transition"
-            disabled={quantity >= product.stock}
+            disabled={quantity >= stock}
           >
             <Plus className="w-4 h-4 text-gray-600" />
           </button>
         </div>
         <span className="text-sm text-gray-500">
-            {product.stock} items in stock
+            {stock} items in stock
         </span>
       </div>
 

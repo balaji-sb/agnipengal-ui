@@ -18,13 +18,19 @@ interface ProductCardProps {
     category: { name: string, slug: string } | string;
     stock: number;
     activeDeal?: { name: string };
+    variants?: { stock: number }[];
   };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const isOutOfStock = product.stock <= 0;
+  
+  const totalStock = (product.variants && product.variants.length > 0)
+    ? product.variants.reduce((acc, v) => acc + (v.stock || 0), 0)
+    : product.stock;
+
+  const isOutOfStock = totalStock <= 0;
 
   return (
     <div className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col h-full ${isOutOfStock ? 'opacity-75' : ''}`}>

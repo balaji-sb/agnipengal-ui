@@ -61,15 +61,18 @@ export const metadata: Metadata = {
     apple: '/logo.jpg',
   },
 };
+ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("GOOGLE_CLIENT_ID", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
   return (
     <html lang="en">
       <body className={plusJakarta.className}>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID'}>
         <AuthProvider>
         <CartProvider>
         <WishlistProvider>
@@ -78,6 +81,7 @@ export default function RootLayout({
         </WishlistProvider>
         </CartProvider>
         </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

@@ -14,6 +14,11 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
+    // Reset selection when images change (e.g. variant switch)
+    React.useEffect(() => {
+        setSelectedImageIndex(0);
+    }, [images]);
+
     const selectedImage = images[selectedImageIndex] || '/placeholder.png';
 
     const handleNext = (e: React.MouseEvent) => {

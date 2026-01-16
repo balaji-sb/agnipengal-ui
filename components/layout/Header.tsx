@@ -49,7 +49,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="group flex items-center gap-3 relative">
-                 <div className="relative w-12 h-12 md:w-14 md:h-14 overflow-hidden rounded-full border-2 border-white/50 shadow-sm group-hover:scale-110 transition-transform duration-500">
+                 <div className="relative w-16 h-16 md:w-16 md:h-16 overflow-hidden rounded-xl border-2 border-white/50 shadow-sm group-hover:scale-110 transition-transform duration-500 p-2">
                     <Image
                         src="/logo.jpg" 
                         alt="Mahi's Vriksham Logo" 

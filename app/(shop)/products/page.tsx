@@ -8,7 +8,7 @@ import api from '@/lib/api';
 export const dynamic = 'force-dynamic';
 
 async function getAllProducts(sort: string, filters: any) {
-  const params: any = {};
+  const params: any = { limit: 15, page: 1 }; // Default initial load
   if (sort) params.sort = sort;
   if (filters.minPrice) params.minPrice = filters.minPrice;
   if (filters.maxPrice) params.maxPrice = filters.maxPrice;
@@ -18,14 +18,18 @@ async function getAllProducts(sort: string, filters: any) {
 
   try {
       const res = await api.get('/products', { params });
-      return res.data.data || [];
+      return { 
+          products: res.data.data || [],
+          pagination: res.data.pagination || { page: 1, totalPages: 1, total: 0 }
+      };
   } catch (error) {
       console.error('Fetch products error:', error);
-      return [];
+      return { products: [], pagination: { page: 1, totalPages: 1, total: 0 } };
   }
 }
 
 // ... (existing imports and functions)
+import ProductInfiniteScroll from '@/components/shop/ProductInfiniteScroll';
 
 export default async function AllProductsPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const resolvedSearchParams = await searchParams;
@@ -39,7 +43,7 @@ export default async function AllProductsPage({ searchParams }: { searchParams: 
     search: resolvedSearchParams.search,
   };
 
-  const products = await getAllProducts(sort, filters);
+  const { products, pagination } = await getAllProducts(sort, filters);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -48,17 +52,17 @@ export default async function AllProductsPage({ searchParams }: { searchParams: 
       >
           <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
             <h1 className="text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0">
-               All Products <span className="text-gray-400 text-lg">({products.length})</span>
+               All Products <span className="text-gray-400 text-lg">({pagination.total})</span>
             </h1>
             <ProductSort />
           </div>
 
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product: any) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-            </div>
+            <ProductInfiniteScroll 
+                initialProducts={products} 
+                searchParams={resolvedSearchParams}
+                initialPagination={pagination}
+            />
           ) : (
              <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
                 <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
