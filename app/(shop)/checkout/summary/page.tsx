@@ -145,6 +145,30 @@ export default function OrderSummaryPage() {
         
                         if (verifyRes.data.success) {
                             console.log('Payment success');
+                            
+                            // Log Firebase Analytics Event
+                            import('@/lib/firebase').then(({ analytics }) => {
+                                if (analytics) {
+                                    import('firebase/analytics').then(({ logEvent }) => {
+                                        logEvent(analytics, 'purchase', {
+                                            transaction_id: response.razorpay_payment_id,
+                                            value: finalTotal,
+                                            currency: 'INR',
+                                            tax: 0,
+                                            shipping: shippingCharge,
+                                            coupon: appliedCoupon,
+                                            items: items.map(item => ({
+                                                item_id: item.variant ? `${item.product._id}-${item.variant.name}` : item.product._id,
+                                                item_name: item.product.name,
+                                                item_variant: item.variant?.name,
+                                                price: item.variant ? item.variant.price : item.product.price,
+                                                quantity: item.quantity
+                                            }))
+                                        });
+                                    });
+                                }
+                            });
+
                             clearCart();
                             window.location.href = '/checkout/success';
                             sessionStorage.removeItem('checkoutAddress');

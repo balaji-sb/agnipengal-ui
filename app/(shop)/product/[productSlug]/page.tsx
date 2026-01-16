@@ -76,7 +76,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <ProductViewTracker productId={product._id} />
+      <ProductViewTracker product={product} />
       <ProductDetails product={product} />
 
        {/* Combo Includes Section */}
