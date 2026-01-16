@@ -61,7 +61,8 @@ export const metadata: Metadata = {
     apple: '/logo.jpg',
   },
 };
- import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 export default function RootLayout({
   children,
@@ -76,6 +77,7 @@ export default function RootLayout({
         <AuthProvider>
         <CartProvider>
         <WishlistProvider>
+            <AnalyticsTracker />
             {children}
             <Toaster position="top-right" />
         </WishlistProvider>
