@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
+    "@react-oauth/google": "^0.13.4",
     "@tailwindcss/typography": "^0.5.19",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
@@ -20,6 +21,7 @@
     "framer-motion": "^12.23.26",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.556.0",
     "mongoose": "^9.0.1",
     "next": "16.0.8",
@@ -31,6 +33,7 @@
     "react-dom": "19.2.1",
     "react-dropzone": "^14.3.8",
     "react-hot-toast": "^2.6.0",
+    "react-intersection-observer": "^10.0.2",
     "react-quill-new": "^3.7.0",
     "react-slider": "^2.0.6",
     "tailwind-merge": "^3.4.0"

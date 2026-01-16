@@ -6,9 +6,10 @@ import api from '@/lib/api';
 import { useAuth } from '@/lib/context/AuthContext';
 import Link from 'next/link';
 import { UserPlus, Loader2, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, login } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -176,7 +177,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-             <button
+            <button
               type="submit"
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all shadow-lg shadow-pink-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
@@ -190,6 +191,43 @@ export default function RegisterPage() {
                   'Create Account'
               )}
             </button>
+          </div>
+
+          <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+          </div>
+
+          <div>
+             <div className="flex justify-center">
+                 <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                        try {
+                            setLoading(true);
+                            const res = await api.post('/auth/google', { token: credentialResponse.credential });
+                            if (res.data.success) {
+                                login(res.data.user, res.data.token);
+                            }
+                        } catch (err: any) {
+                             console.error('Google Login Error', err);
+                             setError(err.response?.data?.error || 'Google Login Failed');
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    onError={() => {
+                        console.log('Login Failed');
+                        setError('Google Login Failed');
+                    }}
+                    useOneTap
+                    shape="circle"
+                    width="100%"
+                 />
+             </div>
           </div>
         </form>
       </div>

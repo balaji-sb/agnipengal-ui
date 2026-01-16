@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import { useAuth } from '@/lib/context/AuthContext';
 import Link from 'next/link';
 import { LogIn, Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -150,6 +151,44 @@ export default function LoginPage() {
                   'Sign in'
               )}
             </button>
+          </div>
+
+          <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+          </div>
+
+          <div>
+             <div className="flex justify-center">
+                 <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                        try {
+                            setLoading(true);
+                            // console.log(credentialResponse);
+                            const res = await api.post('/auth/google', { token: credentialResponse.credential });
+                            if (res.data.success) {
+                                login(res.data.user, res.data.token);
+                            }
+                        } catch (err: any) {
+                             console.error('Google Login Error', err);
+                             setError(err.response?.data?.error || 'Google Login Failed');
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    onError={() => {
+                        console.log('Login Failed');
+                        setError('Google Login Failed');
+                    }}
+                    useOneTap
+                    shape="circle"
+                    width="100%"
+                 />
+             </div>
           </div>
         </form>
       </div>

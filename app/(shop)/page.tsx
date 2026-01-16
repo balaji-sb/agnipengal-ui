@@ -51,7 +51,7 @@ async function getData() {
       const combosData = combosRes.data.data || [];
       
       // 4. Process Product Grids
-      const latestProducts = allProducts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8);
+      const latestProducts = allProducts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 4);
       const featuredProducts = allProducts.filter((p: any) => p.isFeatured).slice(0, 8);
 
       // Default layout fallback if empty
@@ -230,7 +230,7 @@ export default async function Home() {
           <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-indigo-200/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
       </div>
 
-      <div className="relative z-10 space-y-8 md:space-y-12">
+      <div className="relative z-10 space-y-8 md:space-y-2">
         {sections.map((section: any) => renderSection(section))}
       </div>
       
