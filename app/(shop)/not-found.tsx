@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { Home, MoveLeft } from 'lucide-react';
 
+import { useConfig } from '@/lib/context/ConfigContext';
+
 export default function NotFound() {
+  const { config } = useConfig();
+  const appName = config?.appName || "Mahi's Vriksham Boutique";
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full text-center space-y-8">
@@ -49,7 +54,7 @@ export default function NotFound() {
         </div>
 
         <div className="pt-12">
-           <p className="text-xs text-gray-400 uppercase tracking-widest">Mahi's Vriksham Boutique</p>
+           <p className="text-xs text-gray-400 uppercase tracking-widest">{appName}</p>
         </div>
       </div>
     </div>

@@ -1,13 +1,18 @@
-'use client';
-
+"use client";
 import React, { useState } from 'react';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/context/AuthContext';
 import Link from 'next/link';
 import { LogIn, Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
+import { useConfig } from '@/lib/context/ConfigContext';
+import Image from 'next/image';
 
 export default function LoginPage() {
+  const { config } = useConfig();
+  const logoSrc = config?.logo || null;
+  const appName = config?.appName || "Mahi's Vriksham Boutique";
+
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -30,15 +35,21 @@ export default function LoginPage() {
         setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-violet-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/50">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-gradient-to-tr from-pink-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg mb-4">
-            <LogIn className="h-6 w-6 text-white" />
+          <div className="mx-auto h-16 w-16 bg-gradient-to-tr from-pink-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg mb-4 overflow-hidden p-1">
+             {logoSrc ? (
+                 <Image src={logoSrc} alt={appName} width={64} height={64} className="object-cover w-full h-full rounded-lg" />
+             ) : (
+                <LogIn className="h-8 w-8 text-white" />
+             )}
           </div>
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome Back</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            to {appName}
+          </p>
           <p className="mt-2 text-sm text-gray-600">
             Don't have an account?{' '}
             <Link href="/register" className="font-medium text-pink-600 hover:text-pink-500 transition-colors">

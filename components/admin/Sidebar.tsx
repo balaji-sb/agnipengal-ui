@@ -4,11 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText, HelpCircle,Ticket } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Layers, Grid, Tag, LogOut, Settings, MessageSquare, Image as ImageIcon, CreditCard, Mail, FileText, HelpCircle, Ticket, BarChart3 } from 'lucide-react';
 
+
+import { useConfig } from '@/lib/context/ConfigContext';
 
 const menuItems = [
     { label: 'Dashboard', href: '/mahisadminpanel', icon: LayoutDashboard, color: 'text-sky-500' }, 
+    { label: 'Analytics', href: '/mahisadminpanel/analytics', icon: BarChart3, color: 'text-indigo-600' },
     { label: 'Categories', href: '/mahisadminpanel/categories', icon: Grid, color: 'text-violet-500' },
     { label: 'Products', href: '/mahisadminpanel/products', icon: Package, color: 'text-pink-500' },
     { label: 'Orders', href: '/mahisadminpanel/orders', icon: ShoppingBag, color: 'text-orange-500' },
@@ -28,6 +31,8 @@ const menuItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const { config } = useConfig();
+    const appName = config?.appName || "Mahi's Vriksham Boutique";
 
     return (
         <aside className="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
@@ -36,8 +41,8 @@ export default function Sidebar() {
                     Admin Panel
                 </h1> */}
                 <Image
-                                        src="/logo.jpg" 
-                                        alt="Mahi's Vriksham Logo" 
+                                        src={config?.logo || "/logo.jpg"} 
+                                        alt={`${appName} Logo`} 
                                         width={150}
                                         height={120}
                                         className="object-contain p-1 rounded-xl"
@@ -61,7 +66,7 @@ export default function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-gray-800 text-xs text-center text-gray-500">
-                &copy; 2025 Mahi's Vriksham Boutique
+                &copy; {new Date().getFullYear()} {appName}
             </div>
         </aside>
     );

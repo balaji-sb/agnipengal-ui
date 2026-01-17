@@ -16,6 +16,7 @@ export default function EmailTemplateEditor() {
 
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     subject: '',
     body: '',
     variables: '',
@@ -83,14 +84,26 @@ export default function EmailTemplateEditor() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name (Identifier)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
-                placeholder="e.g. WELCOME_EMAIL"
+                placeholder="e.g. Welcome Email"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Slug (Identifier)</label>
+              <input
+                type="text"
+                required
+                value={formData.slug}
+                onChange={e => setFormData({ ...formData, slug: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none font-mono text-sm"
+                placeholder="e.g. welcome_email"
                 disabled={!isNew}
               />
               {!isNew && <p className="text-xs text-gray-500 mt-1">Identifier cannot be changed</p>}

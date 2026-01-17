@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { Save, Loader2, Settings as SettingsIcon, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -12,6 +13,7 @@ export default function SettingsPage() {
     const [formData, setFormData] = useState({
         appName: '',
         themeColor: '',
+        logo: '',
         adminEmail: '',
         adminUsername: '',
         adminWhatsapp: '',
@@ -36,6 +38,7 @@ export default function SettingsPage() {
                 const data = res.data.data;
                 setFormData({
                     appName: data.appName || '',
+                    logo: data.logo || '',
                     themeColor: data.themeColor || '#ffffff',
                     adminEmail: data.adminEmail || '',
                     adminUsername: data.adminUsername || '',
@@ -160,6 +163,17 @@ export default function SettingsPage() {
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition"
                             />
+                        </div>
+
+                        <div className="md:col-span-2">
+                             <ImageUpload 
+                                label="App Logo"
+                                value={formData.logo}
+                                onChange={(url: string | string[]) => setFormData({ ...formData, logo: url as string })}
+                                multiple={false}
+                                folder="branding"
+                             />
+                             <p className="text-xs text-gray-500 mt-2">Recommended size: 512x512px (Square), Transparent PNG</p>
                         </div>
 
                         <div>

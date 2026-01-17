@@ -52,6 +52,7 @@ export default function EmailTemplatesPage() {
             <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
                     <th className="p-4 font-medium text-gray-500">Name</th>
+                    <th className="p-4 font-medium text-gray-500">Slug</th>
                     <th className="p-4 font-medium text-gray-500">Subject</th>
                     <th className="p-4 font-medium text-gray-500">Active</th>
                     <th className="p-4 font-medium text-gray-500">Action</th>
@@ -63,6 +64,7 @@ export default function EmailTemplatesPage() {
                 ) : templates.map((template: any) => (
                     <tr key={template._id} className="hover:bg-gray-50 transition">
                         <td className="p-4 font-medium text-gray-900">{template.name}</td>
+                        <td className="p-4 text-gray-600 font-mono text-sm">{template.slug}</td>
                         <td className="p-4 text-gray-700">{template.subject}</td>
                         <td className="p-4 text-gray-700">
                             <span className={`px-2 py-1 rounded text-xs ${template.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

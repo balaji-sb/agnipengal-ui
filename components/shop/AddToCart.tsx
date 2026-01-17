@@ -31,6 +31,26 @@ export default function AddToCart({ product, variant, disabled = false }: AddToC
   const handleAddToCart = () => {
     addItem(product, quantity, variant);
     setIsAdded(true);
+
+    // Log Firebase Event
+    import('@/lib/firebase').then(({ analytics }) => {
+        if (analytics) {
+             import('firebase/analytics').then(({ logEvent }) => {
+                 logEvent(analytics, 'add_to_cart', {
+                     currency: 'INR',
+                     value: (variant ? variant.price : product.price) * quantity,
+                     items: [{
+                         item_id: variant ? `${product._id}-${variant.name}` : product._id,
+                         item_name: product.name,
+                         item_variant: variant?.name,
+                         price: variant ? variant.price : product.price,
+                         quantity: quantity
+                     }]
+                 });
+             });
+        }
+    });
+
     setTimeout(() => setIsAdded(false), 2000);
   };
 

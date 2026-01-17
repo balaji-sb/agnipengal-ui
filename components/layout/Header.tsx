@@ -9,6 +9,8 @@ import { useAuth } from '@/lib/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import SearchWithAutocomplete from '@/components/ui/SearchWithAutocomplete';
+import { useConfig } from '@/lib/context/ConfigContext';
+
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
@@ -17,6 +19,10 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  
+  const { config } = useConfig();
+  const logoSrc = config?.logo || '/logo.jpg';
+  const appName = config?.appName || "Mahi's Vriksham Boutique";
 
   // Handle scroll effect for transparency
   useEffect(() => {
@@ -30,8 +36,8 @@ export default function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Collections', href: '/category' }, 
-    { name: 'New Arrivals', href: '/products?sort=newest' },
-    { name: 'Best Sellers', href: '/products?feature=true' },
+    { name: 'Deals', href: '/deals' },
+    { name: 'Combos', href: '/combos' },
   ];
 
   return (
@@ -51,15 +57,15 @@ export default function Header() {
             <Link href="/" className="group flex items-center gap-3 relative">
                  <div className="relative w-16 h-16 md:w-16 md:h-16 overflow-hidden rounded-xl border-2 border-white/50 shadow-sm group-hover:scale-110 transition-transform duration-500 p-2">
                     <Image
-                        src="/logo.jpg" 
-                        alt="Mahi's Vriksham Logo" 
+                        src={logoSrc}
+                        alt={`${appName} Logo`} 
                         fill
                         className="object-cover"
                     />
                  </div>
                  <div className="flex flex-col">
                     <span className="text-xl md:text-2xl font-black tracking-tight text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-purple-600 transition-all duration-300">
-                        Mahi's Vriksham
+                        {appName}
                     </span>
                  </div>
             </Link>

@@ -6,10 +6,14 @@ import { Send, CreditCard, ShieldCheck, Truck, Loader2 } from 'lucide-react';
 import api from '@/lib/api'; 
 import toast from 'react-hot-toast';
 
+import { useConfig } from '@/lib/context/ConfigContext';
+
 export default function Footer() {
   const [email, setEmail] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [cmsPages, setCmsPages] = React.useState<any[]>([]);
+  const { config } = useConfig();
+  const appName = config?.appName || "Mahi's Vriksham Boutique";
 
   React.useEffect(() => {
     const fetchPages = async () => {
@@ -52,7 +56,7 @@ export default function Footer() {
           {/* Newsletter Section - Catchy & Prominent */}
           <div className="max-w-4xl mx-auto mb-16 text-center">
             <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-violet-400 mb-4">
-              Join the Mahi's Vriksham Family
+              Join the {appName} Family
             </h2>
             <p className="text-gray-400 mb-8 max-w-lg mx-auto">
               Subscribe to get exclusive offers, early access to new sewing kits, and aari work tips delivered to your inbox.
@@ -92,7 +96,7 @@ export default function Footer() {
             {/* Brand Section */}
             <div className="space-y-6">
               <h3 className="text-2xl font-bold text-white tracking-tight">
-                Mahi's <span className="text-pink-500">Vriksham</span>
+                {appName}
               </h3>
               <p className="text-sm leading-relaxed text-gray-400">
                 Your premium destination for Aari raw materials, custom sewing kits, and exquisite decoration items. We empower your creativity with quality.
@@ -184,7 +188,7 @@ export default function Footer() {
       {/* Bottom Footer */}
       <div className="bg-gray-950 py-6 border-t border-gray-900">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-          <p>&copy; {new Date().getFullYear()} Mahi's Vriksham Boutique. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {appName}. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
              <span className="hover:text-gray-400 cursor-pointer">Privacy</span>
              <span className="hover:text-gray-400 cursor-pointer">Terms</span>
