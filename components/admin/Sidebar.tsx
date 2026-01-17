@@ -41,7 +41,7 @@ export default function Sidebar() {
                     Admin Panel
                 </h1> */}
                 <Image
-                                        src="/logo.jpg" 
+                                        src={config?.logo || "/logo.jpg"} 
                                         alt={`${appName} Logo`} 
                                         width={150}
                                         height={120}

@@ -7,8 +7,13 @@ import { useAuth } from '@/lib/context/AuthContext';
 import Link from 'next/link';
 import { UserPlus, Loader2, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
+import { useConfig } from '@/lib/context/ConfigContext';
+import Image from 'next/image';
 
 export default function RegisterPage() {
+  const { config } = useConfig();
+    const logoSrc = config?.logo || null;
+    const appName = config?.appName || "Mahi's Vriksham Boutique";
   const { register, login } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
@@ -44,8 +49,12 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-violet-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/50">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-gradient-to-tr from-pink-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg mb-4">
+          <div className="mx-auto h-24 w-24 bg-gradient-to-tr from-pink-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg mb-4">
+                 {logoSrc ? (
+                             <Image src={logoSrc} alt={appName} width={64} height={64} className="object-cover w-full h-full rounded-lg" />
+                         ) : (
             <UserPlus className="h-6 w-6 text-white" />
+            )}
           </div>
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Create Account</h2>
           <p className="mt-2 text-sm text-gray-600">

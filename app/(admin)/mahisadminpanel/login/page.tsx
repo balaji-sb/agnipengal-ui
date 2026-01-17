@@ -6,11 +6,16 @@ import { Lock } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
+import { useConfig } from '@/lib/context/ConfigContext';
+import Image from 'next/image';
+
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { config } = useConfig();
+  const logoSrc = config?.logo || null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,8 +46,12 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full border border-gray-100">
         <div className="text-center mb-8">
-          <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-             <Lock className="text-pink-600 w-8 h-8" />
+          <div className="bg-pink-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden p-2">
+             {logoSrc ? (
+                 <Image src={logoSrc} alt="Admin Logo" width={120} height={100} className="object-contain w-full h-full" />
+             ) : (
+                 <Lock className="text-pink-600 w-8 h-8" />
+             )}
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
           <p className="text-gray-500 mt-2">Secure access for administrators</p>

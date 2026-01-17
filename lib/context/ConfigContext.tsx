@@ -5,6 +5,7 @@ import axios from '@/lib/api';
 
 interface Config {
     appName: string;
+    logo: string;
     themeColor: string;
     adminEmail: string;
     adminUsername: string;
