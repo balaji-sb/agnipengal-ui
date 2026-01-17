@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Montserrat,Quicksand,Plus_Jakarta_Sans } from "next/font/google"; 
+import { Montserrat,Quicksand,Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from 'react';
 import "./globals.css";
 import { CartProvider } from "@/lib/context/CartContext";
 import { AuthProvider } from "@/lib/context/AuthContext";
@@ -96,8 +97,12 @@ export default function RootLayout({
         <ConfigProvider>
         <AuthProvider>
         <CartProvider>
+
+
         <WishlistProvider>
-            <AnalyticsTracker />
+            <Suspense fallback={null}>
+                <AnalyticsTracker />
+            </Suspense>
             {children}
             <Toaster position="top-right" />
         </WishlistProvider>
