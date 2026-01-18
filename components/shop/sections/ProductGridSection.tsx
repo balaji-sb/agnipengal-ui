@@ -29,7 +29,7 @@ export default function ProductGridSection({
   return (
     <section className="container mx-auto px-4 py-0">
       <MotionSection>
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 pt-16">
           <div>
              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
                 {title}

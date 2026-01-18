@@ -53,12 +53,29 @@ export default function ProductCard({ product }: ProductCardProps) {
              </div>
          )}
         <Link href={`/product/${product.slug}`} className={`block h-full w-full ${isOutOfStock ? 'pointer-events-none' : ''}`}>
-          <Image
-            src={product.images[0] || '/placeholder.png'} 
+          {
+            product.images.length > 0  ? (
+                <Image
+                    src={product.images[0]} 
+                    alt={product.name}
+                    fill
+                    className={`object-cover transition-transform duration-700 ${isOutOfStock ? 'grayscale' : 'group-hover:scale-110'}`}
+                />
+            ) : (
+                <Image
+                    src={'/logo.jpg'} 
+                    alt={product.name}
+                    fill
+                    className={`object-contain opacity-50 bg-white p-8 transition-transform duration-700 ${isOutOfStock ? 'grayscale' : 'group-hover:scale-110'}`}
+                />
+            )
+          }
+          {/* <Image
+            src={product.images[0] || '/logo.jpg'} 
             alt={product.name}
             fill
             className={`object-cover transition-transform duration-700 ${isOutOfStock ? 'grayscale' : 'group-hover:scale-110'}`}
-          />
+          /> */}
           {/* Secondary Image on Hover (if available - future enhancement) */}
         </Link>
         
