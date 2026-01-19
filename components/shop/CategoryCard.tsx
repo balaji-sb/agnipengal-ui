@@ -13,7 +13,7 @@ interface CategoryCardProps {
 export default function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link href={`/category/${category.slug}`} className="group block h-full">
-      <div className="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[4/5] shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
+      <div className="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[1/1] shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
         {/* Background Image or Placeholder */}
         <div className="absolute inset-0 bg-gradient-to-br from-pink-100 to-violet-100 flex items-center justify-center text-gray-400">
              {category.image ? (
@@ -28,7 +28,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                     src="/logo.jpg" 
                     alt={category.name} 
                     fill 
-                    className="object-contain p-8 opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                    className="object-contain p-8 opacity-50  group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
                 />
              )}
         </div>

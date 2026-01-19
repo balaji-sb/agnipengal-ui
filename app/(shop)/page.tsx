@@ -3,7 +3,9 @@ import Carousel from '@/components/shop/Carousel';
 import ProductGridSection from '@/components/shop/sections/ProductGridSection';
 import HomeCategories from '@/components/shop/sections/HomeCategories';
 import RecentHistory from '@/components/shop/sections/RecentHistory';
+import SearchHistorySection from '@/components/shop/sections/SearchHistorySection';
 import BuyAgain from '@/components/shop/sections/BuyAgain';
+
 import api from '@/lib/api';
 import { Package, Sparkles } from 'lucide-react';
 import * as Motion from 'framer-motion/client'; // Server Component compatible import
@@ -231,8 +233,13 @@ export default async function Home() {
       </div>
 
       <div className="relative z-10 space-y-8 md:space-y-2">
+        {/* <SearchHistorySection /> */}
+       
         {sections.map((section: any) => renderSection(section))}
+         <BuyAgain />
+        <RecentHistory />
       </div>
+
       
       {/* Empty State */}
       {sections.length === 0 && (

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import clsx from 'clsx';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Product {
     _id: string;
@@ -136,9 +137,24 @@ export default function SearchWithAutocomplete({ className }: { className?: stri
                                 >
                                     <div className="flex-shrink-0 h-8 w-8 rounded bg-gray-100 overflow-hidden mr-3">
                                        {/* Placeholder for image */}
-                                       <div className="w-full h-full bg-pink-100 flex items-center justify-center text-pink-500 font-bold text-xs">
+                                       {/* <div className="w-full h-full bg-pink-100 flex items-center justify-center text-pink-500 font-bold text-xs">
                                             {product.name.charAt(0)}
-                                       </div>
+                                       </div> */}
+                                       {
+                                        product.images && product.images.length > 0 ? (
+                                            <Image
+                                                src={product.images[0]}
+                                                alt={product.name}
+                                                width={50}
+                                            height={50}
+                                            className="object-cover"
+                                        />
+                                        ):(
+                                        <div className="w-full h-full bg-pink-100 flex items-center justify-center text-pink-500 font-bold text-xs">
+                                            {product.name.charAt(0)}
+                                       </div> 
+                                        )
+                                    }
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-gray-900 truncate group-hover/item:text-pink-600">{product.name}</p>

@@ -53,7 +53,7 @@ export default function HomeCategories({ categories, title = 'Shop by Category' 
                                             src="/logo.jpg" 
                                             alt={cat.name} 
                                             fill 
-                                            className="object-contain p-8 opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                                            className="object-contain p-8 opacity-50 bg-white group-hover:grayscale-0 border border-gray-200 rounded-2xl group-hover:opacity-100 transition-all duration-500" 
                                         />
                                      )}
                          {/* <img 
