@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AuthContext from '@/lib/context/SessionContext';
+import { AdminAuthProvider } from '@/lib/context/AdminAuthContext';
 
 export default function AdminRootLayout({
   children,
@@ -9,8 +9,8 @@ export default function AdminRootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthContext>
+    <AdminAuthProvider>
       {children}
-    </AuthContext>
+    </AdminAuthProvider>
   );
 }

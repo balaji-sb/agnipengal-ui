@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    console.log("NEXT_PUBLIC_API_URL", process.env.NEXT_PUBLIC_API_URL);
     return [
       {
         source: '/api/:path((?!auth).*)',

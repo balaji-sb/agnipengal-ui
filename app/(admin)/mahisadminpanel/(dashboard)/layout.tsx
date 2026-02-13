@@ -3,7 +3,7 @@ import React from 'react';
 import Sidebar from '@/components/admin/Sidebar';
 
 import AdminHeader from '@/components/admin/AdminHeader';
-import { useSession } from 'next-auth/react';
+import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
@@ -12,10 +12,10 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status } = useSession();
+  const { admin, loading } = useAdminAuth();
   const router = useRouter();
 
-  if (status === "loading") {
+  if (loading) {
       return (
           <div className="flex h-screen items-center justify-center bg-gray-50">
               <Loader2 className="w-10 h-10 text-pink-600 animate-spin" />
@@ -24,8 +24,9 @@ export default function AdminLayout({
       );
   }
 
-  if (!session) {
+  if (!admin) {
       // Middleware should capture this, but just in case
+      router.push('/mahisadminpanel/login');
       return null; 
   }
 
