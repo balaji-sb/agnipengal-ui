@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import api from '@/lib/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  try {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mahisvrikshamboutique.vercel.app';
   
   // Static routes
@@ -48,5 +49,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch (error) {
     console.error('Sitemap generation error:', error);
     return routes;
+  }
+} catch (error) {
+    console.error('Sitemap generation error:', error);
+    return [];
   }
 }

@@ -4,14 +4,24 @@ import { authOptions } from "@/lib/auth-options";
 const API_BASE_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 
 
+import { cookies } from 'next/headers';
+
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {
-    const session = await getServerSession(authOptions);
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('adminToken')?.value || cookieStore.get('admin_auth_token')?.value || cookieStore.get('admin_token')?.value;
+
     const headers: Record<string, string> = {};
 
+    if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+        return headers;
+    }
+
+    const session = await getServerSession(authOptions);
     if (session?.user?.token) {
         headers['Authorization'] = `Bearer ${session.user.token}`;
     } else {
-        console.warn('No active session found in server component request.');
+        // console.warn('No active session found in server component request.');
     }
 
     return headers;

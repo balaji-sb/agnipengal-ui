@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { Montserrat,Quicksand,Plus_Jakarta_Sans } from "next/font/google";
 import { Suspense } from 'react';
@@ -19,6 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   try {
      const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+     console.log("Api url",apiUrl)
      const res = await fetch(`${apiUrl}/config`, { next: { revalidate: 60 } });
      const json = await res.json();
      if (json?.data?.appName) {

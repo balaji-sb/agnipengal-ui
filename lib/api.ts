@@ -42,12 +42,8 @@ api.interceptors.request.use(async (config) => {
         let token = null;
 
         if (isAdminSection) {
-            // Only load NextAuth session if we are in admin section
-            const { getSession } = await import('next-auth/react');
-            const session = await getSession();
-            if (session?.user?.token) {
-                token = session.user.token;
-            }
+            // Use adminToken from localStorage
+            token = localStorage.getItem('adminToken');
         } else {
             // Standard User Auth for Shop
             token = localStorage.getItem('authToken');

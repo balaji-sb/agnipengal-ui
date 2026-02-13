@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
+import api from '@/lib/api';
+import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 
 import { useConfig } from '@/lib/context/ConfigContext';
 import Image from 'next/image';
@@ -13,7 +14,8 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
+  const { login } = useAdminAuth();
   const { config } = useConfig();
   const logoSrc = config?.logo || null;
 
@@ -22,22 +24,21 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (result?.error) {
-        toast.error(result.error);
-        setLoading(false);
-      } else {
+      const res = await api.post('/auth/admin-login', { email, password });
+      
+      if (res.data.success) {
         toast.success("Login Successful");
-        router.push('/mahisadminpanel');
-        router.refresh(); // Refresh to update session
+        // Use context login to update state and redirect
+        // Backend returns: { success: true, user: {...}, admin_token: "..." }
+        login(res.data.user, res.data.admin_token);
+      } else {
+        toast.error(res.data.error || "Login Failed");
+        setLoading(false);
       }
-    } catch (error) {
-      toast.error('An unexpected error occurred');
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.error || 'An unexpected error occurred';
+      toast.error(msg);
       setLoading(false);
     }
   };
