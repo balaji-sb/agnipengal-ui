@@ -43,6 +43,9 @@ next-env.d.ts
 backend-server
 
 .env.local
-.env.prod
+.env.production
 .env
+
+package-lock.json
+yarn.lock
 
