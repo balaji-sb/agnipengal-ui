@@ -22,113 +22,132 @@ import {
   Ticket,
   BarChart3,
   UserCog,
+  Store,
 } from 'lucide-react';
 
 import { useConfig } from '@/lib/context/ConfigContext';
 
-const menuItems = [
+const menuGroups = [
   {
-    label: 'Dashboard',
-    href: '/mahisadminpanel',
-    icon: LayoutDashboard,
-    color: 'text-sky-500',
+    title: 'Overview',
+    items: [
+      {
+        label: 'Dashboard',
+        href: '/mahisadminpanel',
+        icon: LayoutDashboard,
+        color: 'text-sky-500',
+      },
+      {
+        label: 'Analytics',
+        href: '/mahisadminpanel/analytics',
+        icon: BarChart3,
+        color: 'text-indigo-600',
+      },
+    ],
   },
   {
-    label: 'Analytics',
-    href: '/mahisadminpanel/analytics',
-    icon: BarChart3,
-    color: 'text-indigo-600',
+    title: 'Catalog',
+    items: [
+      {
+        label: 'Products',
+        href: '/mahisadminpanel/products',
+        icon: Package,
+        color: 'text-pink-500',
+      },
+      {
+        label: 'Categories',
+        href: '/mahisadminpanel/categories',
+        icon: Grid,
+        color: 'text-violet-500',
+      },
+      { label: 'Combos', href: '/mahisadminpanel/combos', icon: Layers, color: 'text-purple-500' },
+      { label: 'Deals', href: '/mahisadminpanel/deals', icon: Tag, color: 'text-red-500' },
+    ],
   },
   {
-    label: 'Categories',
-    href: '/mahisadminpanel/categories',
-    icon: Grid,
-    color: 'text-violet-500',
+    title: 'Sales',
+    items: [
+      {
+        label: 'Orders',
+        href: '/mahisadminpanel/orders',
+        icon: ShoppingBag,
+        color: 'text-orange-500',
+      },
+      {
+        label: 'Coupons',
+        href: '/mahisadminpanel/coupons',
+        icon: Ticket,
+        color: 'text-indigo-500',
+      },
+      {
+        label: 'Payments',
+        href: '/mahisadminpanel/payments',
+        icon: CreditCard,
+        color: 'text-green-500',
+      },
+    ],
   },
   {
-    label: 'Products',
-    href: '/mahisadminpanel/products',
-    icon: Package,
-    color: 'text-pink-500',
+    title: 'Vendor Management',
+    items: [
+      { label: 'Vendors', href: '/mahisadminpanel/vendors', icon: Store, color: 'text-orange-600' },
+      {
+        label: 'Vendor Categories',
+        href: '/mahisadminpanel/vendor-categories',
+        icon: Layers,
+        color: 'text-teal-600',
+      },
+      {
+        label: 'Subscriptions',
+        href: '/mahisadminpanel/subscriptions',
+        icon: CreditCard,
+        color: 'text-indigo-600',
+      },
+    ],
   },
   {
-    label: 'Orders',
-    href: '/mahisadminpanel/orders',
-    icon: ShoppingBag,
-    color: 'text-orange-500',
-  },
-  {
-    label: 'Carousel',
-    href: '/mahisadminpanel/carousel',
-    icon: ImageIcon,
-    color: 'text-emerald-500',
-  },
-  {
-    label: 'Combos',
-    href: '/mahisadminpanel/combos',
-    icon: Layers,
-    color: 'text-purple-500',
-  },
-  {
-    label: 'Deals',
-    href: '/mahisadminpanel/deals',
-    icon: Tag,
-    color: 'text-red-500',
-  },
-  {
-    label: 'Reviews',
-    href: '/mahisadminpanel/reviews',
-    icon: MessageSquare,
-    color: 'text-yellow-500',
-  },
-  {
-    label: 'CMS',
-    href: '/mahisadminpanel/cms',
-    icon: FileText,
-    color: 'text-blue-500',
-  },
-  {
-    label: 'Payments',
-    href: '/mahisadminpanel/payments',
-    icon: CreditCard,
-    color: 'text-green-500',
-  },
-  {
-    label: 'Email Templates',
-    href: '/mahisadminpanel/email-templates',
-    icon: Mail,
-    color: 'text-cyan-500',
-  },
-  {
-    label: 'FAQs',
-    href: '/mahisadminpanel/faqs',
-    icon: HelpCircle,
-    color: 'text-teal-500',
-  },
-  {
-    label: 'Support Tickets',
-    href: '/mahisadminpanel/support',
-    icon: MessageSquare,
-    color: 'text-rose-500',
-  },
-  {
-    label: 'Coupons',
-    href: '/mahisadminpanel/coupons',
-    icon: Ticket,
-    color: 'text-indigo-500',
-  },
-  {
-    label: 'Layout Manager',
-    href: '/mahisadminpanel/layout-manager',
-    icon: Layers,
-    color: 'text-gray-500',
+    title: 'Content & Support',
+    items: [
+      {
+        label: 'Carousel',
+        href: '/mahisadminpanel/carousel',
+        icon: ImageIcon,
+        color: 'text-emerald-500',
+      },
+      {
+        label: 'Reviews',
+        href: '/mahisadminpanel/reviews',
+        icon: MessageSquare,
+        color: 'text-yellow-500',
+      },
+      { label: 'CMS', href: '/mahisadminpanel/cms', icon: FileText, color: 'text-blue-500' },
+      { label: 'FAQs', href: '/mahisadminpanel/faqs', icon: HelpCircle, color: 'text-teal-500' },
+      {
+        label: 'Support Tickets',
+        href: '/mahisadminpanel/support',
+        icon: MessageSquare,
+        color: 'text-rose-500',
+      },
+      {
+        label: 'Email Templates',
+        href: '/mahisadminpanel/email-templates',
+        icon: Mail,
+        color: 'text-cyan-500',
+      },
+      {
+        label: 'Layout Manager',
+        href: '/mahisadminpanel/layout-manager',
+        icon: Layers,
+        color: 'text-gray-500',
+      },
+    ],
   },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { config } = useConfig();
-  const appName = config?.appName || "Mahi's Vriksham Boutique";
+  const appName = config?.appName || 'Agni Pengal';
 
   return (
     <aside className='w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent'>
@@ -145,20 +164,35 @@ export default function Sidebar() {
         />
       </div>
 
-      <nav className='px-4 space-y-2 flex-1'>
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${isActive ? 'bg-pink-600 text-white' : 'hover:bg-gray-800 text-gray-400'}`}
-            >
-              <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+      <nav className='px-4 space-y-6 flex-1'>
+        {menuGroups.map((group, groupIndex) => (
+          <div key={groupIndex}>
+            {group.title && (
+              <h3 className='mb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider'>
+                {group.title}
+              </h3>
+            )}
+            <div className='space-y-1'>
+              {group.items.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition text-sm ${
+                      isActive
+                        ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
+                  >
+                    <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>

@@ -11,7 +11,7 @@ import Image from 'next/image';
 export default function LoginPage() {
   const { config } = useConfig();
   const logoSrc = config?.logo || null;
-  const appName = config?.appName || "Mahi's Vriksham Boutique";
+  const appName = config?.appName || 'Agni Pengal';
 
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
