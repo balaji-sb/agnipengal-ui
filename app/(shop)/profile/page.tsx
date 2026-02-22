@@ -85,7 +85,7 @@ export default function ProfilePage() {
         <div>
           <h1 className='text-4xl font-black text-gray-900 mb-2'>
             Welcome back,{' '}
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-violet-600'>
+            <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600'>
               {user.name.split(' ')[0]}
             </span>
             !

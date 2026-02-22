@@ -113,7 +113,7 @@ export default function VendorsPage() {
   return (
     <div className='p-8'>
       <div className='flex justify-between items-center mb-8'>
-        <h1 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-violet-600 flex items-center'>
+        <h1 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 flex items-center'>
           <Store className='mr-3 text-pink-600' /> Vendor Management
         </h1>
         <div className='flex space-x-2'>

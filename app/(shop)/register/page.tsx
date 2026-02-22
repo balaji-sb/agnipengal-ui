@@ -215,7 +215,7 @@ export default function RegisterPage() {
             <button
               type='submit'
               disabled={loading}
-              className='group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all shadow-lg shadow-pink-500/30 disabled:opacity-70 disabled:cursor-not-allowed'
+              className='group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-orange-500 to-red-600 hover:from-pink-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all shadow-lg shadow-pink-500/30 disabled:opacity-70 disabled:cursor-not-allowed'
             >
               {loading ? (
                 <>

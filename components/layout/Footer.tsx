@@ -47,14 +47,14 @@ export default function Footer() {
   return (
     <footer className='relative mt-20'>
       {/* Decorative Top Gradient */}
-      <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500' />
+      <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-rose-500' />
 
       {/* Main Footer Content */}
       <div className='bg-gray-900 text-gray-300 pt-16 pb-8'>
         <div className='container mx-auto px-4'>
           {/* Newsletter Section - Catchy & Prominent */}
           <div className='max-w-4xl mx-auto mb-16 text-center'>
-            <h2 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-violet-400 mb-4'>
+            <h2 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-400 mb-4'>
               Join the {appName} Family
             </h2>
             <p className='text-gray-400 mb-8 max-w-lg mx-auto'>
@@ -65,20 +65,20 @@ export default function Footer() {
               onSubmit={handleSubscribe}
               className='flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto relative group'
             >
-              <div className='absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000'></div>
+              <div className='absolute -inset-1 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000'></div>
               <input
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder='Enter your email address'
                 disabled={loading}
-                className='relative flex-1 bg-gray-800 border-gray-700 text-white rounded-lg px-5 py-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                className='relative flex-1 bg-gray-800 border-gray-700 text-white rounded-lg px-5 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed'
                 required
               />
               <button
                 type='submit'
                 disabled={loading}
-                className='relative bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed'
+                className='relative bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed'
               >
                 {loading ? (
                   <>
@@ -106,7 +106,7 @@ export default function Footer() {
               <div className='flex gap-4'>
                 <a
                   href='https://www.instagram.com/mahis_vriksham_boutique/'
-                  className='w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all transform hover:-translate-y-1'
+                  className='w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1'
                   target='_blank'
                 >
                   <svg
@@ -170,43 +170,43 @@ export default function Footer() {
             {/* Quick Links */}
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
-                <span className='w-8 h-1 bg-pink-500 rounded-full'></span>
+                <span className='w-8 h-1 bg-red-500 rounded-full'></span>
                 Shop
               </h4>
               <ul className='space-y-3 text-sm'>
                 <li>
                   <a
                     href='/products'
-                    className='hover:text-pink-400 transition-colors flex items-center gap-2 group'
+                    className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                   >
-                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-pink-500 transition-colors'></span>{' '}
+                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>{' '}
                     All Products
                   </a>
                 </li>
                 <li>
                   <a
                     href='/products/aari-materials'
-                    className='hover:text-pink-400 transition-colors flex items-center gap-2 group'
+                    className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                   >
-                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-pink-500 transition-colors'></span>{' '}
+                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>{' '}
                     Aari Materials
                   </a>
                 </li>
                 <li>
                   <a
                     href='/products/sewing-kits'
-                    className='hover:text-pink-400 transition-colors flex items-center gap-2 group'
+                    className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                   >
-                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-pink-500 transition-colors'></span>{' '}
+                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>{' '}
                     Sewing Kits
                   </a>
                 </li>
                 <li>
                   <a
                     href='/products?sort=newest'
-                    className='hover:text-pink-400 transition-colors flex items-center gap-2 group'
+                    className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                   >
-                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-pink-500 transition-colors'></span>{' '}
+                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>{' '}
                     New Arrivals
                   </a>
                 </li>
@@ -216,7 +216,7 @@ export default function Footer() {
             {/* Support */}
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
-                <span className='w-8 h-1 bg-purple-500 rounded-full'></span>
+                <span className='w-8 h-1 bg-orange-500 rounded-full'></span>
                 Support
               </h4>
               <ul className='space-y-3 text-sm'>
@@ -249,7 +249,7 @@ export default function Footer() {
             {/* Contact Info */}
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
-                <span className='w-8 h-1 bg-indigo-500 rounded-full'></span>
+                <span className='w-8 h-1 bg-amber-500 rounded-full'></span>
                 We Accept
               </h4>
               <div className='grid grid-cols-2 gap-3 mb-6'>

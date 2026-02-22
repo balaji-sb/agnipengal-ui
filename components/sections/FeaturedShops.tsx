@@ -36,7 +36,7 @@ export default function FeaturedShops() {
           </div>
           <Link
             href='/shops'
-            className='text-pink-600 font-semibold hover:text-pink-700 flex items-center transition'
+            className='text-red-600 font-semibold hover:text-red-700 flex items-center transition'
           >
             View All <ArrowRight className='w-4 h-4 ml-1' />
           </Link>
@@ -45,11 +45,11 @@ export default function FeaturedShops() {
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
           {vendors.map((vendor) => (
             <Link key={vendor._id} href={`/shops/${vendor._id}`} className='group'>
-              <div className='bg-gray-50 rounded-xl p-6 text-center hover:shadow-md transition border border-transparent hover:border-pink-100 h-full flex flex-col items-center justify-center'>
-                <div className='w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform text-2xl font-bold text-pink-600'>
+              <div className='bg-gray-50 rounded-xl p-6 text-center hover:shadow-md transition border border-transparent hover:border-red-100 h-full flex flex-col items-center justify-center'>
+                <div className='w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform text-2xl font-bold text-red-600'>
                   {vendor.storeName.charAt(0)}
                 </div>
-                <h3 className='font-bold text-lg text-gray-900 mb-1 group-hover:text-pink-600 transition-colors'>
+                <h3 className='font-bold text-lg text-gray-900 mb-1 group-hover:text-red-700 transition-colors'>
                   {vendor.storeName}
                 </h3>
                 {vendor.category && <p className='text-sm text-gray-500'>{vendor.category.name}</p>}

@@ -87,18 +87,18 @@ export default function Header() {
                 href={link.href}
                 className={clsx(
                   'relative px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full transition-all duration-300 overflow-hidden group',
-                  pathname === link.href ? 'text-pink-600' : 'text-gray-600 hover:text-pink-600',
+                  pathname === link.href ? 'text-red-700' : 'text-gray-600 hover:text-red-700',
                 )}
               >
                 <span className='relative z-10'>{link.name}</span>
                 {pathname === link.href && (
                   <motion.div
                     layoutId='nav-pill'
-                    className='absolute inset-0 bg-pink-50 rounded-full z-0'
+                    className='absolute inset-0 bg-red-50 rounded-full z-0'
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
-                <span className='absolute bottom-0 left-0 w-full h-0.5 bg-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left' />
+                <span className='absolute bottom-0 left-0 w-full h-0.5 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left' />
               </Link>
             ))}
           </nav>
@@ -113,18 +113,18 @@ export default function Header() {
             {/* Mobile Search Icon */}
             <Link
               href='/products'
-              className='lg:hidden p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 rounded-full transition-all'
+              className='lg:hidden p-2.5 text-gray-600 hover:bg-red-50 hover:text-red-700 rounded-full transition-all'
             >
               <Search className='h-5 w-5' />
             </Link>
 
             <Link
               href='/cart'
-              className='p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 rounded-full transition-all relative group'
+              className='p-2.5 text-gray-600 hover:bg-red-50 hover:text-red-700 rounded-full transition-all relative group'
             >
               <ShoppingCart className='h-5 w-5 group-hover:scale-110 transition-transform' />
               {totalItems > 0 && (
-                <span className='absolute top-0 right-0 inline-flex items-center justify-center h-5 w-5 text-[10px] font-bold leading-none text-white bg-gradient-to-r from-pink-500 to-purple-500 rounded-full shadow-md transform translate-x-1/4 -translate-y-1/4 border-2 border-white animate-bounce-short'>
+                <span className='absolute top-0 right-0 inline-flex items-center justify-center h-5 w-5 text-[10px] font-bold leading-none text-white bg-gradient-to-r from-orange-500 to-red-600 rounded-full shadow-md transform translate-x-1/4 -translate-y-1/4 border-2 border-white animate-bounce-short'>
                   {totalItems}
                 </span>
               )}
@@ -137,7 +137,7 @@ export default function Header() {
                   href='/profile'
                   className='hidden md:flex items-center space-x-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100/50 transition-all border border-transparent hover:border-gray-200'
                 >
-                  <div className='h-8 w-8 bg-gradient-to-br from-pink-500 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md'>
+                  <div className='h-8 w-8 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md'>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                 </Link>
@@ -145,32 +145,32 @@ export default function Header() {
                 {/* Dropdown Menu */}
                 <div className='absolute right-0 top-full pt-4 w-60 opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200 transform origin-top-right'>
                   <div className='bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden ring-1 ring-black/5'>
-                    <div className='px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-pink-50/50 to-purple-50/50'>
+                    <div className='px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-red-50/50 to-orange-50/50'>
                       <p className='text-sm font-bold text-gray-900 truncate'>{user.name}</p>
                       <p className='text-xs text-gray-500 truncate'>{user.email}</p>
                     </div>
                     <div className='py-2'>
                       <Link
                         href='/profile'
-                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2'
+                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
                         <User className='w-4 h-4' /> My Profile
                       </Link>
                       <Link
                         href='/profile/orders'
-                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2'
+                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
                         <ShoppingCart className='w-4 h-4' /> My Orders
                       </Link>
                       <Link
                         href='/profile/wishlist'
-                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2'
+                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
                         <Heart className='w-4 h-4' /> Wishlist
                       </Link>
                       <Link
                         href='/profile/addresses'
-                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-colors flex items-center gap-2'
+                        className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
                         <MapPin className='w-4 h-4' /> Saved Addresses
                       </Link>
@@ -218,7 +218,7 @@ export default function Header() {
             <div className='space-y-1 px-4 py-6'>
               {user && (
                 <div className='flex items-center space-x-3 mb-6 px-2 pb-4 border-b border-gray-100'>
-                  <div className='h-10 w-10 bg-gradient-to-br from-pink-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-md'>
+                  <div className='h-10 w-10 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold shadow-md'>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -235,8 +235,8 @@ export default function Header() {
                   className={clsx(
                     'block py-3 px-4 text-sm font-bold rounded-xl transition-all uppercase tracking-wide',
                     pathname === link.href
-                      ? 'bg-pink-50 text-pink-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-pink-600',
+                      ? 'bg-red-50 text-red-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-red-700',
                   )}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -252,25 +252,25 @@ export default function Header() {
                     </p>
                     <Link
                       href='/profile'
-                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3'
+                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
                       <User className='w-5 h-5' /> Profile
                     </Link>
                     <Link
                       href='/profile/orders'
-                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3'
+                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
                       <ShoppingCart className='w-5 h-5' /> Orders
                     </Link>
                     <Link
                       href='/profile/addresses'
-                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3'
+                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
                       <MapPin className='w-5 h-5' /> Addresses
                     </Link>
                     <Link
                       href='/profile/wishlist'
-                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-pink-600 rounded-xl transition-all flex items-center gap-3'
+                      className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
                       <Heart className='w-5 h-5' /> Wishlist
                     </Link>

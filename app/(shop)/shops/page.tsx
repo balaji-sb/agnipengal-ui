@@ -70,7 +70,7 @@ export default function ShopsPage() {
               <Link key={vendor._id} href={`/shops/${vendor._id}`} className='group block h-full'>
                 <div className='bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-full border border-gray-100 flex flex-col'>
                   {/* Banner/Cover Area - Using a gradient placeholder for now as vendor images aren't fully set up */}
-                  <div className='h-32 bg-gradient-to-r from-pink-500 to-purple-600 relative'>
+                  <div className='h-32 bg-gradient-to-r from-orange-500 to-red-600 relative'>
                     <div className='absolute -bottom-8 left-6'>
                       <div className='w-16 h-16 rounded-xl bg-white p-1 shadow-lg'>
                         <div className='w-full h-full bg-gray-100 rounded-lg flex items-center justify-center text-pink-600 font-bold text-xl'>

@@ -7,6 +7,9 @@ import SearchHistorySection from '@/components/shop/sections/SearchHistorySectio
 import BuyAgain from '@/components/shop/sections/BuyAgain';
 import FeaturedShops from '@/components/sections/FeaturedShops';
 import VendorCategorySection from '@/components/shop/sections/VendorCategorySection';
+import HeroSection from '@/components/shop/sections/HeroSection';
+import FeatureSection from '@/components/shop/sections/FeatureSection';
+import SubscriptionPackagesSection from '@/components/shop/sections/SubscriptionPackagesSection';
 
 import api from '@/lib/api';
 import { Package, Sparkles } from 'lucide-react';
@@ -41,6 +44,7 @@ async function getData() {
       ? api.get('/deals?activeOnly=true')
       : Promise.resolve({ data: { data: [] } });
     const combosPromise = hasCombos ? api.get('/combos') : Promise.resolve({ data: { data: [] } });
+    const subscriptionPlansPromise = api.get('/subscription-plans');
 
     // 3. Execute all promises in parallel
     const [
@@ -51,6 +55,7 @@ async function getData() {
       productsRes,
       dealsRes,
       combosRes,
+      subscriptionPlansRes,
     ] = await Promise.all([
       configPromise,
       carouselPromise,
@@ -59,6 +64,7 @@ async function getData() {
       productsPromise,
       dealsPromise,
       combosPromise,
+      subscriptionPlansPromise,
     ]);
 
     const config = configRes.data.data || {};
@@ -68,6 +74,7 @@ async function getData() {
     const allProducts = productsRes.data.data || [];
     const dealsData = dealsRes.data.data || [];
     const combosData = combosRes.data.data || [];
+    const subscriptionPlans = subscriptionPlansRes?.data?.data || [];
 
     // 4. Process Product Grids
     const latestProducts = allProducts
@@ -97,6 +104,7 @@ async function getData() {
       featuredProducts,
       dealsData,
       combosData,
+      subscriptionPlans,
     };
   } catch (error) {
     console.error('Home Page data fetch error:', error);
@@ -109,6 +117,7 @@ async function getData() {
       featuredProducts: [],
       dealsData: [],
       combosData: [],
+      subscriptionPlans: [],
     };
   }
 }
@@ -123,6 +132,7 @@ export default async function Home() {
     featuredProducts,
     dealsData,
     combosData,
+    subscriptionPlans,
   } = await getData();
 
   // Fallback for banner if empty
@@ -132,17 +142,17 @@ export default async function Home() {
       : [
           {
             id: '1',
-            title: 'Premium Aari Materials',
+            title: 'Handcrafted Elegance',
             image:
-              'https://images.unsplash.com/photo-1619551734325-81aaf323686c?auto=format&fit=crop&q=80',
+              'https://images.unsplash.com/photo-1605369651713-33e10bdcecfd?auto=format&fit=crop&q=80',
             link: '/products',
           },
           {
             id: '2',
-            title: 'Exquisite Sewing Kits',
+            title: 'Support Women Makers',
             image:
               'https://images.unsplash.com/photo-1594981441668-d4c38d22ddba?auto=format&fit=crop&q=80',
-            link: '/category/sewing',
+            link: '/category',
           },
         ];
 
@@ -275,12 +285,16 @@ export default async function Home() {
     <div className='bg-gray-50 min-h-screen pb-20 overflow-x-hidden relative'>
       {/* Decorative Background Blobs */}
       <div className='fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0'>
-        <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-pink-200/30 rounded-full blur-[100px] animate-blob' />
-        <div className='absolute top-[20%] right-[-10%] w-[35%] h-[35%] bg-violet-200/30 rounded-full blur-[100px] animate-blob animation-delay-2000' />
-        <div className='absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-indigo-200/20 rounded-full blur-[100px] animate-blob animation-delay-4000' />
+        <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-100/30 rounded-full blur-[100px] animate-blob' />
+        <div className='absolute top-[20%] right-[-10%] w-[35%] h-[35%] bg-rose-100/30 rounded-full blur-[100px] animate-blob animation-delay-2000' />
+        <div className='absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-orange-100/20 rounded-full blur-[100px] animate-blob animation-delay-4000' />
       </div>
 
-      <div className='relative z-10 space-y-8 md:space-y-2'>
+      <HeroSection />
+      {/* <FeatureSection /> */}
+      {/* <SubscriptionPackagesSection plans={subscriptionPlans} /> */}
+
+      <div className='relative z-10 space-y-8 md:space-y-2 mt-8'>
         {/* <SearchHistorySection /> */}
 
         {sections.map((section: any) => renderSection(section))}
@@ -292,10 +306,12 @@ export default async function Home() {
       {/* Empty State */}
       {sections.length === 0 && (
         <div className='container mx-auto px-4 py-40 text-center relative z-10'>
-          <div className='bg-white/50 backdrop-blur-sm p-12 rounded-3xl inline-block border border-white/50 shadow-xl'>
-            <Package className='w-20 h-20 mx-auto text-gray-300 mb-6' />
-            <h2 className='text-2xl font-bold text-gray-400'>Store is getting ready...</h2>
-            <p className='text-gray-400 mt-2'>Check back soon for amazing products!</p>
+          <div className='bg-orange-50/50 backdrop-blur-sm p-12 rounded-3xl inline-block border border-orange-100 shadow-xl'>
+            <Package className='w-20 h-20 mx-auto text-orange-300 mb-6' />
+            <h2 className='text-2xl font-bold text-gray-800'>Igniting Soon...</h2>
+            <p className='text-gray-600 mt-2'>
+              We are curating amazing handcrafted products for you.
+            </p>
           </div>
         </div>
       )}

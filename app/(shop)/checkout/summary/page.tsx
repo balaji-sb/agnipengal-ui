@@ -335,7 +335,7 @@ export default function OrderSummaryPage() {
             <button
               onClick={handlePayment}
               disabled={loading}
-              className='w-full py-4 bg-gradient-to-r from-pink-600 to-violet-600 text-white font-bold rounded-xl hover:opacity-90 transition shadow-lg flex items-center justify-center'
+              className='w-full py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-xl hover:opacity-90 transition shadow-lg flex items-center justify-center'
             >
               {loading ? (
                 <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-white'></div>

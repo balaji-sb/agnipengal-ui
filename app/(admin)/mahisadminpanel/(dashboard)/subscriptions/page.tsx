@@ -74,7 +74,7 @@ export default function SubscriptionPlansPage() {
   return (
     <div className='p-8'>
       <div className='flex justify-between items-center mb-8'>
-        <h1 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-violet-600 flex items-center'>
+        <h1 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 flex items-center'>
           <CreditCard className='mr-3 text-pink-600' /> Subscription Plans
         </h1>
         <button
