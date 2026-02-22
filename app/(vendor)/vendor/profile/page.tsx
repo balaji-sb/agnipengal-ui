@@ -298,9 +298,7 @@ export default function VendorProfilePage() {
             ) : (
               <div className='bg-orange-50 rounded-xl shadow-sm border border-orange-100 p-6'>
                 <h3 className='font-bold text-orange-800 mb-2'>No Active Subscription</h3>
-                <p className='text-sm text-orange-600 mb-4'>
-                  Subscribe to a plan to start selling.
-                </p>
+                <p className='text-sm bg-orange-600 mb-4'>Subscribe to a plan to start selling.</p>
                 {/* Link to subscription page if it exists */}
               </div>
             )}

@@ -252,7 +252,7 @@ export default function ProfilePage() {
                 </p>
                 <Link
                   href='/products'
-                  className='inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-pink-600 hover:bg-pink-700 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5'
+                  className='inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5'
                 >
                   Start Shopping
                 </Link>
@@ -305,7 +305,7 @@ export default function ProfilePage() {
               className='group flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-pink-300 hover:shadow-md transition-all'
             >
               <div className='flex items-center gap-4'>
-                <div className='w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors'>
+                <div className='w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 group-hover:bg-orange-600 group-hover:text-white transition-colors'>
                   <MapPin className='w-5 h-5' />
                 </div>
                 <div>

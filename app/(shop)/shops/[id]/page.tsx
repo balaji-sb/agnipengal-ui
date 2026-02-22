@@ -221,7 +221,7 @@ export default function ShopDetailsPage() {
                           </span>
                         )}
                       </div>
-                      <button className='w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-pink-600 group-hover:text-white transition-colors'>
+                      <button className='w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-orange-600 group-hover:text-white transition-colors'>
                         <Store className='w-4 h-4' />
                       </button>
                     </div>

@@ -167,7 +167,7 @@ export default async function Home() {
           </section>
         );
       case 'vendor_category':
-        return <VendorCategorySection categories={vendorCategories} />;
+        return <VendorCategorySection key={section._id} categories={vendorCategories} />;
       case 'shops':
         return <FeaturedShops />;
       case 'categories':

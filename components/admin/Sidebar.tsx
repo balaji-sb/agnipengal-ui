@@ -90,7 +90,7 @@ const menuGroups = [
   {
     title: 'Vendor Management',
     items: [
-      { label: 'Vendors', href: '/mahisadminpanel/vendors', icon: Store, color: 'text-orange-600' },
+      { label: 'Vendors', href: '/mahisadminpanel/vendors', icon: Store, color: 'bg-orange-600' },
       {
         label: 'Vendor Categories',
         href: '/mahisadminpanel/vendor-categories',

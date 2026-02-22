@@ -151,7 +151,7 @@ export default async function AdminDashboard() {
           {/* Total Vendors */}
           <div className='bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4'>
             <div className='p-3 bg-orange-100 rounded-xl'>
-              <Store size={24} className='text-orange-600' />
+              <Store size={24} className='bg-orange-600' />
             </div>
             <div>
               <h3 className='text-gray-500 text-sm font-medium'>Total Vendors</h3>

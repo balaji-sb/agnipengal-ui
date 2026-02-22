@@ -50,7 +50,7 @@ export default function VendorProducts() {
         <h1 className='text-3xl font-bold text-gray-800'>My Products</h1>
         <Link
           href='/vendor/products/add'
-          className='flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition'
+          className='flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition'
         >
           <Plus className='w-4 h-4 mr-2' />
           Add New

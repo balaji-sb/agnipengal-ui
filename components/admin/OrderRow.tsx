@@ -225,7 +225,7 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                   <button
                     onClick={submitTracking}
                     disabled={loading}
-                    className='px-4 py-2 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 disabled:opacity-50 flex items-center gap-2'
+                    className='px-4 py-2 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 disabled:opacity-50 flex items-center gap-2'
                   >
                     {loading && <Loader2 className='w-4 h-4 animate-spin' />}
                     {loading ? 'Updating...' : 'Confirm Shipment'}

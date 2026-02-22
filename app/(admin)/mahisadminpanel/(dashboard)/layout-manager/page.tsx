@@ -157,7 +157,7 @@ export default function LayoutManager() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className='flex items-center px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition'
+            className='flex items-center px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition'
           >
             {saving ? (
               <Loader2 className='w-4 h-4 mr-2 animate-spin' />

@@ -39,6 +39,7 @@ export default function PartnershipRegister() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     // Load Razorpay script
@@ -137,6 +138,7 @@ export default function PartnershipRegister() {
         order_id: order_id,
         handler: async function (response: any) {
           // 3. On Success -> Register Vendor with Payment Details
+          setProcessingPayment(true);
           try {
             const registerRes = await axios.post(
               `${process.env.NEXT_PUBLIC_API_URL}/vendors/register`,
@@ -154,16 +156,12 @@ export default function PartnershipRegister() {
             );
 
             if (registerRes.data.success) {
-              toast.success('Registration and Payment Successful!');
-              if (registerRes.data.token) {
-                Cookies.set('token', registerRes.data.token, { expires: 30 });
-                Cookies.set('role', 'vendor', { expires: 30 });
-                Cookies.set('userName', registerRes.data.data.name, { expires: 30 });
-                router.push('/vendor/dashboard');
-              } else {
-                // Should not happen for paid flow as we auto-activate
-                router.push('/vendor/login');
-              }
+              toast.success(
+                'Registration and Payment Successful! Please check your email for the login link.',
+                { duration: 6000 },
+              );
+              // Do not automatically log in the vendor. Redirect to login page.
+              // router.push('/vendor/login');
             }
           } catch (regError: any) {
             toast.error(
@@ -171,6 +169,9 @@ export default function PartnershipRegister() {
                 'Registration failed after payment. Please contact support.',
             );
             console.error('Registration Error', regError);
+          } finally {
+            setProcessingPayment(false);
+            setLoading(false);
           }
         },
         prefill: {
@@ -207,6 +208,18 @@ export default function PartnershipRegister() {
           Complete your profile and subscription to start selling.
         </p>
       </div>
+
+      {/* Overlay Loader */}
+      {processingPayment && (
+        <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm'>
+          <div className='w-16 h-16 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin'></div>
+          <h3 className='mt-4 text-xl font-bold text-gray-800'>Finalizing Your Registration...</h3>
+          <p className='mt-2 text-gray-600 text-center max-w-sm px-4'>
+            Please don't close this window. We are creating your partner portal and sending your
+            login details securely.
+          </p>
+        </div>
+      )}
 
       <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-xl'>
         <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>

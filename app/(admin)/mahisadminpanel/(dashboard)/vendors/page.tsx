@@ -123,7 +123,7 @@ export default function VendorsPage() {
               onClick={() => setFilter(status)}
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition ${
                 filter === status
-                  ? 'bg-pink-600 text-white'
+                  ? 'bg-orange-600 text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >

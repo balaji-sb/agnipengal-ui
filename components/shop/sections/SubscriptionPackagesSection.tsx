@@ -38,7 +38,7 @@ export default function SubscriptionPackagesSection({ plans }: SubscriptionPacka
       <div className='container mx-auto max-w-7xl relative z-10 px-4 sm:px-6 lg:px-8'>
         <div className='text-center mb-16 max-w-3xl mx-auto'>
           <div className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/50 mb-6'>
-            <ShieldCheck className='w-3.5 h-3.5 text-orange-600 dark:text-orange-400' />
+            <ShieldCheck className='w-3.5 h-3.5 bg-orange-600 dark:text-orange-400' />
             <span className='text-sm font-medium text-orange-800 dark:text-orange-300 tracking-wide uppercase text-xs'>
               Partner Plans
             </span>

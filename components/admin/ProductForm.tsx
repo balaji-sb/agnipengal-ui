@@ -574,7 +574,7 @@ export default function ProductForm({
         <button
           type='submit'
           disabled={loading}
-          className='w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition flex items-center justify-center'
+          className='w-full bg-orange-600 text-white py-3 rounded-lg font-bold hover:bg-orange-700 transition flex items-center justify-center'
         >
           {loading ? <Loader2 className='animate-spin mr-2' /> : <Save className='w-4 h-4 mr-2' />}
           {isEditing ? 'Update Product' : 'Create Product'}

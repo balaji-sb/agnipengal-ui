@@ -21,7 +21,7 @@ export default function HeroSection() {
           {/* Main Typography Content */}
           <div className='max-w-2xl mx-auto lg:mx-0 text-center lg:text-left flex flex-col justify-center h-full'>
             <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/50 mb-8 self-center lg:self-start transition-colors hover:bg-orange-100 dark:hover:bg-orange-900/50'>
-              <Sparkles className='w-3.5 h-3.5 text-orange-600 dark:text-orange-400' />
+              <Sparkles className='w-3.5 h-3.5 bg-orange-600 dark:text-orange-400' />
               <span className='text-sm font-medium text-orange-800 dark:text-orange-300 tracking-wide uppercase text-xs'>
                 Join our thriving community
               </span>
@@ -29,7 +29,7 @@ export default function HeroSection() {
 
             <h1 className='text-5xl sm:text-6xl lg:text-[4.2rem] font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-[1.1]'>
               Turn Your Passion Into a <br className='hidden md:block' />
-              <span className='text-orange-600 dark:text-orange-500 relative inline-block'>
+              <span className='bg-orange-600 dark:text-orange-500 relative inline-block'>
                 Thriving Business
                 {/* Decorative underline */}
                 <svg
@@ -142,7 +142,7 @@ export default function HeroSection() {
             <div className='absolute top-8 -left-4 sm:-left-12 bg-white dark:bg-[#1A1A1A] p-5 sm:p-6 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 z-20 w-[90%] sm:w-[320px] transform transition-transform duration-300 hover:scale-[1.02]'>
               <div className='flex items-center gap-3 mb-4 border-b border-gray-100 dark:border-gray-800 pb-4'>
                 <div className='bg-orange-100 dark:bg-orange-900/30 w-12 h-12 rounded-full flex items-center justify-center shrink-0'>
-                  <span className='text-xl font-black text-orange-600 dark:text-orange-400'>₹</span>
+                  <span className='text-xl font-black bg-orange-600 dark:text-orange-400'>₹</span>
                 </div>
                 <div>
                   <h5 className='font-bold text-gray-900 dark:text-white text-lg leading-tight'>
