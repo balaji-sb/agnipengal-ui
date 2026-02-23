@@ -4,14 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import api from '@/lib/api';
-import { Save, LogOut, Store, Mail, Phone, MapPin, Tag } from 'lucide-react';
-import Cookies from 'js-cookie';
+import { Save, Store, Mail, Phone, MapPin, Tag } from 'lucide-react';
+import { useVendorAuth } from '@/lib/context/VendorAuthContext';
 
 interface VendorProfile {
   _id: string;
   storeName: string;
   storeDescription: string;
   phone: string;
+  shippingCharge: number;
+  referralCode?: string;
   status: string;
   category: string | { _id: string; name: string };
   user: {
@@ -35,9 +37,9 @@ interface VendorCategory {
 
 export default function VendorProfilePage() {
   const router = useRouter();
+  const { vendor, checkAuth, loading: authLoading } = useVendorAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState<VendorProfile | null>(null);
   const [categories, setCategories] = useState<VendorCategory[]>([]);
 
   // Form State
@@ -46,42 +48,42 @@ export default function VendorProfilePage() {
     storeDescription: '',
     phone: '',
     category: '',
+    shippingCharge: 0,
     name: '', // User name
   });
 
   useEffect(() => {
-    fetchData();
+    fetchCategories();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    if (vendor) {
+      setFormData({
+        storeName: vendor.storeName || '',
+        storeDescription: vendor.storeDescription || '',
+        phone: vendor.phone || '',
+        shippingCharge: vendor.shippingCharge || 0,
+        category:
+          typeof vendor.category === 'object' ? vendor.category?._id : vendor.category || '',
+        name: vendor.user?.name || '',
+      });
+    }
+  }, [vendor]);
+
+  const fetchCategories = async () => {
     try {
-      const [profileRes, categoriesRes] = await Promise.all([
-        api.get('/vendors/profile'),
-        api.get('/vendor-categories'),
-      ]);
-
-      if (profileRes.data.success) {
-        const data = profileRes.data.data;
-        setProfile(data);
-        setFormData({
-          storeName: data.storeName || '',
-          storeDescription: data.storeDescription || '',
-          phone: data.phone || '',
-          category: typeof data.category === 'object' ? data.category?._id : data.category || '',
-          name: data.user?.name || '',
-        });
-      }
-
-      if (categoriesRes.data.success) {
-        setCategories(categoriesRes.data.data);
+      const res = await api.get('/vendor-categories');
+      if (res.data.success) {
+        setCategories(res.data.data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
-      toast.error('Failed to load profile');
+      console.error('Error fetching categories:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  // fetchData replaced by vendor context and fetchCategories
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -98,7 +100,7 @@ export default function VendorProfilePage() {
       const res = await api.put('/vendors/profile', formData);
       if (res.data.success) {
         toast.success('Profile updated successfully');
-        // Update local state if needed
+        checkAuth(); // Refresh global context
       }
     } catch (error: any) {
       console.error('Error updating profile:', error);
@@ -108,20 +110,7 @@ export default function VendorProfilePage() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.get('/vendors/logout');
-    } catch (error) {
-      console.error('Logout failed', error);
-    }
-
-    Cookies.remove('role');
-    Cookies.remove('userName');
-    router.push('/vendor/login');
-    toast.success('Logged out successfully');
-  };
-
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className='flex justify-center items-center h-screen bg-gray-50'>
         <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600'></div>
@@ -129,7 +118,7 @@ export default function VendorProfilePage() {
     );
   }
 
-  if (!profile) return null;
+  if (!vendor) return null;
 
   return (
     <div className='min-h-screen bg-gray-50 p-6'>
@@ -139,13 +128,6 @@ export default function VendorProfilePage() {
             <h1 className='text-3xl font-bold text-gray-800'>Store Profile</h1>
             <p className='text-gray-500'>Manage your store information and settings</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className='flex items-center px-4 py-2 text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors'
-          >
-            <LogOut className='w-4 h-4 mr-2' />
-            Logout
-          </button>
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
@@ -234,6 +216,24 @@ export default function VendorProfilePage() {
                     />
                   </div>
                 </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Shipping Charge (₹)
+                  </label>
+                  <input
+                    type='number'
+                    name='shippingCharge'
+                    value={formData.shippingCharge}
+                    onChange={handleChange}
+                    min='0'
+                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all'
+                    placeholder='e.g. 50'
+                  />
+                  <p className='text-xs text-gray-500 mt-1'>
+                    Set this as 0 to offer free shipping for your products.
+                  </p>
+                </div>
               </div>
 
               <div className='mt-8 flex justify-end'>
@@ -262,35 +262,35 @@ export default function VendorProfilePage() {
                   <Mail className='w-5 h-5 text-gray-400 mt-0.5' />
                   <div>
                     <p className='text-sm font-medium text-gray-900'>Email Address</p>
-                    <p className='text-sm text-gray-500'>{profile.user.email}</p>
+                    <p className='text-sm text-gray-500'>{vendor.user.email}</p>
                   </div>
                 </div>
                 <div className='flex items-start gap-3'>
                   <div
-                    className={`w-2 h-2 mt-1.5 rounded-full ${profile.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'}`}
+                    className={`w-2 h-2 mt-1.5 rounded-full ${vendor.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'}`}
                   />
                   <div>
                     <p className='text-sm font-medium text-gray-900'>Account Status</p>
-                    <p className='text-sm text-gray-500 capitalize'>{profile.status}</p>
+                    <p className='text-sm text-gray-500 capitalize'>{vendor.status}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {profile.subscription ? (
+            {vendor.subscription ? (
               <div className='bg-gradient-to-br from-violet-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white'>
                 <h3 className='font-bold mb-1 opacity-90'>Current Plan</h3>
-                <p className='text-2xl font-bold mb-4'>{profile.subscription.plan.name}</p>
+                <p className='text-2xl font-bold mb-4'>{vendor.subscription.plan.name}</p>
 
                 <div className='space-y-2 text-sm opacity-80'>
                   <div className='flex justify-between'>
                     <span>Status</span>
-                    <span className='capitalize font-medium'>{profile.subscription.status}</span>
+                    <span className='capitalize font-medium'>{vendor.subscription.status}</span>
                   </div>
                   <div className='flex justify-between'>
                     <span>Expires On</span>
                     <span className='font-medium'>
-                      {new Date(profile.subscription.endDate).toLocaleDateString()}
+                      {new Date(vendor.subscription.endDate).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -298,7 +298,9 @@ export default function VendorProfilePage() {
             ) : (
               <div className='bg-orange-50 rounded-xl shadow-sm border border-orange-100 p-6'>
                 <h3 className='font-bold text-orange-800 mb-2'>No Active Subscription</h3>
-                <p className='text-sm bg-orange-600 mb-4'>Subscribe to a plan to start selling.</p>
+                <p className='text-sm text-orange-600 mb-4'>
+                  Subscribe to a plan to start selling.
+                </p>
                 {/* Link to subscription page if it exists */}
               </div>
             )}

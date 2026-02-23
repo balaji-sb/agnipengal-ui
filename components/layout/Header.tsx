@@ -40,6 +40,7 @@ export default function Header() {
     { name: 'Deals', href: '/deals' },
     { name: 'Shops', href: '/shops' },
     { name: 'Partnership', href: '/partnership' },
+    { name: 'Refer & Earn', href: '/refer-and-earn' },
   ];
 
   return (

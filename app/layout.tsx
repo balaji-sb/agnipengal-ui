@@ -9,6 +9,7 @@ import { WishlistProvider } from '@/lib/context/WishlistContext';
 import { Toaster } from 'react-hot-toast';
 
 import { ConfigProvider } from '@/lib/context/ConfigContext';
+import { VendorAuthProvider } from '@/lib/context/VendorAuthContext';
 
 const montserrat = Montserrat({ subsets: ['latin'] });
 const quicksand = Quicksand({ subsets: ['latin'] });
@@ -23,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const apiUrl =
       process.env.INTERNAL_API_URL ||
       process.env.NEXT_PUBLIC_API_URL ||
-      'http://localhost:5002/api';
+      'http://localhost:5000/api';
     console.log('Api url', apiUrl);
     const res = await fetch(`${apiUrl}/config`, { next: { revalidate: 60 } });
     const json = await res.json();
@@ -113,15 +114,17 @@ export default function RootLayout({
         >
           <ConfigProvider>
             <AuthProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <Suspense fallback={null}>
-                    <AnalyticsTracker />
-                  </Suspense>
-                  {children}
-                  <Toaster position='top-right' />
-                </WishlistProvider>
-              </CartProvider>
+              <VendorAuthProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <Suspense fallback={null}>
+                      <AnalyticsTracker />
+                    </Suspense>
+                    {children}
+                    <Toaster position='top-right' />
+                  </WishlistProvider>
+                </CartProvider>
+              </VendorAuthProvider>
             </AuthProvider>
           </ConfigProvider>
         </GoogleOAuthProvider>

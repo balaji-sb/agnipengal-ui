@@ -105,10 +105,13 @@ export default function OrderManager({ orders, pagination, isVendor = false }: O
               <th className='p-4 font-medium text-gray-500'>Order ID</th>
               <th className='p-4 font-medium text-gray-500'>Customer</th>
               <th className='p-4 font-medium text-gray-500'>Products</th>
+              {!isVendor && <th className='p-4 font-medium text-gray-500'>Vendor</th>}
               <th className='p-4 font-medium text-gray-500'>Date</th>
               <th className='p-4 font-medium text-gray-500'>Payment</th>
               <th className='p-4 font-medium text-gray-500'>Order Status</th>
-              <th className='p-4 font-medium text-gray-500'>Total</th>
+              <th className='p-4 font-medium text-gray-500'>
+                {isVendor ? 'Vendor Total' : 'Total'}
+              </th>
               <th className='p-4 font-medium text-gray-500'>Actions</th>
             </tr>
           </thead>

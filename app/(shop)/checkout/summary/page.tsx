@@ -41,15 +41,18 @@ export default function OrderSummaryPage() {
     setShippingAddress(JSON.parse(storedAddress));
 
     // Fetch shipping charge
-    fetchShippingCharge(JSON.parse(storedAddress), totalPrice);
-  }, [totalPrice, router]);
+    fetchShippingCharge(JSON.parse(storedAddress), totalPrice, items);
+  }, [totalPrice, items, router]);
 
-  const fetchShippingCharge = async (address: any, total: number) => {
+  const fetchShippingCharge = async (address: any, total: number, cartItems: any[]) => {
     try {
+      console.log('Fetching shipping charge, total:', total, 'items:', cartItems);
       const { data } = await api.post('/shipping/calculate', {
         pincode: address.pincode,
         totalAmount: total,
+        items: cartItems,
       });
+      console.log('Shipping calculation response:', data);
       if (data.success) {
         setShippingCharge(data.shippingCharge);
       }
@@ -110,7 +113,7 @@ export default function OrderSummaryPage() {
         items: items.map((item) => ({
           product: item.product._id,
           quantity: item.quantity,
-          price: item.product.price,
+          price: item.product.offerPrice > 0 ? item.product.offerPrice : item.product.price,
           image: item.product.images[0],
           name: item.product.name,
         })),
@@ -143,7 +146,22 @@ export default function OrderSummaryPage() {
             });
 
             if (verifyRes.data.success) {
-              console.log('Payment success');
+              console.log('Payment success, orders:', verifyRes.data.orderIds);
+
+              // Store per-vendor order IDs for the success page to display
+              if (verifyRes.data.orderIds && verifyRes.data.orderIds.length > 0) {
+                sessionStorage.setItem(
+                  'confirmedOrderIds',
+                  JSON.stringify(verifyRes.data.orderIds),
+                );
+                sessionStorage.setItem(
+                  'confirmedOrderCount',
+                  String(verifyRes.data.orderCount || 1),
+                );
+              } else if (data.dbOrderIds) {
+                sessionStorage.setItem('confirmedOrderIds', JSON.stringify(data.dbOrderIds));
+                sessionStorage.setItem('confirmedOrderCount', String(data.dbOrderIds.length));
+              }
 
               // Log Firebase Analytics Event
               import('@/lib/firebase').then(({ analytics }) => {
@@ -162,7 +180,11 @@ export default function OrderSummaryPage() {
                           : item.product._id,
                         item_name: item.product.name,
                         item_variant: item.variant?.name,
-                        price: item.variant ? item.variant.price : item.product.price,
+                        price: item.variant
+                          ? item.variant.price
+                          : item.product.offerPrice > 0
+                            ? item.product.offerPrice
+                            : item.product.price,
                         quantity: item.quantity,
                       })),
                     });
@@ -257,10 +279,15 @@ export default function OrderSummaryPage() {
                   </div>
                   <div className='flex-1'>
                     <h3 className='font-medium text-gray-900'>{item.product.name}</h3>
+                    {item.product.vendorName && (
+                      <p className='text-xs text-pink-600 font-medium'>{item.product.vendorName}</p>
+                    )}
                     <p className='text-sm text-gray-500'>Qty: {item.quantity}</p>
                   </div>
                   <div className='font-bold text-gray-900'>
-                    ₹{item.product.price * item.quantity}
+                    ₹
+                    {(item.product.offerPrice > 0 ? item.product.offerPrice : item.product.price) *
+                      item.quantity}
                   </div>
                 </div>
               ))}

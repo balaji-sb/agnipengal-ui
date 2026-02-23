@@ -3,9 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Package, LogOut, Settings, Store, ShoppingBag } from 'lucide-react';
 import { useConfig } from '@/lib/context/ConfigContext';
+import Cookies from 'js-cookie';
+import api from '@/lib/api';
+import { toast } from 'react-hot-toast';
+import { useVendorAuth } from '@/lib/context/VendorAuthContext';
 
 const menuItems = [
   {
@@ -37,8 +41,14 @@ const menuItems = [
 
 export default function VendorSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useVendorAuth();
   const { config } = useConfig();
   const appName = config?.appName || 'Agni Pengal';
+
+  const handleLogout = async () => {
+    logout();
+  };
 
   return (
     <aside className='w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent'>
@@ -72,6 +82,14 @@ export default function VendorSidebar() {
             </Link>
           );
         })}
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className='flex w-full items-center space-x-3 px-4 py-3 mt-auto rounded-lg transition hover:bg-gray-800 text-red-500 hover:text-red-400'
+        >
+          <LogOut className='w-5 h-5 text-red-500' />
+          <span>Sign Out</span>
+        </button>
       </nav>
 
       <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>

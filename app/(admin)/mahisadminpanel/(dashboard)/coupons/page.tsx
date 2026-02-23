@@ -69,6 +69,7 @@ export default function CouponsPage() {
             <tr>
               <th className='p-4 font-semibold text-gray-600'>Code</th>
               <th className='p-4 font-semibold text-gray-600'>Discount</th>
+              <th className='p-4 font-semibold text-gray-600'>Type</th>
               <th className='p-4 font-semibold text-gray-600'>Min Order</th>
               <th className='p-4 font-semibold text-gray-600'>Status</th>
               <th className='p-4 font-semibold text-gray-600'>Actions</th>
@@ -82,6 +83,17 @@ export default function CouponsPage() {
                   {coupon.discountType === 'PERCENTAGE'
                     ? `${coupon.discountValue}% OFF`
                     : `₹${coupon.discountValue} OFF`}
+                </td>
+                <td className='p-4'>
+                  {coupon.couponType === 'partnership-coupon' ? (
+                    <span className='text-xs px-2 py-1 bg-violet-100 text-violet-700 rounded-full font-medium'>
+                      Partnership
+                    </span>
+                  ) : (
+                    <span className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium'>
+                      Standard
+                    </span>
+                  )}
                 </td>
                 <td className='p-4'>₹{coupon.minOrderValue}</td>
                 <td className='p-4'>

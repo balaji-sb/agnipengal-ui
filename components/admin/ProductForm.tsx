@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Loader2, Plus, Trash2, Zap } from 'lucide-react';
 import Link from 'next/link';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { useAuth } from '@/lib/context/AuthContext';
+import { useVendorAuth } from '@/lib/context/VendorAuthContext';
 
 interface ProductFormProps {
   initialData?: any;
@@ -19,7 +21,10 @@ export default function ProductForm({
   isVendor = false,
 }: ProductFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
+  const { vendor, loading: vendorLoading } = useVendorAuth();
   const [categories, setCategories] = useState<any[]>([]);
+  const [vendors, setVendors] = useState<any[]>([]); // For Admin to assign vendors
   const [loading, setLoading] = useState(false);
 
   // Custom state for dynamic attributes
@@ -43,6 +48,7 @@ export default function ProductForm({
     stock: '',
     category: '',
     subcategory: '',
+    vendor: '',
     images: [] as string[],
     isFeatured: false,
     isDeal: false,
@@ -55,6 +61,7 @@ export default function ProductForm({
         ...initialData,
         images: initialData.images || [],
         category: initialData.category?._id || initialData.category,
+        vendor: initialData.vendor?._id || initialData.vendor || '',
       });
 
       if (initialData.attributes) {
@@ -81,7 +88,16 @@ export default function ProductForm({
 
   useEffect(() => {
     api.get('/categories').then((res) => setCategories(res.data.data));
-  }, []);
+
+    // If Admin, fetch vendors to assign
+    if (!isVendor) {
+      api.get('/vendors/admin/all').then((res) => {
+        if (res.data.success) {
+          setVendors(res.data.data);
+        }
+      });
+    }
+  }, [isVendor]);
 
   const handleChange = (e: any) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -196,6 +212,7 @@ export default function ProductForm({
         ...formData,
         attributes: attributesObj,
         variants: hasVariants ? variants : [],
+        ...(isVendor && vendor?.user?._id ? { vendor: vendor.user._id } : {}),
       };
 
       if (payload.category === '') {
@@ -263,6 +280,33 @@ export default function ProductForm({
             />
           </div>
         </div>
+
+        {/* Vendor Selection (Admin Only) */}
+        {!isVendor && (
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <div>
+              <label className='block text-sm font-medium mb-1 text-orange-700 font-bold'>
+                Assign Vendor
+              </label>
+              <select
+                name='vendor'
+                value={formData.vendor || ''}
+                onChange={handleChange}
+                className='w-full p-2 border border-orange-200 rounded bg-orange-50'
+              >
+                <option value=''>Admin Product (Internal)</option>
+                {vendors.map((v: any) => (
+                  <option key={v._id} value={v.user?._id || v.user}>
+                    {v.storeName} ({v.user?.name || 'No Name'})
+                  </option>
+                ))}
+              </select>
+              <p className='text-xs text-gray-500 mt-1'>
+                Select which vendor owns this product. Leave empty for Admin products.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           <div>

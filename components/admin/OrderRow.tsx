@@ -100,6 +100,11 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
               >
                 {order.items[0].product?.name || order.items[0].name || 'Product Deleted'}
               </p>
+              {!isVendor && order.items[0].vendorName && (
+                <p className='text-[10px] text-pink-600 font-semibold uppercase'>
+                  Vendor: {order.items[0].vendorName}
+                </p>
+              )}
               {order.items.length > 1 && (
                 <p className='text-xs text-gray-500'>+{order.items.length - 1} more items</p>
               )}
@@ -108,6 +113,22 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
             <span className='text-gray-400 italic'>No items</span>
           )}
         </td>
+        {!isVendor && (
+          <td className='p-4'>
+            <div className='flex flex-wrap gap-1'>
+              {Array.from(
+                new Set(order.items.map((item: any) => item.vendorName || 'Main Store')),
+              ).map((vName: any, idx) => (
+                <span
+                  key={idx}
+                  className='px-2 py-0.5 bg-pink-50 text-pink-600 rounded text-[10px] font-bold uppercase'
+                >
+                  {vName}
+                </span>
+              ))}
+            </div>
+          </td>
+        )}
         <td className='p-4 text-sm text-gray-500' suppressHydrationWarning>
           {new Date(order.createdAt).toLocaleDateString()}
         </td>
@@ -150,7 +171,12 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
             )}
           </div>
         </td>
-        <td className='p-4 font-bold text-gray-900'>₹{order.totalAmount}</td>
+        <td className='p-4 font-bold text-gray-900'>
+          ₹{isVendor ? order.vendorGrandTotal || order.vendorSubTotal || 0 : order.totalAmount}
+          {isVendor && (
+            <span className='block text-[10px] text-gray-400 font-normal'>Vendor Earned</span>
+          )}
+        </td>
         <td className='p-4'>
           <button
             onClick={() => setShowModal(true)}
@@ -363,6 +389,7 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                       <thead className='bg-gray-50 border-b'>
                         <tr>
                           <th className='p-3 font-medium text-gray-500'>Product</th>
+                          {!isVendor && <th className='p-3 font-medium text-gray-500'>Vendor</th>}
                           <th className='p-3 font-medium text-gray-500 text-center'>Qty</th>
                           <th className='p-3 font-medium text-gray-500 text-right'>Price</th>
                           <th className='p-3 font-medium text-gray-500 text-right'>Total</th>
@@ -379,6 +406,13 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                                 <p className='text-xs text-gray-500'>{item.variant}</p>
                               )}
                             </td>
+                            {!isVendor && (
+                              <td className='p-3'>
+                                <span className='text-xs font-semibold text-pink-600 bg-pink-50 px-2 py-0.5 rounded'>
+                                  {item.vendorName || 'Main Store'}
+                                </span>
+                              </td>
+                            )}
                             <td className='p-3 text-center'>{item.quantity}</td>
                             <td className='p-3 text-right'>₹{item.price}</td>
                             <td className='p-3 text-right font-medium'>
@@ -388,50 +422,110 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                         ))}
                       </tbody>
                       <tfoot className='bg-gray-50 border-t'>
-                        <tr>
-                          <td colSpan={3} className='p-2 text-right text-gray-600'>
-                            Subtotal
-                          </td>
-                          <td className='p-2 text-right font-medium text-gray-900'>
-                            ₹{order.subTotal || order.totalAmount}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colSpan={3} className='p-2 text-right text-gray-600'>
-                            Shipping Charge
-                          </td>
-                          <td className='p-2 text-right font-medium text-gray-900'>
-                            {order.shippingCharge ? `+₹${order.shippingCharge}` : 'Free'}
-                          </td>
-                        </tr>
-                        {order.discount > 0 && (
-                          <tr>
-                            <td colSpan={3} className='p-2 text-right text-green-600'>
-                              Discount{' '}
-                              {order.couponCode ? (
-                                <span className='text-xs border border-green-200 bg-green-50 px-1 rounded ml-1'>
-                                  {order.couponCode}
-                                </span>
-                              ) : (
-                                ''
-                              )}
-                            </td>
-                            <td className='p-2 text-right font-medium text-green-600'>
-                              -₹{order.discount}
-                            </td>
-                          </tr>
+                        {isVendor ? (
+                          <>
+                            <tr>
+                              <td colSpan={3} className='p-2 text-right text-gray-600 font-medium'>
+                                Vendor Subtotal
+                              </td>
+                              <td className='p-2 text-right font-semibold text-gray-900'>
+                                ₹{order.vendorSubTotal || 0}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colSpan={3} className='p-2 text-right text-gray-600 font-medium'>
+                                Shipping Share
+                              </td>
+                              <td className='p-2 text-right font-semibold text-gray-900'>
+                                {order.vendorShippingTotal
+                                  ? `+₹${order.vendorShippingTotal}`
+                                  : '₹0'}
+                              </td>
+                            </tr>
+                            <tr className='border-t border-gray-200'>
+                              <td
+                                colSpan={3}
+                                className='p-3 text-right font-bold text-gray-900 text-lg'
+                              >
+                                Vendor Total
+                              </td>
+                              <td className='p-3 text-right font-bold text-pink-600 text-lg'>
+                                ₹{order.vendorGrandTotal || order.vendorSubTotal || 0}
+                              </td>
+                            </tr>
+                          </>
+                        ) : (
+                          <>
+                            <tr>
+                              <td colSpan={4} className='p-2 text-right text-gray-600'>
+                                Subtotal
+                              </td>
+                              <td className='p-2 text-right font-medium text-gray-900'>
+                                ₹{order.subTotal || order.totalAmount}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colSpan={4} className='p-2 text-right text-gray-600'>
+                                Shipping Charge
+                              </td>
+                              <td className='p-2 text-right font-medium text-gray-900'>
+                                {order.shippingCharge ? `+₹${order.shippingCharge}` : 'Free'}
+                              </td>
+                            </tr>
+                            {/* Shipping Breakdown for Admin */}
+                            {!isVendor && order.vendorShippingCharges?.length > 1 && (
+                              <tr>
+                                <td colSpan={5} className='p-2 text-right'>
+                                  <div className='inline-block text-[10px] text-gray-500 bg-gray-50 px-2 py-1 rounded border'>
+                                    <span className='font-semibold mr-1'>Breakdown:</span>
+                                    {order.vendorShippingCharges.map((vsc: any, idx: number) => {
+                                      // Try to find vendor name from items
+                                      const vName =
+                                        order.items.find(
+                                          (item: any) =>
+                                            (item.vendor?._id || item.vendor)?.toString() ===
+                                            (vsc.vendor?._id || vsc.vendor)?.toString(),
+                                        )?.vendorName || 'Vendor';
+                                      return (
+                                        <span key={idx} className='inline-block ml-2'>
+                                          {vName}: ₹{vsc.charge}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                            {order.discount > 0 && (
+                              <tr>
+                                <td colSpan={4} className='p-2 text-right text-green-600'>
+                                  Discount{' '}
+                                  {order.couponCode ? (
+                                    <span className='text-xs border border-green-200 bg-green-50 px-1 rounded ml-1'>
+                                      {order.couponCode}
+                                    </span>
+                                  ) : (
+                                    ''
+                                  )}
+                                </td>
+                                <td className='p-2 text-right font-medium text-green-600'>
+                                  -₹{order.discount}
+                                </td>
+                              </tr>
+                            )}
+                            <tr className='border-t border-gray-200'>
+                              <td
+                                colSpan={4}
+                                className='p-3 text-right font-bold text-gray-900 text-lg'
+                              >
+                                Total Amount
+                              </td>
+                              <td className='p-3 text-right font-bold text-pink-600 text-lg'>
+                                ₹{order.totalAmount}
+                              </td>
+                            </tr>
+                          </>
                         )}
-                        <tr className='border-t border-gray-200'>
-                          <td
-                            colSpan={3}
-                            className='p-3 text-right font-bold text-gray-900 text-lg'
-                          >
-                            Total Amount
-                          </td>
-                          <td className='p-3 text-right font-bold text-pink-600 text-lg'>
-                            ₹{order.totalAmount}
-                          </td>
-                        </tr>
                       </tfoot>
                     </table>
                   </div>

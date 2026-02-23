@@ -9,7 +9,10 @@ import {
   Tag,
   Store,
   CreditCard,
+  ArrowRight,
+  Clock,
 } from 'lucide-react';
+import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
@@ -28,8 +31,11 @@ async function getStats() {
       comboCount: 0,
       dealCount: 0,
       vendorCount: 0,
+      activeVendorCount: 0,
+      pendingVendorCount: 0,
       vendorCategoryCount: 0,
       subscriptionPlanCount: 0,
+      recentVendors: [],
     };
   }
 }
@@ -147,15 +153,51 @@ export default async function AdminDashboard() {
       {/* Vendor Section */}
       <div>
         <h2 className='text-xl font-bold text-gray-800 mb-4'>Vendor Management</h2>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {/* Total Vendors */}
           <div className='bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4'>
             <div className='p-3 bg-orange-100 rounded-xl'>
-              <Store size={24} className='bg-orange-600' />
+              <Store size={24} className='text-orange-600' />
             </div>
-            <div>
-              <h3 className='text-gray-500 text-sm font-medium'>Total Vendors</h3>
+            <div className='flex-1'>
+              <h3 className='text-gray-500 text-sm font-medium uppercase'>Total Vendors</h3>
               <p className='text-2xl font-bold text-gray-900'>{stats.vendorCount || 0}</p>
+            </div>
+          </div>
+
+          {/* Active vs Pending */}
+          <div className='bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center'>
+            <div className='flex justify-between items-center mb-2'>
+              <span className='text-xs font-semibold uppercase tracking-wider text-green-600'>
+                Active
+              </span>
+              <span className='text-lg font-bold text-gray-900'>
+                {stats.activeVendorCount || 0}
+              </span>
+            </div>
+            <div className='w-full bg-gray-100 rounded-full h-2 overflow-hidden'>
+              <div
+                className='bg-green-500 h-full rounded-full transition-all duration-500'
+                style={{
+                  width: `${(stats.activeVendorCount / (stats.vendorCount || 1)) * 100}%`,
+                }}
+              />
+            </div>
+            <div className='flex justify-between items-center mt-3 mb-2'>
+              <span className='text-xs font-semibold uppercase tracking-wider text-orange-600'>
+                Pending
+              </span>
+              <span className='text-lg font-bold text-gray-900'>
+                {stats.pendingVendorCount || 0}
+              </span>
+            </div>
+            <div className='w-full bg-gray-100 rounded-full h-2 overflow-hidden'>
+              <div
+                className='bg-orange-500 h-full rounded-full transition-all duration-500'
+                style={{
+                  width: `${(stats.pendingVendorCount / (stats.vendorCount || 1)) * 100}%`,
+                }}
+              />
             </div>
           </div>
 
@@ -165,7 +207,7 @@ export default async function AdminDashboard() {
               <Layers size={24} className='text-teal-600' />
             </div>
             <div>
-              <h3 className='text-gray-500 text-sm font-medium'>Vendor Categories</h3>
+              <h3 className='text-gray-500 text-sm font-medium uppercase'>Categories</h3>
               <p className='text-2xl font-bold text-gray-900'>{stats.vendorCategoryCount || 0}</p>
             </div>
           </div>
@@ -176,10 +218,80 @@ export default async function AdminDashboard() {
               <CreditCard size={24} className='text-indigo-600' />
             </div>
             <div>
-              <h3 className='text-gray-500 text-sm font-medium'>Subscription Plans</h3>
+              <h3 className='text-gray-500 text-sm font-medium uppercase'>Subscription</h3>
               <p className='text-2xl font-bold text-gray-900'>{stats.subscriptionPlanCount || 0}</p>
             </div>
           </div>
+        </div>
+      </div>
+      {/* Recent Vendors Section */}
+      <div className='bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden'>
+        <div className='p-6 border-b border-gray-50 flex justify-between items-center'>
+          <div className='flex items-center space-x-2'>
+            <Clock className='text-pink-600' size={20} />
+            <h2 className='text-lg font-bold text-gray-800'>Recent Vendor Registrations</h2>
+          </div>
+          <Link
+            href='/mahisadminpanel/vendors'
+            className='text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center group'
+          >
+            View All Vendors
+            <ArrowRight size={16} className='ml-1 group-hover:translate-x-1 transition-transform' />
+          </Link>
+        </div>
+        <div className='overflow-x-auto'>
+          <table className='w-full text-left'>
+            <thead className='bg-gray-50/50 text-gray-500 text-xs font-bold uppercase tracking-wider'>
+              <tr>
+                <th className='px-6 py-4'>Store Name</th>
+                <th className='px-6 py-4'>Owner</th>
+                <th className='px-6 py-4'>Category</th>
+                <th className='px-6 py-4'>Status</th>
+                <th className='px-6 py-4'>Date</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-gray-50'>
+              {stats.recentVendors?.map((vendor: any) => (
+                <tr key={vendor._id} className='hover:bg-gray-50/50 transition-colors'>
+                  <td className='px-6 py-4'>
+                    <span className='font-semibold text-gray-800'>{vendor.storeName}</span>
+                  </td>
+                  <td className='px-6 py-4'>
+                    <div className='text-sm font-medium text-gray-900'>
+                      {vendor.user?.name || '-'}
+                    </div>
+                    <div className='text-xs text-gray-400'>{vendor.user?.email || '-'}</div>
+                  </td>
+                  <td className='px-6 py-4 text-sm text-gray-600'>
+                    {vendor.category?.name || '-'}
+                  </td>
+                  <td className='px-6 py-4'>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                        vendor.status === 'active'
+                          ? 'bg-green-100 text-green-700'
+                          : vendor.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-red-100 text-red-700'
+                      }`}
+                    >
+                      {vendor.status}
+                    </span>
+                  </td>
+                  <td className='px-6 py-4 text-sm text-gray-500'>
+                    {new Date(vendor.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+              {(!stats.recentVendors || stats.recentVendors.length === 0) && (
+                <tr>
+                  <td colSpan={5} className='px-6 py-10 text-center text-gray-500 italic'>
+                    No recent vendor registrations found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

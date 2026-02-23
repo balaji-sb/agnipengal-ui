@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/context/AuthContext';
+import { useVendorAuth } from '@/lib/context/VendorAuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
@@ -19,7 +19,7 @@ export default function VendorLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth(); // We might need to adjust AuthContext if it hardcodes /auth/login
+  const { login } = useVendorAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,23 +36,7 @@ export default function VendorLoginPage() {
       if (res.data.success) {
         toast.success('Login successful');
         const { token, user } = res.data;
-
-        // Manually setting cookies/state if AuthContext doesn't support custom endpoints easily
-        // But optimally AuthContext should be flexible.
-        // For now, let's assume we can manually set cookies and redirect,
-        // OR use the login function if it accepts a role or endpoint.
-
-        // Let's set cookies manually as per other parts of the app
-        // Cookies.set('vendor_token', token, { expires: 30 }); // Using HttpOnly from backend
-        Cookies.set('role', 'vendor', { expires: 30 });
-        Cookies.set('userName', user.name, { expires: 30 });
-
-        // Force reload or state update?
-        // Ideally we should use the context.
-        // If AuthContext reads from cookies on mount, a hard reload or router.refresh might work.
-        // Let's try router.push first.
-
-        window.location.href = '/vendor/dashboard'; // Force reload to update context
+        login(user, token);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Login failed');
