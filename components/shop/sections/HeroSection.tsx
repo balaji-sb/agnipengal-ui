@@ -61,7 +61,7 @@ export default function HeroSection() {
                   <ArrowRight className='w-5 h-5' />
                 </button>
               </Link>
-              <Link href='/how-it-works' className='w-full sm:w-auto min-w-[200px]'>
+              <Link href='/refer-and-earn' className='w-full sm:w-auto min-w-[200px]'>
                 <button className='w-full px-8 py-4 bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-white font-semibold rounded-lg border-2 border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-white transition-all duration-200 flex items-center justify-center gap-2'>
                   See How It Works
                 </button>

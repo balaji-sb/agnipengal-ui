@@ -35,10 +35,10 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Collections', href: '/category' },
+    // { name: 'Collections', href: '/category' },
+    { name: 'Shops', href: '/shops' },
     { name: 'Products', href: '/products' },
     { name: 'Deals', href: '/deals' },
-    { name: 'Shops', href: '/shops' },
     { name: 'Partnership', href: '/partnership' },
     { name: 'Refer & Earn', href: '/refer-and-earn' },
   ];

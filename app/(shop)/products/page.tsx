@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductSort from '@/components/shop/ProductSort';
 import ProductFilter from '@/components/shop/ProductFilter';
@@ -6,6 +7,38 @@ import ProductListingLayout from '@/components/shop/ProductListingLayout';
 import api from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'All Products – Aari Materials, Sewing Kits & More',
+  description:
+    'Browse our full collection of Aari embroidery raw materials, needles, threads, sewing kits, and handmade decoration items. Filter by price, vendor, and category. Ships across India.',
+  keywords: [
+    'buy aari embroidery materials',
+    'aari thread online',
+    'aari needle India',
+    'sewing kits online',
+    'handmade decoration items India',
+    'embroidery supplies shop',
+    'women artisan products India',
+    'Agni Pengal products',
+  ],
+  openGraph: {
+    title: 'Shop All Products | Agni Pengal',
+    description:
+      'Browse Aari embroidery supplies, sewing kits, and handmade items from women-owned stores.',
+    url: 'https://agnipengal.com/products',
+    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shop All Products | Agni Pengal',
+    description: 'Browse Aari embroidery supplies and handmade products from women-owned stores.',
+    images: ['https://agnipengal.com/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://agnipengal.com/products',
+  },
+};
 
 async function getAllProducts(sort: string, filters: any) {
   const params: any = { limit: 15, page: 1 }; // Default initial load

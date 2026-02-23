@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Carousel from '@/components/shop/Carousel';
 import ProductGridSection from '@/components/shop/sections/ProductGridSection';
 import HomeCategories from '@/components/shop/sections/HomeCategories';
@@ -17,6 +18,37 @@ import * as Motion from 'framer-motion/client'; // Server Component compatible i
 
 // Force dynamic to ensure data is fresh
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Home – Aari Embroidery Supplies & Handmade Products',
+  description:
+    'Discover premium Aari embroidery raw materials, sewing kits, handmade decoration items, and more — from women-owned stores across India. Empower artisans. Shop now on Agni Pengal.',
+  keywords: [
+    'Aari embroidery materials',
+    'Aari work supplies online',
+    'buy aari thread India',
+    'handmade decoration items',
+    'sewing kits online India',
+    'women artisan products',
+    'Agni Pengal shop',
+    'Mahis Vriksham',
+    'aari needle buy',
+    'embroidery raw materials Chennai',
+  ],
+  openGraph: {
+    title: 'Agni Pengal – Aari Embroidery & Handmade Marketplace',
+    description:
+      'Shop Aari embroidery supplies, sewing kits, and handmade products from women entrepreneurs across India.',
+    url: 'https://agnipengal.com',
+    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Agni Pengal – Aari Embroidery & Handmade Marketplace',
+    description: 'Shop Aari embroidery supplies from women entrepreneurs across India.',
+    images: ['https://agnipengal.com/og-image.jpg'],
+  },
+};
 
 async function getData() {
   try {
