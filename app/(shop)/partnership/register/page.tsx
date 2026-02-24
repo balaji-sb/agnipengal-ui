@@ -19,6 +19,8 @@ interface Plan {
   name: string;
   price: number;
   durationInMonths: number;
+  isFreeTrialPlan: boolean;
+  trialPeriodDays: number;
 }
 
 export default function PartnershipRegister() {
@@ -295,7 +297,7 @@ export default function PartnershipRegister() {
           contact: formData.phone,
         },
         theme: {
-          color: '#7C3AED', // Violet-600
+          color: '#ea580c', // Orange-600 — Agni Pengal theme
         },
         modal: {
           ondismiss: function () {
@@ -327,7 +329,7 @@ export default function PartnershipRegister() {
       {/* Overlay Loader */}
       {processingPayment && (
         <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm'>
-          <div className='w-16 h-16 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin'></div>
+          <div className='w-16 h-16 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin'></div>
           <h3 className='mt-4 text-xl font-bold text-gray-800'>Finalizing Your Registration...</h3>
           <p className='mt-2 text-gray-600 text-center max-w-sm px-4'>
             Please don't close this window. We are creating your partner portal and sending your
@@ -347,7 +349,7 @@ export default function PartnershipRegister() {
                   name='name'
                   type='text'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -358,7 +360,7 @@ export default function PartnershipRegister() {
                   name='email'
                   type='email'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -372,7 +374,7 @@ export default function PartnershipRegister() {
                   name='password'
                   type='password'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -383,7 +385,7 @@ export default function PartnershipRegister() {
                   name='confirmPassword'
                   type='password'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.confirmPassword}
                   onChange={handleChange}
                 />
@@ -398,7 +400,7 @@ export default function PartnershipRegister() {
                   name='storeName'
                   type='text'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.storeName}
                   onChange={handleChange}
                 />
@@ -410,7 +412,7 @@ export default function PartnershipRegister() {
                 <select
                   name='category'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.category}
                   onChange={handleChange}
                 >
@@ -428,7 +430,7 @@ export default function PartnershipRegister() {
                   name='phone'
                   type='text'
                   required
-                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                  className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                   value={formData.phone}
                   onChange={handleChange}
                 />
@@ -440,7 +442,7 @@ export default function PartnershipRegister() {
               <textarea
                 name='storeDescription'
                 rows={3}
-                className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500'
+                className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
                 placeholder='Tell us about your products...'
                 value={formData.storeDescription}
                 onChange={handleChange}
@@ -449,32 +451,71 @@ export default function PartnershipRegister() {
 
             {/* Plan Selection */}
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Selected Plan</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>Select Plan</label>
               <div className='grid grid-cols-1 gap-3'>
-                {plans.map((plan, index) => {
-                  const isBestValue = index === plans.length - 1; // Assuming sorted ascending by price, the last is highest value
+                {plans.map((plan) => {
+                  const paidPlans = plans.filter((p) => !p.isFreeTrialPlan);
+                  const bestPlanId =
+                    paidPlans.length >= 3
+                      ? paidPlans[Math.floor(paidPlans.length / 2)]._id
+                      : paidPlans[paidPlans.length - 1]?._id;
+                  const isBestValue = !plan.isFreeTrialPlan && plan._id === bestPlanId;
+                  const isSelected = formData.planId === plan._id;
+
                   return (
                     <div
                       key={plan._id}
-                      className={`relative p-4 border rounded-lg cursor-pointer flex justify-between items-center transition overflow-hidden ${
-                        formData.planId === plan._id
-                          ? 'border-violet-600 bg-violet-50 ring-1 ring-violet-600'
-                          : 'border-gray-200 hover:border-violet-300'
+                      className={`relative p-4 border-2 rounded-xl cursor-pointer flex justify-between items-center transition overflow-hidden ${
+                        isSelected
+                          ? isBestValue
+                            ? 'border-orange-500 bg-orange-50 ring-1 ring-orange-400'
+                            : 'border-orange-400 bg-orange-50 ring-1 ring-orange-300'
+                          : 'border-gray-200 hover:border-orange-200 bg-white'
                       }`}
                       onClick={() => setFormData({ ...formData, planId: plan._id })}
                     >
+                      {/* Best Value badge */}
                       {isBestValue && (
-                        <div className='absolute top-0 right-0 bg-gradient-to-r from-orange-400 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm tracking-wider uppercase'>
+                        <div className='absolute top-0 right-0 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm tracking-wider uppercase'>
                           Best Value
                         </div>
                       )}
+                      {/* Free Trial badge */}
+                      {plan.isFreeTrialPlan && (
+                        <div className='absolute top-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm tracking-wider uppercase'>
+                          Free Trial
+                        </div>
+                      )}
+
                       <div>
-                        <span className='font-bold text-gray-800'>{plan.name}</span>
-                        <span className='text-gray-500 text-sm ml-2'>
-                          ({plan.durationInMonths} Mo)
+                        <span
+                          className={`font-bold ${isBestValue ? 'text-orange-700' : 'text-gray-800'}`}
+                        >
+                          {plan.name}
                         </span>
+                        {!plan.isFreeTrialPlan && (
+                          <span className='text-gray-400 text-sm ml-2'>
+                            ({plan.durationInMonths} Mo)
+                          </span>
+                        )}
+                        {plan.isFreeTrialPlan && (
+                          <span className='text-green-600 text-sm ml-2'>
+                            ({plan.trialPeriodDays} days)
+                          </span>
+                        )}
                       </div>
-                      <span className='font-bold text-pink-600'>₹{plan.price}</span>
+
+                      <span
+                        className={`font-bold text-lg ${
+                          plan.isFreeTrialPlan
+                            ? 'text-green-600'
+                            : isBestValue
+                              ? 'text-orange-600'
+                              : 'text-gray-800'
+                        }`}
+                      >
+                        {plan.isFreeTrialPlan ? 'Free' : `₹${plan.price}`}
+                      </span>
                     </div>
                   );
                 })}
@@ -492,7 +533,7 @@ export default function PartnershipRegister() {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                   placeholder='Enter code'
-                  className='flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 uppercase'
+                  className='flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400 uppercase'
                 />
                 <button
                   type='button'
@@ -544,7 +585,7 @@ export default function PartnershipRegister() {
                 className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors ${
                   loading
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500'
+                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
                 }`}
               >
                 {loading ? 'Processing...' : 'Pay & Register'}
@@ -555,7 +596,7 @@ export default function PartnershipRegister() {
               Already have an account?{' '}
               <Link
                 href='/vendor/login'
-                className='font-medium text-violet-600 hover:text-violet-500'
+                className='font-medium text-orange-600 hover:text-orange-500'
               >
                 Sign in here
               </Link>
