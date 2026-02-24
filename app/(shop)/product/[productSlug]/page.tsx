@@ -36,20 +36,33 @@ export async function generateMetadata(
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
-    title: product.name,
-    description: product.description?.slice(0, 160) || `Buy ${product.name} at Agni Pengal`,
+    title: `${product.name} | Agni Pengal`,
+    description:
+      product.description?.slice(0, 160) ||
+      `Buy ${product.name} from women-owned businesses on Agni Pengal – Empowering Women Entrepreneurs across India.`,
     openGraph: {
-      title: product.name,
-      description: product.description?.slice(0, 200),
+      title: `${product.name} | Agni Pengal`,
+      description:
+        product.description?.slice(0, 200) ||
+        `Shop ${product.name} on Agni Pengal – India's marketplace for handmade and artisan products by women entrepreneurs.`,
       images: [
         ...(product.images || []).map((url: string) => ({
           url,
           width: 800,
           height: 600,
-          alt: product.name,
+          alt: `${product.name} – available on Agni Pengal`,
         })),
         ...previousImages,
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@agnipengal',
+      title: `${product.name} | Agni Pengal`,
+      description:
+        product.description?.slice(0, 160) ||
+        `Buy ${product.name} on Agni Pengal – Empowering Women Entrepreneurs.`,
+      images: product.images?.[0] ? [product.images[0]] : [],
     },
   };
 }
@@ -136,10 +149,16 @@ export default async function ProductDetailPage({
             brand: {
               '@type': 'Brand',
               name: 'Agni Pengal',
+              description: 'Empowering Women Entrepreneurs across India',
+            },
+            seller: {
+              '@type': 'Organization',
+              name: 'Agni Pengal',
+              url: 'https://agnipengal.com',
             },
             offers: {
               '@type': 'Offer',
-              url: `https://mahisvrikshamboutique.vercel.app/product/${product.slug || product._id}`,
+              url: `https://agnipengal.com/product/${product.slug || product._id}`,
               priceCurrency: 'INR',
               price: product.offerPrice || product.price,
               availability:

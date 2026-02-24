@@ -9,30 +9,31 @@ import api from '@/lib/api';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'All Products – Aari Materials, Sewing Kits & More',
+  title: 'Shop Products | Agni Pengal – Women Entrepreneur Marketplace',
   description:
-    'Browse our full collection of Aari embroidery raw materials, needles, threads, sewing kits, and handmade decoration items. Filter by price, vendor, and category. Ships across India.',
+    'Browse handmade products, Aari embroidery supplies, sewing kits, and decoration items crafted by women entrepreneurs and artisans across India. Every purchase empowers a woman-owned business on Agni Pengal.',
   keywords: [
-    'buy aari embroidery materials',
-    'aari thread online',
-    'aari needle India',
-    'sewing kits online',
-    'handmade decoration items India',
-    'embroidery supplies shop',
-    'women artisan products India',
-    'Agni Pengal products',
+    'women entrepreneur products India',
+    'buy from women owned businesses',
+    'Agni Pengal shop',
+    'handmade products women India',
+    'Aari embroidery materials online',
+    'women artisan marketplace',
+    'empowering women through shopping',
+    'support women business India',
   ],
   openGraph: {
-    title: 'Shop All Products | Agni Pengal',
+    title: 'Shop Products | Agni Pengal – Empowering Women Entrepreneurs',
     description:
-      'Browse Aari embroidery supplies, sewing kits, and handmade items from women-owned stores.',
+      "Buy handmade and artisan products from women-owned businesses on Agni Pengal – India's women empowerment marketplace.",
     url: 'https://agnipengal.com/products',
     images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shop All Products | Agni Pengal',
-    description: 'Browse Aari embroidery supplies and handmade products from women-owned stores.',
+    site: '@agnipengal',
+    title: 'Shop Products | Agni Pengal',
+    description: 'Buy from women-owned businesses on Agni Pengal – Empowering Women Entrepreneurs.',
     images: ['https://agnipengal.com/og-image.jpg'],
   },
   alternates: {

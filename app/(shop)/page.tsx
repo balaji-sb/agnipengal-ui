@@ -20,32 +20,33 @@ import * as Motion from 'framer-motion/client'; // Server Component compatible i
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Home – Aari Embroidery Supplies & Handmade Products',
+  title: 'Agni Pengal – Empowering Women Entrepreneurs',
   description:
-    'Discover premium Aari embroidery raw materials, sewing kits, handmade decoration items, and more — from women-owned stores across India. Empower artisans. Shop now on Agni Pengal.',
+    'Welcome to Agni Pengal – a community platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement celebrating creativity and financial independence.',
   keywords: [
-    'Aari embroidery materials',
-    'Aari work supplies online',
-    'buy aari thread India',
-    'handmade decoration items',
-    'sewing kits online India',
-    'women artisan products',
-    'Agni Pengal shop',
-    'Mahis Vriksham',
-    'aari needle buy',
-    'embroidery raw materials Chennai',
+    'Agni Pengal',
+    'Agni Pengal platform',
+    'empowering women entrepreneurs India',
+    'women empowerment marketplace',
+    'women business community India',
+    'support women owned businesses',
+    'handmade products women India',
+    'women artisans marketplace',
+    'female entrepreneurs India',
+    'buy from women India',
   ],
   openGraph: {
-    title: 'Agni Pengal – Aari Embroidery & Handmade Marketplace',
+    title: 'Agni Pengal – Empowering Women Entrepreneurs',
     description:
-      'Shop Aari embroidery supplies, sewing kits, and handmade products from women entrepreneurs across India.',
+      "Join Agni Pengal – India's platform empowering women entrepreneurs with a marketplace, mentorship, and community.",
     url: 'https://agnipengal.com',
     images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Agni Pengal – Aari Embroidery & Handmade Marketplace',
-    description: 'Shop Aari embroidery supplies from women entrepreneurs across India.',
+    site: '@agnipengal',
+    title: 'Agni Pengal – Empowering Women Entrepreneurs',
+    description: 'Join Agni Pengal – a community empowering women entrepreneurs across India.',
     images: ['https://agnipengal.com/og-image.jpg'],
   },
 };
