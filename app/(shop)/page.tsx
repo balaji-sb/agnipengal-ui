@@ -111,9 +111,12 @@ async function getData() {
 
     // 4. Process Product Grids
     const latestProducts = allProducts
+      .filter((p: any) => p.countInStock > 0 || p.stock > 0)
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 4);
-    const featuredProducts = allProducts.filter((p: any) => p.isFeatured).slice(0, 8);
+    const featuredProducts = allProducts
+      .filter((p: any) => p.isFeatured && (p.countInStock > 0 || p.stock > 0))
+      .slice(0, 8);
 
     // Default layout fallback if empty
     const sections =

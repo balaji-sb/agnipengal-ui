@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import api from '@/lib/api';
-import { Plus, Edit, Trash2, X, Save, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save, Search, GripVertical } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 import ImportExportButtons from '@/components/admin/ImportExportButtons';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import toast from 'react-hot-toast';
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
@@ -91,8 +93,6 @@ export default function AdminCategoriesPage() {
     setEditingSubId(null);
   };
 
-  // ... existing methods ...
-
   const handleDeleteCategory = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category?')) return;
     try {
@@ -117,6 +117,28 @@ export default function AdminCategoriesPage() {
       resetForm();
     } catch (error) {
       alert('Failed to save category');
+    }
+  };
+
+  // --- Drag-and-Drop ---
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+    if (result.destination.index === result.source.index) return;
+
+    const reordered = Array.from(categories);
+    const [removed] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, removed);
+
+    // Optimistic update
+    setCategories(reordered);
+
+    try {
+      await api.put('/categories/reorder', { ids: reordered.map((c: any) => c._id) });
+      toast.success('Order saved');
+    } catch (error) {
+      toast.error('Failed to save order');
+      fetchCategories(); // revert
     }
   };
 
@@ -199,6 +221,13 @@ export default function AdminCategoriesPage() {
         <Search className='w-5 h-5 text-gray-400 absolute left-3 top-2.5' />
       </div>
 
+      {!search && (
+        <p className='text-sm text-gray-400 mb-3 flex items-center gap-1'>
+          <GripVertical className='w-4 h-4' />
+          Drag rows to reorder — the order shown here is what clients see.
+        </p>
+      )}
+
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
         {/* List */}
         <div className='lg:col-span-2'>
@@ -206,68 +235,102 @@ export default function AdminCategoriesPage() {
             <table className='w-full text-left'>
               <thead className='bg-gray-50 border-b border-gray-100'>
                 <tr>
+                  <th className='p-4 w-10'></th>
                   <th className='p-4 font-medium text-gray-500'>Name</th>
                   <th className='p-4 font-medium text-gray-500'>Subcategories</th>
                   <th className='p-4 font-medium text-gray-500 text-right'>Actions</th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-gray-100'>
-                {categories.map((cat: any) => (
-                  <tr
-                    key={cat._id}
-                    className={`hover:bg-gray-50 ${editingCategory?._id === cat._id ? 'bg-pink-50' : ''}`}
-                  >
-                    <td className='p-4 font-medium'>
-                      <div className='flex items-center gap-3'>
-                        {cat.image && (
-                          <img
-                            src={cat.image}
-                            alt={cat.name}
-                            className='w-10 h-10 object-cover rounded text-xs'
-                          />
-                        )}
-                        <div>
-                          {cat.name}
-                          <div className='text-xs text-gray-400'>{cat.slug}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className='p-4 text-sm text-gray-500'>
-                      <div className='flex flex-wrap gap-2'>
-                        {cat.subcategories.map((sub: any) => (
-                          <div
-                            key={sub._id}
-                            className='bg-gray-100 px-2 py-1 rounded-md border border-gray-200 flex items-center gap-2'
-                          >
-                            {sub.image && (
-                              <img
-                                src={sub.image}
-                                alt={sub.name}
-                                className='w-5 h-5 object-cover rounded-sm'
-                              />
-                            )}
-                            <span>{sub.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className='p-4 text-right space-x-2'>
-                      <button
-                        onClick={() => startEdit(cat)}
-                        className='text-blue-600 hover:text-blue-800'
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCategory(cat._id)}
-                        className='text-red-600 hover:text-red-800'
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId='categories-list' isDropDisabled={!!search}>
+                  {(provided) => (
+                    <tbody
+                      className='divide-y divide-gray-100'
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {categories.map((cat: any, index: number) => (
+                        <Draggable
+                          key={cat._id}
+                          draggableId={cat._id}
+                          index={index}
+                          isDragDisabled={!!search}
+                        >
+                          {(provided, snapshot) => (
+                            <tr
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`hover:bg-gray-50 ${
+                                editingCategory?._id === cat._id ? 'bg-pink-50' : ''
+                              } ${snapshot.isDragging ? 'shadow-lg bg-white opacity-90' : ''}`}
+                            >
+                              <td className='p-4 w-10'>
+                                <span
+                                  {...provided.dragHandleProps}
+                                  className='cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 inline-block'
+                                  title='Drag to reorder'
+                                >
+                                  <GripVertical size={18} />
+                                </span>
+                              </td>
+                              <td className='p-4 font-medium'>
+                                <div className='flex items-center gap-3'>
+                                  {cat.image && (
+                                    <img
+                                      src={cat.image}
+                                      alt={cat.name}
+                                      className='w-10 h-10 object-cover rounded text-xs'
+                                    />
+                                  )}
+                                  <div>
+                                    {cat.name}
+                                    <div className='text-xs text-gray-400'>{cat.slug}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className='p-4 text-sm text-gray-500'>
+                                <div className='flex flex-wrap gap-2'>
+                                  {cat.subcategories.map((sub: any) => (
+                                    <div
+                                      key={sub._id}
+                                      className='bg-gray-100 px-2 py-1 rounded-md border border-gray-200 flex items-center gap-2'
+                                    >
+                                      {sub.image && (
+                                        <img
+                                          src={sub.image}
+                                          alt={sub.name}
+                                          className='w-5 h-5 object-cover rounded-sm'
+                                        />
+                                      )}
+                                      <span>{sub.name}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className='p-4 text-right space-x-2'>
+                                <button
+                                  onClick={() => startEdit(cat)}
+                                  className='text-blue-600 hover:text-blue-800'
+                                >
+                                  <Edit size={18} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCategory(cat._id)}
+                                  className='text-red-600 hover:text-red-800'
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </td>
+                            </tr>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </tbody>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </table>
             {categories.length === 0 && !loading && (
               <div className='p-8 text-center text-gray-500'>No categories found.</div>

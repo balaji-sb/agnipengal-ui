@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { Plus, Edit2, Trash2, X, Search } from 'lucide-react';
-import Image from 'next/image';
+import { Plus, Edit2, Trash2, X, GripVertical } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 interface VendorCategory {
   _id: string;
@@ -112,9 +112,33 @@ export default function VendorCategoriesPage() {
     }
   };
 
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+    if (result.destination.index === result.source.index) return;
+
+    const reordered = Array.from(categories);
+    const [removed] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, removed);
+
+    // Optimistic update
+    setCategories(reordered);
+
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/vendor-categories/reorder`,
+        { ids: reordered.map((c) => c._id) },
+        { withCredentials: true },
+      );
+      toast.success('Order saved');
+    } catch (error) {
+      toast.error('Failed to save order');
+      fetchCategories(); // revert
+    }
+  };
+
   return (
     <div className='p-6'>
-      <div className='flex justify-between items-center mb-6'>
+      <div className='flex justify-between items-center mb-2'>
         <h1 className='text-2xl font-bold text-gray-800'>Vendor Categories</h1>
         <button
           onClick={() => handleOpenModal()}
@@ -123,6 +147,11 @@ export default function VendorCategoriesPage() {
           <Plus size={20} /> Add Category
         </button>
       </div>
+
+      <p className='text-sm text-gray-400 mb-5 flex items-center gap-1'>
+        <GripVertical className='w-4 h-4' />
+        Drag rows to reorder — the order shown here is what clients see.
+      </p>
 
       {loading ? (
         <div className='flex justify-center p-8'>
@@ -133,55 +162,86 @@ export default function VendorCategoriesPage() {
           <table className='w-full text-left'>
             <thead className='bg-gray-50 text-gray-500 font-medium'>
               <tr>
+                <th className='p-4 w-10'></th>
                 <th className='p-4'>Name</th>
                 <th className='p-4'>Description</th>
                 <th className='p-4'>Status</th>
                 <th className='p-4 text-right'>Actions</th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-100'>
-              {categories.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className='p-8 text-center text-gray-500'>
-                    No categories found. Create one to get started.
-                  </td>
-                </tr>
-              ) : (
-                categories.map((category) => (
-                  <tr key={category._id} className='hover:bg-gray-50 transition'>
-                    <td className='p-4 font-medium text-gray-900'>{category.name}</td>
-                    <td className='p-4 text-gray-500'>{category.description || '-'}</td>
-                    <td className='p-4'>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          category.isActive
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        {category.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className='p-4 text-right'>
-                      <div className='flex justify-end gap-2'>
-                        <button
-                          onClick={() => handleOpenModal(category)}
-                          className='p-2 text-violet-600 hover:bg-violet-50 rounded-lg transition'
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(category._id)}
-                          className='p-2 text-red-600 hover:bg-red-50 rounded-lg transition'
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId='vendor-categories-list'>
+                {(provided) => (
+                  <tbody
+                    className='divide-y divide-gray-100'
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {categories.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className='p-8 text-center text-gray-500'>
+                          No categories found. Create one to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      categories.map((category, index) => (
+                        <Draggable key={category._id} draggableId={category._id} index={index}>
+                          {(provided, snapshot) => (
+                            <tr
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`hover:bg-gray-50 transition ${
+                                snapshot.isDragging ? 'shadow-lg bg-white opacity-90' : ''
+                              }`}
+                            >
+                              <td className='p-4 w-10'>
+                                <span
+                                  {...provided.dragHandleProps}
+                                  className='cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 inline-block'
+                                  title='Drag to reorder'
+                                >
+                                  <GripVertical size={18} />
+                                </span>
+                              </td>
+                              <td className='p-4 font-medium text-gray-900'>{category.name}</td>
+                              <td className='p-4 text-gray-500'>{category.description || '-'}</td>
+                              <td className='p-4'>
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    category.isActive
+                                      ? 'bg-green-100 text-green-700'
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}
+                                >
+                                  {category.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td className='p-4 text-right'>
+                                <div className='flex justify-end gap-2'>
+                                  <button
+                                    onClick={() => handleOpenModal(category)}
+                                    className='p-2 text-violet-600 hover:bg-violet-50 rounded-lg transition'
+                                  >
+                                    <Edit2 size={18} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(category._id)}
+                                    className='p-2 text-red-600 hover:bg-red-50 rounded-lg transition'
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Draggable>
+                      ))
+                    )}
+                    {provided.placeholder}
+                  </tbody>
+                )}
+              </Droppable>
+            </DragDropContext>
           </table>
         </div>
       )}
@@ -221,7 +281,6 @@ export default function VendorCategoriesPage() {
                 />
               </div>
 
-              {/* Image URL Input for now - could be file upload later */}
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-1'>
                   Image URL (Optional)

@@ -16,7 +16,7 @@ interface VendorProfile {
   _id: string;
   user: User;
   storeName: string;
-  status: 'pending' | 'active' | 'suspended';
+  status: 'pending' | 'active' | 'suspended' | 'expired';
   shippingCharge?: number;
   [key: string]: any;
 }
