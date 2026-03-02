@@ -35,30 +35,31 @@ export function middleware(req: NextRequest) {
     // Only rewrite the root path to the vendor store.
     // If the path is /product, /category, /cart, etc., let it render normally
     // so the vendor's customers can view products without leaving the subdomain URL context.
-    const sharedRoutes = [
-      '/product',
-      '/category',
-      '/deals',
-      '/collections',
-      '/cart',
-      '/checkout',
-      '/login',
-      '/register',
-      '/search',
-      '/profile',
-      '/refer-and-earn',
-      '/partnership',
-      '/pages/*',
-      '/faq',
-      '/account/support',
+    const sharedRoutesPatterns = [
+      '^/product(/.*)?$',
+      '^/category(/.*)?$',
+      '^/deals/?$',
+      '^/collections(/.*)?$',
+      '^/cart/?$',
+      '^/checkout/?$',
+      '^/login/?$',
+      '^/register/?$',
+      '^/search/?$',
+      '^/profile(/.*)?$',
+      '^/refer-and-earn/?$',
+      '^/partnership/?$',
+      '^/pages(/.*)?$', // Dynamic CMS pages wildcard
+      '^/faq/?$',
+      '^/account/support/?$',
     ];
-    const isSharedRoute = sharedRoutes.some((route) => path.startsWith(route));
+
+    const isSharedRoute = sharedRoutesPatterns.some((pattern) => new RegExp(pattern).test(path));
 
     if (path === '/' || (!isSharedRoute && !path.startsWith('/_next'))) {
       url.pathname = `/vendor-store/${subdomain}${path}`;
       return NextResponse.rewrite(url);
     } else if (isSharedRoute) {
-      // For shared routes like /products, /category, we append the storeSlug as a query parameter
+      // For shared routes like /product, /category, we append the storeSlug as a query parameter
       // so the page can filter the data for this specific vendor while reusing the same UI.
       console.log(`[Middleware] Subdomain detected: ${subdomain} on route ${path}`);
       url.searchParams.set('storeSlug', subdomain);
