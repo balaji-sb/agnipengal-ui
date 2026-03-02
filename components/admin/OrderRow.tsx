@@ -442,6 +442,26 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                                   : '₹0'}
                               </td>
                             </tr>
+                            {order.discount > 0 && (
+                              <tr>
+                                <td
+                                  colSpan={3}
+                                  className='p-2 text-right text-green-600 font-medium'
+                                >
+                                  Discount{' '}
+                                  {order.couponCode ? (
+                                    <span className='text-xs border border-green-200 bg-green-50 px-1 rounded ml-1'>
+                                      {order.couponCode}
+                                    </span>
+                                  ) : (
+                                    ''
+                                  )}
+                                </td>
+                                <td className='p-2 text-right font-semibold text-green-600'>
+                                  -₹{order.discount}
+                                </td>
+                              </tr>
+                            )}
                             <tr className='border-t border-gray-200'>
                               <td
                                 colSpan={3}

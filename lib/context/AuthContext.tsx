@@ -1,8 +1,11 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '@/lib/api';
+import api, {
+  setCrossDomainCookie,
+  getCrossDomainCookie,
+  removeCrossDomainCookie,
+} from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -22,12 +25,12 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({
-    user: null,
-    loading: true,
-    login: () => {},
-    register: () => {},
-    logout: () => {},
-    checkAuth: () => {},
+  user: null,
+  loading: true,
+  login: () => {},
+  register: () => {},
+  logout: () => {},
+  checkAuth: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,18 +40,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkAuth = async () => {
     try {
-        const res = await api.get('/auth/me');
-        if (res.data.success) {
-            setUser(res.data.user);
-        } else {
-            setUser(null);
-            localStorage.removeItem('authToken');
-        }
-    } catch (error) {
+      const tokenStr =
+        typeof window !== 'undefined'
+          ? getCrossDomainCookie('authToken') || localStorage.getItem('authToken')
+          : null;
+      console.log('[AuthContext] checkAuth running. Token present:', !!tokenStr);
+      const res = await api.get('/auth/me');
+      if (res.data.success) {
+        setUser(res.data.user);
+      } else {
         setUser(null);
+        removeCrossDomainCookie('authToken');
         localStorage.removeItem('authToken');
+      }
+    } catch (error) {
+      setUser(null);
+      removeCrossDomainCookie('authToken');
+      localStorage.removeItem('authToken');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -59,32 +69,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = (userData: User, token?: string) => {
     setUser(userData);
     if (token) {
-        localStorage.setItem('authToken', token);
+      setCrossDomainCookie('authToken', token, 30); // Save for 30 days
+      localStorage.setItem('authToken', token); // Fallback for legacy
     }
     router.push('/');
-    router.refresh(); 
+    router.refresh();
   };
 
   const register = (userData: User) => {
-      // Registration doesn't return token usually (verification needed)
-      setUser(userData);
-      router.push('/');
-      router.refresh();
+    // Registration doesn't return token usually (verification needed)
+    setUser(userData);
+    router.push('/');
+    router.refresh();
   };
 
   const logout = async () => {
     try {
-        await api.post('/auth/logout');
-        setUser(null);
-        localStorage.removeItem('authToken');
-        router.push('/login');
-        router.refresh();
+      await api.post('/auth/logout');
+      setUser(null);
+      removeCrossDomainCookie('authToken');
+      localStorage.removeItem('authToken');
+      router.push('/login');
+      router.refresh();
     } catch (error) {
-        console.error('Logout failed', error);
-        // Force logout locally even if API fails
-        setUser(null);
-        localStorage.removeItem('authToken');
-        router.push('/login');
+      console.error('Logout failed', error);
+      // Force logout locally even if API fails
+      setUser(null);
+      removeCrossDomainCookie('authToken');
+      localStorage.removeItem('authToken');
+      router.push('/login');
     }
   };
 

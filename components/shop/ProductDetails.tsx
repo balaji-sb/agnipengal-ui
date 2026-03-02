@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import AddToCart from './AddToCart';
 import ProductShare from './ProductShare';
 import ProductGallery from './ProductGallery';
-import { Star, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { Star, ShieldCheck, Truck, RotateCcw, Store } from 'lucide-react';
+import Link from 'next/link';
 
 interface ProductDetailsProps {
   product: any;
@@ -13,6 +14,21 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const [selectedOptions, setSelectedOptions] = useState<any>({});
   const [currentVariant, setCurrentVariant] = useState<any>(null);
 
+  // Mongoose Map type fields may come as native Map objects or plain objects depending
+  // on the serialization path. This helper normalizes either form to a plain JS object.
+  const toPlainObject = (mapOrObj: any): Record<string, string> => {
+    if (!mapOrObj) return {};
+    if (typeof mapOrObj.get === 'function') {
+      // Native Map or Mongoose Map instance
+      const result: Record<string, string> = {};
+      mapOrObj.forEach((value: string, key: string) => {
+        result[key] = value;
+      });
+      return result;
+    }
+    return mapOrObj as Record<string, string>;
+  };
+
   // Identify available option types from variants
   const getOptionsMap = () => {
     if (!product.variants || product.variants.length === 0) return {};
@@ -20,9 +36,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const options: any = {};
     product.variants.forEach((v: any) => {
       if (v.options) {
-        Object.keys(v.options).forEach((key) => {
+        const plainOptions = toPlainObject(v.options);
+        Object.keys(plainOptions).forEach((key) => {
           if (!options[key]) options[key] = new Set();
-          options[key].add(v.options[key]);
+          options[key].add(plainOptions[key]);
         });
       }
     });
@@ -37,7 +54,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     if (product.variants && product.variants.length > 0 && !currentVariant) {
       const first = product.variants[0];
       if (first && first.options) {
-        setSelectedOptions(first.options);
+        setSelectedOptions(toPlainObject(first.options));
         setCurrentVariant(first);
       }
     }
@@ -47,14 +64,33 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     // Find variant matching selected options
     if (product.variants && availableKeys.length > 0) {
       const match = product.variants.find((v: any) => {
-        return availableKeys.every((key) => v.options[key] === selectedOptions[key]);
+        const plainOpts = toPlainObject(v.options);
+        return availableKeys.every((key) => plainOpts[key] === selectedOptions[key]);
       });
-      setCurrentVariant(match || null);
+      // Important to keep previous if we have a partial mismatch or we just select it
+      if (match) {
+        setCurrentVariant(match);
+      }
     }
-  }, [selectedOptions]);
+  }, [selectedOptions, product.variants, availableKeys]);
 
   const handleOptionSelect = (key: string, value: string) => {
     setSelectedOptions({ ...selectedOptions, [key]: value });
+  };
+
+  // Check if a specific option value leads to at least one in-stock variant
+  const isOptionAvailable = (key: string, value: string): boolean => {
+    if (!product.variants) return false;
+    return product.variants.some((v: any) => {
+      const plainOpts = toPlainObject(v.options);
+      // Must match this value for the key, and match all other currently-selected keys
+      if (plainOpts[key] !== value) return false;
+      const otherKeys = availableKeys.filter((k) => k !== key);
+      const otherMatch = otherKeys.every(
+        (k) => !selectedOptions[k] || plainOpts[k] === selectedOptions[k],
+      );
+      return otherMatch && v.stock > 0;
+    });
   };
 
   // Derived Display Data
@@ -63,7 +99,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     : product.offerPrice > 0
       ? product.offerPrice
       : product.price;
-  const originalPrice = currentVariant ? null : product.price; // Show strike-through only if base product has offer
 
   // If not variant, fall back to standard logic
   const isOffer = !currentVariant && product.offerPrice > 0;
@@ -102,6 +137,28 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             <ProductShare productName={product.name} productSlug={product.slug} />
           </div>
 
+          {/* Vendor Details */}
+          {product.vendor && (product.vendor.storeName || product.vendorName) && (
+            <div className='mt-3 flex items-center gap-2'>
+              <Store className='w-4 h-4 text-gray-400' />
+              <span className='text-sm text-gray-500'>
+                Sold by:{' '}
+                {product.vendor.storeSlug ? (
+                  <Link
+                    href={`/vendor-store/${product.vendor.storeSlug}`}
+                    className='font-bold text-gray-900 hover:text-pink-600 transition-colors'
+                  >
+                    {product.vendor.storeName || product.vendorName}
+                  </Link>
+                ) : (
+                  <span className='font-bold text-gray-900'>
+                    {product.vendor.storeName || product.vendorName}
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
+
           {/* Rating Summary */}
           <div className='mt-2 flex items-center gap-2'>
             <div className='flex bg-orange-600 text-white px-2 py-0.5 rounded text-sm font-bold items-center gap-1'>
@@ -137,35 +194,100 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           <p>{product.description}</p>
         </div>
 
-        {/* Variants Selection */}
+        {/* ── Variant Selector ── */}
         {availableKeys.length > 0 && (
-          <div className='space-y-4 border-t border-gray-100 pt-6'>
+          <div className='space-y-6 border-t border-gray-100 pt-6'>
             {availableKeys.map((key) => (
               <div key={key}>
-                <h3 className='text-sm font-medium text-gray-900 mb-3 uppercase tracking-wide'>
-                  {key}
-                </h3>
-                <div className='flex flex-wrap gap-3'>
+                {/* Option Header */}
+                <div className='flex items-center gap-2 mb-3'>
+                  <h3 className='text-sm font-bold text-gray-700 uppercase tracking-widest'>
+                    {key}
+                  </h3>
+                  {selectedOptions[key] && (
+                    <span className='text-xs font-semibold text-pink-600 bg-pink-50 border border-pink-200 rounded-full px-2.5 py-0.5'>
+                      {selectedOptions[key]}
+                    </span>
+                  )}
+                </div>
+
+                {/* Option Pills */}
+                <div className='flex flex-wrap gap-2.5'>
                   {Array.from(optionsMap[key] as Set<string>).map((val: any) => {
                     const isSelected = selectedOptions[key] === val;
+                    const available = isOptionAvailable(key, val);
+
                     return (
                       <button
                         key={val}
-                        onClick={() => handleOptionSelect(key, val)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
-                          isSelected
-                            ? 'border-black bg-black text-white'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                        }`}
+                        onClick={() => available && handleOptionSelect(key, val)}
+                        disabled={!available}
+                        className={`
+                          relative px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all duration-200
+                          ${
+                            isSelected
+                              ? 'border-pink-600 bg-gradient-to-br from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-200 scale-105'
+                              : available
+                                ? 'border-gray-200 bg-white text-gray-700 hover:border-pink-400 hover:text-pink-600 hover:shadow-md'
+                                : 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed line-through'
+                          }
+                        `}
+                        title={!available ? `${val} — Out of Stock` : val}
                       >
                         {val}
+                        {/* Cross-out line for unavailable */}
+                        {!available && (
+                          <span className='absolute inset-0 flex items-center justify-center pointer-events-none'>
+                            <span className='w-full border-t border-gray-300 mx-3' />
+                          </span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
               </div>
             ))}
-            {!currentVariant && <p className='text-sm text-red-500'>Combination not available</p>}
+
+            {/* Current Variant Status */}
+            <div className='flex items-center gap-3 mt-2'>
+              {currentVariant ? (
+                <>
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
+                      currentVariant.stock > 10
+                        ? 'bg-green-50 text-green-700 border border-green-200'
+                        : currentVariant.stock > 0
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-red-50 text-red-600 border border-red-200'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full inline-block ${
+                        currentVariant.stock > 10
+                          ? 'bg-green-500'
+                          : currentVariant.stock > 0
+                            ? 'bg-amber-500'
+                            : 'bg-red-500'
+                      }`}
+                    />
+                    {currentVariant.stock > 10
+                      ? 'In Stock'
+                      : currentVariant.stock > 0
+                        ? `Only ${currentVariant.stock} left`
+                        : 'Out of Stock'}
+                  </span>
+                  {currentVariant.sku && (
+                    <span className='text-xs text-gray-400 font-mono'>
+                      SKU: {currentVariant.sku}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <p className='text-sm text-red-500 font-medium'>
+                  ⚠ This combination is not available
+                </p>
+              )}
+            </div>
           </div>
         )}
 

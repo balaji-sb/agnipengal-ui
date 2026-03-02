@@ -50,16 +50,19 @@ async function getAllProducts(sort: string, filters: any) {
   if (filters.material) params.material = filters.material;
   if (filters.search) params.search = filters.search;
   if (filters.vendor) params.vendor = filters.vendor;
+  if (filters.storeSlug) params.storeSlug = filters.storeSlug;
   if (filters.vendorCategory) params.vendorCategory = filters.vendorCategory;
 
   try {
+    console.log('[getAllProducts] Calling API with params:', params);
     const res = await api.get('/products', { params });
+    console.log(`[getAllProducts] Response received. Found ${res.data?.data?.length} products.`);
     return {
       products: res.data.data || [],
       pagination: res.data.pagination || { page: 1, totalPages: 1, total: 0 },
     };
   } catch (error) {
-    console.error('Fetch products error:', error);
+    console.error('[getAllProducts] Fetch products error:', error);
     return { products: [], pagination: { page: 1, totalPages: 1, total: 0 } };
   }
 }
@@ -82,6 +85,7 @@ export default async function AllProductsPage({
     material: resolvedSearchParams.material,
     search: resolvedSearchParams.search,
     vendor: resolvedSearchParams.vendor,
+    storeSlug: resolvedSearchParams.storeSlug,
     vendorCategory: resolvedSearchParams.vendorCategory,
   };
 

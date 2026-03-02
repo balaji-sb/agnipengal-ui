@@ -76,12 +76,34 @@ export default function ProductForm({
 
       if (initialData.variants && initialData.variants.length > 0) {
         setHasVariants(true);
-        setVariants(initialData.variants);
-        // Infer option types from first variant options to populate the generator fields if user wants to add more
-        // This is imperfect but helps. Or just leave blank.
-        // Actually better to try inferring so they can regenerate comfortably.
-        // BUT we don't know the order.
-        // Let's just leave it blank or default.
+        // Normalize variant options from Mongoose Map to plain object
+        const normalizedVariants = initialData.variants.map((v: any) => {
+          let plainOptions = v.options;
+          if (v.options && typeof v.options.get === 'function') {
+            // Mongoose Map instance
+            plainOptions = {};
+            v.options.forEach((value: string, key: string) => {
+              (plainOptions as any)[key] = value;
+            });
+          } else if (v.options && typeof v.options === 'object') {
+            // Already a plain object, but copy it to avoid mutation
+            plainOptions = { ...v.options };
+          }
+          return { ...v, options: plainOptions };
+        });
+        setVariants(normalizedVariants);
+
+        // Infer option type names from first variant so user can regenerate/add more
+        const firstOptions = normalizedVariants[0]?.options || {};
+        const inferredOptionTypes = Object.keys(firstOptions).map((key) => ({
+          name: key,
+          valuesText: [
+            ...new Set(normalizedVariants.map((v: any) => v.options?.[key]).filter(Boolean)),
+          ].join(', '),
+        }));
+        if (inferredOptionTypes.length > 0) {
+          setOptionTypes(inferredOptionTypes);
+        }
       }
     }
   }, [initialData]);

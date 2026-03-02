@@ -29,6 +29,34 @@ export default function ProductFilter() {
   const currentMinPrice = Number(searchParams.get('minPrice')) || MIN_PRICE;
   const currentMaxPrice = Number(searchParams.get('maxPrice')) || MAX_PRICE;
 
+  // Custom Hook/Logic to read Subdomain since useSearchParams() can't safely see middleware rewrites
+  const getSubdomain = () => {
+    if (typeof window === 'undefined') return null;
+    const hostname = window.location.hostname;
+    const cleanHost = hostname.replace('www.', '');
+    const baseDomain = hostname.includes('localhost') ? 'localhost' : 'agnipengal.com';
+
+    if (cleanHost.endsWith(baseDomain) && cleanHost !== baseDomain) {
+      const extractedSlug = cleanHost.replace(`.${baseDomain}`, '');
+      const reservedSubdomains = [
+        'admin',
+        'api',
+        'help',
+        'support',
+        'mail',
+        'blog',
+        'shop',
+        'vendor',
+      ];
+      if (!reservedSubdomains.includes(extractedSlug)) {
+        return extractedSlug;
+      }
+    }
+    return null;
+  };
+
+  const storeSlug = getSubdomain();
+
   const [priceRange, setPriceRange] = useState([currentMinPrice, currentMaxPrice]);
   const [categories, setCategories] = useState<VendorCategory[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -200,8 +228,8 @@ export default function ProductFilter() {
         </div>
       )}
 
-      {/* Shops (Vendors) */}
-      {vendors.length > 0 && (
+      {/* Shops (Vendors) - Hide if user is already on a vendor's subdomain */}
+      {!storeSlug && vendors.length > 0 && (
         <div>
           <h3 className='text-lg font-medium text-gray-900 mb-2'>Shops</h3>
           <div className='space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar'>

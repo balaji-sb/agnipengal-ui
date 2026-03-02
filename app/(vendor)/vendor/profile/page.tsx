@@ -17,6 +17,8 @@ import {
   Wallet,
   ShieldCheck,
   ShieldAlert,
+  Link2,
+  Copy,
 } from 'lucide-react';
 import { useVendorAuth } from '@/lib/context/VendorAuthContext';
 
@@ -72,6 +74,34 @@ export default function VendorProfilePage() {
   const [savingUpi, setSavingUpi] = useState(false);
   const [verifyingUpi, setVerifyingUpi] = useState(false);
 
+  // Subdomain State
+  const [storeSlug, setStoreSlug] = useState('');
+  const [checkingSlug, setCheckingSlug] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [slugError, setSlugError] = useState('');
+  const [baseDomain, setBaseDomain] = useState('agnipengal.com');
+  const [protocol, setProtocol] = useState('https://');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const host = window.location.host;
+      if (host.includes('localhost')) {
+        setBaseDomain('localhost:3000');
+        setProtocol('http://');
+      } else {
+        setBaseDomain('agnipengal.com');
+        setProtocol('https://');
+      }
+    }
+  }, []);
+
+  const handleCopyUrl = () => {
+    if (!storeSlug) return;
+    const url = `${protocol}${storeSlug}.${baseDomain}`;
+    navigator.clipboard.writeText(url);
+    toast.success('Store URL copied to clipboard!');
+  };
+
   useEffect(() => {
     fetchCategories();
     // Load Razorpay script on mount
@@ -99,6 +129,10 @@ export default function VendorProfilePage() {
       setUpiId((vendor as any).upiId || '');
       setUpiVerified((vendor as any).upiVerified || false);
       setUpiHolderName((vendor as any).upiHolderName || '');
+
+      // Seed Subdomain
+      setStoreSlug((vendor as any).storeSlug || '');
+      setSlugAvailable((vendor as any).storeSlug ? true : null);
     }
   }, [vendor]);
 
@@ -120,11 +154,43 @@ export default function VendorProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const checkSlugAvailability = async (slug: string) => {
+    if (!slug.trim()) {
+      setSlugAvailable(null);
+      setSlugError('');
+      return;
+    }
+    const formattedSlug = slug.toLowerCase().trim();
+    if (!/^[a-z0-9-]+$/.test(formattedSlug)) {
+      setSlugError('Only lowercase letters, numbers, and hyphens allowed.');
+      setSlugAvailable(false);
+      return;
+    }
+    setCheckingSlug(true);
+    setSlugError('');
+    try {
+      const res = await api.get(`/vendors/check-slug?slug=${formattedSlug}`);
+      if (res.data.success) {
+        setSlugAvailable(res.data.isAvailable);
+        if (!res.data.isAvailable) {
+          setSlugError('This store URL is already taken.');
+        }
+      }
+    } catch (err: any) {
+      console.error(err);
+      setSlugError('Failed to check availability.');
+      setSlugAvailable(false);
+    } finally {
+      setCheckingSlug(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await api.put('/vendors/profile', formData);
+      const payload = { ...formData, storeSlug: storeSlug.toLowerCase().trim() };
+      const res = await api.put('/vendors/profile', payload);
       if (res.data.success) {
         toast.success('Profile updated successfully');
         checkAuth();
@@ -493,6 +559,94 @@ export default function VendorProfilePage() {
                 >
                   <CreditCard className='w-4 h-4' />
                   Subscribe Now
+                </button>
+              </div>
+            )}
+
+            {/* Store URL Details - Only for 12 Month Plans */}
+            {sub?.plan?.durationInMonths === 12 ? (
+              <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+                <h3 className='font-bold text-gray-800 mb-1 flex items-center gap-2'>
+                  <Link2 className='w-4 h-4 text-pink-600' />
+                  Store URL
+                </h3>
+                <p className='text-xs text-gray-400 mb-4'>
+                  Set a unique web address for your store.
+                </p>
+
+                <div className='mb-3'>
+                  <div className='flex items-center w-full min-h-[44px] px-3 py-1.5 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-pink-500 focus-within:border-transparent transition-all bg-white'>
+                    <span className='text-gray-400 text-sm whitespace-nowrap shrink-0'>
+                      {protocol}
+                    </span>
+                    <input
+                      type='text'
+                      value={storeSlug}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                        setStoreSlug(val);
+                        setSlugAvailable(null);
+                        setSlugError('');
+                      }}
+                      onBlur={() => checkSlugAvailability(storeSlug)}
+                      placeholder='your-store-name'
+                      className='flex-1 min-w-[80px] w-full outline-none text-sm bg-transparent font-medium text-pink-600 px-1'
+                    />
+                    <span className='text-gray-400 text-sm whitespace-nowrap shrink-0 pr-2'>
+                      .{baseDomain}
+                    </span>
+                  </div>
+
+                  {vendor?.storeSlug === storeSlug && (
+                    <button
+                      onClick={handleCopyUrl}
+                      type='button'
+                      className='mt-2 flex items-center gap-1 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors bg-pink-50 hover:bg-pink-100 px-3 py-1.5 rounded-md w-fit'
+                    >
+                      <Copy className='w-4 h-4' />
+                      Copy Store URL
+                    </button>
+                  )}
+                  {checkingSlug && (
+                    <p className='text-xs text-blue-500 mt-1'>Checking availability...</p>
+                  )}
+                  {!checkingSlug && slugAvailable === true && storeSlug && (
+                    <p className='text-xs text-green-600 mt-1 flex items-center gap-1'>
+                      <CheckCircle className='w-3 h-3' /> URL is available!
+                    </p>
+                  )}
+                  {!checkingSlug && slugAvailable === false && slugError && (
+                    <p className='text-xs text-red-500 mt-1 flex items-center gap-1'>
+                      <AlertTriangle className='w-3 h-3' /> {slugError}
+                    </p>
+                  )}
+                </div>
+                <p className='text-xs text-gray-500 italic'>
+                  Click "Save Changes" on the left to confirm your URL.
+                </p>
+              </div>
+            ) : (
+              <div className='bg-white rounded-xl shadow-sm border border-orange-100 p-6 opacity-90 relative overflow-hidden'>
+                <div className='absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-orange-100 to-pink-100 rounded-full blur-2xl -z-10 opacity-50'></div>
+                <div className='flex items-center justify-between mb-3'>
+                  <h3 className='font-bold text-gray-800 flex items-center gap-2'>
+                    <Link2 className='w-4 h-4 text-orange-500' />
+                    Custom Store URL
+                  </h3>
+                  <span className='bg-gradient-to-r from-orange-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+                    Pro Feature
+                  </span>
+                </div>
+                <p className='text-sm text-gray-600 mb-4 font-medium leading-relaxed'>
+                  Get your own branded web address (e.g.,{' '}
+                  <strong>https:your-brand.agnipengal.com</strong>). This feature is exclusive to
+                  Annual (12 Months) subscription plans.
+                </p>
+                <button
+                  onClick={openRenewalModal}
+                  className='w-full py-2.5 bg-orange-50 hover:bg-orange-100 text-orange-700 text-sm font-bold rounded-lg transition-colors border border-orange-200 shadow-sm flex items-center justify-center gap-2'
+                >
+                  <RefreshCw className='w-4 h-4' /> Upgrade to Annual Plan
                 </button>
               </div>
             )}
