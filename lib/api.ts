@@ -15,9 +15,55 @@ const api = axios.create({
 
 // Helper to get auth headers for Server Components moved to lib/api-server.ts
 
+// Cross-Subdomain Authentication Helpers
+export const setCrossDomainCookie = (name: string, value: string, days = 7) => {
+  if (typeof window === 'undefined') return;
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = '; expires=' + date.toUTCString();
+
+  // Apply cookie to base domain to make it accessible across all subdomains
+  const hostname = window.location.hostname;
+  // If we are on localhost (e.g., mvb.localhost), base domain is usually just localhost
+  // If agnipengal.com, domain should be .agnipengal.com
+  let domainStr = '';
+  if (hostname.includes('localhost')) {
+    domainStr = '; domain=localhost';
+  } else if (hostname.includes('agnipengal.com')) {
+    domainStr = '; domain=.agnipengal.com';
+  }
+
+  document.cookie = name + '=' + (value || '') + expires + '; path=/' + domainStr;
+};
+
+export const getCrossDomainCookie = (name: string) => {
+  if (typeof window === 'undefined') return null;
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+};
+
+export const removeCrossDomainCookie = (name: string) => {
+  if (typeof window === 'undefined') return;
+  // Need to clear it with the identical domain string used to set it
+  const hostname = window.location.hostname;
+  let domainStr = '';
+  if (hostname.includes('localhost')) {
+    domainStr = '; domain=localhost';
+  } else if (hostname.includes('agnipengal.com')) {
+    domainStr = '; domain=.agnipengal.com';
+  }
+  document.cookie = name + '=; Max-Age=-99999999; path=/' + domainStr;
+};
+
 api.interceptors.request.use(
   async (config) => {
-    // Check for tokens in localStorage
+    // Check for tokens
     // We check for adminToken first if the request is for admin routes (optional optimization, but simplified here)
     // Actually, we usually don't know if it's an admin request easily, but we can check the URL or just send what we have.
     // Simpler approach: Store the active token in a specific key based on context,
@@ -41,7 +87,10 @@ api.interceptors.request.use(
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
       const isAdminSection = path.startsWith('/mahisadminpanel') || path.startsWith('/admin');
-      const isVendorSection = path.startsWith('/vendor');
+
+      // We must be careful here. The Next.js middleware rewrites subdomain paths to "/vendor-store/...".
+      // Only the true vendor dashboard is exactly "/vendor/" or "/vendor".
+      const isVendorSection = path === '/vendor' || path.startsWith('/vendor/');
 
       let token = null;
 
@@ -54,8 +103,9 @@ api.interceptors.request.use(
         // because that would cause the backend to validate the wrong token and fail strict type checks.
         token = null;
       } else {
-        // Standard User Auth for Shop
-        token = localStorage.getItem('authToken');
+        // Standard User Auth for Shop (works for root domain AND vendor subdomains)
+        // Check cross-domain cookie FIRST, fallback to localStorage for backwards compatibility
+        token = getCrossDomainCookie('authToken') || localStorage.getItem('authToken');
       }
 
       if (token) {

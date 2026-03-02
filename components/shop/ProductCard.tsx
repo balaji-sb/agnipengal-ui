@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Eye, Heart, Sparkles } from 'lucide-react';
+import { ShoppingCart, Eye, Heart, Sparkles, Store } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 
@@ -19,11 +19,15 @@ interface ProductCardProps {
     stock: number;
     activeDeal?: { name: string };
     variants?: { stock: number }[];
+    vendorName?: string;
+    vendor?: {
+      storeName?: string;
+    };
   };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart();
+  const { addItem, items: cartItems } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const totalStock =
@@ -104,17 +108,36 @@ export default function ProductCard({ product }: ProductCardProps) {
             >
               <Heart className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
             </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                addItem(product);
-              }}
-              className='p-3 bg-gray-900/90 backdrop-blur text-white rounded-full shadow-xl hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 transition-all transform hover:-translate-y-1 flex items-center gap-2 px-6 border border-gray-800/50'
-              title='Add to Cart'
-            >
-              <ShoppingCart className='w-5 h-5' />
-              <span className='text-sm font-bold'>Add</span>
-            </button>
+            {(() => {
+              const currentCartItem = cartItems.find(
+                (item) => item.product._id === product._id && !item.variant,
+              );
+              const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;
+              const isMaxedOut = cartQuantity >= totalStock;
+
+              return isMaxedOut ? (
+                <button
+                  disabled
+                  className='p-3 bg-gray-200 text-gray-400 rounded-full shadow-xl cursor-not-allowed flex items-center gap-2 px-6 border border-gray-100'
+                  title='Max Stock Reached'
+                >
+                  <ShoppingCart className='w-5 h-5 opacity-50' />
+                  <span className='text-sm font-bold truncate max-w-[80px]'>Maxed</span>
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addItem(product);
+                  }}
+                  className='p-3 bg-gray-900/90 backdrop-blur text-white rounded-full shadow-xl hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 transition-all transform hover:-translate-y-1 flex items-center gap-2 px-6 border border-gray-800/50'
+                  title='Add to Cart'
+                >
+                  <ShoppingCart className='w-5 h-5' />
+                  <span className='text-sm font-bold'>Add</span>
+                </button>
+              );
+            })()}
             <Link
               href={`/product/${product.slug}`}
               className='p-3 bg-white/90 backdrop-blur text-gray-900 rounded-full shadow-xl hover:bg-red-50 hover:text-red-600 transition-colors transform hover:-translate-y-1 border border-white/50'
@@ -142,6 +165,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
+        {product.vendor && product.vendor.storeName && (
+          <div className='flex items-center gap-1.5 mb-2 mt-[-4px]'>
+            <Store className='w-3 h-3 text-gray-400' />
+            <span className='text-xs font-medium text-gray-500 line-clamp-1'>
+              Sold by: <span className='text-gray-700'>{product.vendor.storeName}</span>
+            </span>
+          </div>
+        )}
         <div className='mt-auto flex items-end justify-between border-t border-gray-100 pt-3'>
           <div className='flex flex-col'>
             {product.offerPrice && product.offerPrice > 0 && (

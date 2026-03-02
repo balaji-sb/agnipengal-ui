@@ -33,10 +33,37 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const getSubdomain = () => {
+    if (typeof window === 'undefined') return null;
+    const hostname = window.location.hostname;
+    const cleanHost = hostname.replace('www.', '');
+    const baseDomain = hostname.includes('localhost') ? 'localhost' : 'agnipengal.com';
+
+    if (cleanHost.endsWith(baseDomain) && cleanHost !== baseDomain) {
+      const extractedSlug = cleanHost.replace(`.${baseDomain}`, '');
+      const reservedSubdomains = [
+        'admin',
+        'api',
+        'help',
+        'support',
+        'mail',
+        'blog',
+        'shop',
+        'vendor',
+      ];
+      if (!reservedSubdomains.includes(extractedSlug)) {
+        return extractedSlug;
+      }
+    }
+    return null;
+  };
+
+  const storeSlug = getSubdomain();
+
   const navLinks = [
     { name: 'Home', href: '/' },
     // { name: 'Collections', href: '/category' },
-    { name: 'Shops', href: '/shops' },
+    ...(!storeSlug ? [{ name: 'Shops', href: '/shops' }] : []), // Hide Shops link on Vendor Subdomains
     { name: 'Products', href: '/products' },
     { name: 'Deals', href: '/deals' },
     { name: 'Partnership', href: '/partnership' },

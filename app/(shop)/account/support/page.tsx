@@ -17,6 +17,7 @@ import {
 import axios from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState([]);
@@ -32,7 +33,14 @@ export default function SupportTicketsPage() {
   });
   const router = useRouter();
 
+  const { user } = useAuth();
+
   const fetchTickets = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await axios.get('/tickets/my-tickets');
       if (res.data.success) {

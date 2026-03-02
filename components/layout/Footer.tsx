@@ -276,15 +276,43 @@ export default function Footer() {
                     </li>
                   </>
                 )}
-                <li>
-                  <a
-                    href='/shops'
-                    className='hover:text-red-400 transition-colors flex items-center gap-2 group mt-1'
-                  >
-                    <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>
-                    Browse All Shops →
-                  </a>
-                </li>
+                {/* Hide Browse All Shops on subdomains */}
+                {(() => {
+                  if (typeof window !== 'undefined') {
+                    const hostname = window.location.hostname;
+                    const cleanHost = hostname.replace('www.', '');
+                    const baseDomain = hostname.includes('localhost')
+                      ? 'localhost'
+                      : 'agnipengal.com';
+                    if (cleanHost.endsWith(baseDomain) && cleanHost !== baseDomain) {
+                      const extractedSlug = cleanHost.replace(`.${baseDomain}`, '');
+                      const reservedSubdomains = [
+                        'admin',
+                        'api',
+                        'help',
+                        'support',
+                        'mail',
+                        'blog',
+                        'shop',
+                        'vendor',
+                      ];
+                      if (!reservedSubdomains.includes(extractedSlug)) {
+                        return null; // hide on vendor subdomain
+                      }
+                    }
+                  }
+                  return (
+                    <li>
+                      <a
+                        href='/shops'
+                        className='hover:text-red-400 transition-colors flex items-center gap-2 group mt-1'
+                      >
+                        <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>
+                        Browse All Shops →
+                      </a>
+                    </li>
+                  );
+                })()}
               </ul>
             </div>
 

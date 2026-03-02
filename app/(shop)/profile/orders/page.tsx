@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useAuth } from '@/lib/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Package, Star, Eye } from 'lucide-react';
 import api from '@/lib/api';
 import ReviewModal from '@/components/shop/ReviewModal';
@@ -16,9 +16,37 @@ interface ReviewData {
   media?: { url: string; type: 'image' | 'video' }[];
 }
 
-export default function OrdersPage() {
+function OrdersContent() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  // Custom Hook/Logic to read Subdomain since useSearchParams() can't see middleware rewrites
+  const getSubdomain = () => {
+    if (typeof window === 'undefined') return null;
+    const hostname = window.location.hostname;
+    const cleanHost = hostname.replace('www.', '');
+    const baseDomain = hostname.includes('localhost') ? 'localhost' : 'agnipengal.com';
+
+    if (cleanHost.endsWith(baseDomain) && cleanHost !== baseDomain) {
+      const extractedSlug = cleanHost.replace(`.${baseDomain}`, '');
+      const reservedSubdomains = [
+        'admin',
+        'api',
+        'help',
+        'support',
+        'mail',
+        'blog',
+        'shop',
+        'vendor',
+      ];
+      if (!reservedSubdomains.includes(extractedSlug)) {
+        return extractedSlug;
+      }
+    }
+    return null;
+  };
+
+  const storeSlug = getSubdomain();
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
@@ -47,14 +75,18 @@ export default function OrdersPage() {
       fetchOrders();
       fetchUserReviews();
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, storeSlug]);
 
   // Fetch Orders
   const fetchOrders = async () => {
     if (user) {
       try {
-        const res = await api.get('/orders/myorders');
+        console.log('[OrdersPage] fetchOrders - current storeSlug from params:', storeSlug);
+        const endpoint = storeSlug ? `/orders/myorders?storeSlug=${storeSlug}` : '/orders/myorders';
+        console.log('[OrdersPage] Fetching from endpoint:', endpoint);
+        const res = await api.get(endpoint);
         if (res.data.success) {
+          console.log('[OrdersPage] Retrieved orders count:', res.data.data.length);
           setOrders(res.data.data);
         }
       } catch (error) {
@@ -288,5 +320,12 @@ export default function OrdersPage() {
         />
       )}
     </div>
+  );
+}
+export default function OrdersPage() {
+  return (
+    <Suspense fallback={<div className='p-8 text-center'>Loading orders...</div>}>
+      <OrdersContent />
+    </Suspense>
   );
 }

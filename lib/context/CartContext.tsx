@@ -43,18 +43,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addItem = (product: any, quantity = 1, variant?: any) => {
     setItems((prev) => {
       const existing = prev.find((item) => {
-          const sameProduct = item.product._id === product._id;
-          const sameVariant = variant ? item.variant?._id === variant._id : !item.variant; 
-          // Note: using _id for variant might be tricky if we don't have it generated yet. 
-          // Mongo subdocs have _id by default.
-          return sameProduct && sameVariant;
+        const sameProduct = item.product._id === product._id;
+        const sameVariant = variant ? item.variant?._id === variant._id : !item.variant;
+        // Note: using _id for variant might be tricky if we don't have it generated yet.
+        // Mongo subdocs have _id by default.
+        return sameProduct && sameVariant;
       });
 
       if (existing) {
         return prev.map((item) => {
           const sameProduct = item.product._id === product._id;
           const sameVariant = variant ? item.variant?._id === variant._id : !item.variant;
-          return (sameProduct && sameVariant)
+          return sameProduct && sameVariant
             ? { ...item, quantity: item.quantity + quantity }
             : item;
         });
@@ -64,27 +64,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeItem = (productId: string, variantId?: string) => {
-    setItems((prev) => prev.filter((item) => {
-        if (item.product._id !== productId) return true;
-        // matching product, checks variant
-        if (variantId) return item.variant?._id !== variantId;
-        return !!item.variant; // if no variantId passed, remove only base items? Or all? 
-        // Logic: specific removal usually.
-        // Actually simpler: filter out the exact match
-        // But the previous API was removeItem(productId).
-        // Let's assume if variantId is not passed, and we have multiple variants of same product, we might be in trouble.
-        // But usually UI calls remove with specific ID.
-        // Let's refine: The UI currently just passes product ID because cart items listed are distinct.
-        // We need unique cart ID or composite ID.
-    }));
+    setItems((prev) =>
+      prev.filter((item) => {
+        if (item.product._id !== productId) return true; // keep items of other products
+        // Same product — decide whether to remove based on variant
+        if (variantId) {
+          // Remove only the specific variant
+          return item.variant?._id !== variantId;
+        }
+        // No variantId given — remove the base (non-variant) entry
+        return !!item.variant;
+      }),
+    );
   };
-  
-  // FIX: Better removeItem signature
-  // We can't change signature too much without breaking existing calls if we are not careful.
-  // Actually, let's redefine removeItem to filter properly.
-  // Ideally, CartItem should have a generated unique ID. 
-  // For now, let's use the composite check logic.
-
 
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) {
@@ -92,9 +84,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     setItems((prev) =>
-      prev.map((item) =>
-        item.product._id === productId ? { ...item, quantity } : item
-      )
+      prev.map((item) => (item.product._id === productId ? { ...item, quantity } : item)),
     );
   };
 
@@ -104,8 +94,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const totalPrice = items.reduce(
-    (acc, item) => acc + (item.product.offerPrice > 0 ? item.product.offerPrice : item.product.price) * item.quantity,
-    0
+    (acc, item) =>
+      acc +
+      (item.product.offerPrice > 0 ? item.product.offerPrice : item.product.price) * item.quantity,
+    0,
   );
 
   return (
