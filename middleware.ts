@@ -36,6 +36,7 @@ export function middleware(req: NextRequest) {
     // If the path is /product, /category, /cart, etc., let it render normally
     // so the vendor's customers can view products without leaving the subdomain URL context.
     const sharedRoutesPatterns = [
+      '^/products(/.*)?$',
       '^/product(/.*)?$',
       '^/category(/.*)?$',
       '^/deals/?$',
