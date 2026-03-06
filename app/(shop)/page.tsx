@@ -326,22 +326,25 @@ export default async function Home() {
         <div className='absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-orange-100/20 rounded-full blur-[100px] animate-blob animation-delay-4000' />
       </div>
 
-      <HeroSection />
+      {/* <HeroSection /> */}
       {/* <FeatureSection /> */}
       {/* <SubscriptionPackagesSection plans={subscriptionPlans} /> */}
 
-      <div className='relative z-10 space-y-8 md:space-y-2 mt-8'>
+      <div className='relative z-10 space-y-3 md:space-y-2'>
         {/* <SearchHistorySection /> */}
 
         {sections.map((section: any) => renderSection(section))}
 
         <BuyAgain />
-        <RecentHistory />
+
+        <div className='relative z-10 space-y-3 md:space-y-2 mt-5'>
+          <RecentHistory />
+        </div>
       </div>
 
       {/* Empty State */}
       {sections.length === 0 && (
-        <div className='container mx-auto px-4 py-40 text-center relative z-10'>
+        <div className='container mx-auto px-4 py-20 text-center relative z-10'>
           <div className='bg-orange-50/50 backdrop-blur-sm p-12 rounded-3xl inline-block border border-orange-100 shadow-xl'>
             <Package className='w-20 h-20 mx-auto text-orange-300 mb-6' />
             <h2 className='text-2xl font-bold text-gray-800'>Igniting Soon...</h2>
@@ -362,7 +365,7 @@ export default async function Home() {
             description:
               'Agni Pengal - Empowering Women Entrepreneurs. Shop handmade, tailored, and creative products.',
             url: 'https://agnipengal.com',
-            telephone: '+91 880663116', // Update with real number if available
+            telephone: '+91 8088663116', // Update with real number if available
             address: {
               '@type': 'PostalAddress',
               addressCountry: 'IN',

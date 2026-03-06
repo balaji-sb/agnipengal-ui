@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -23,6 +23,7 @@ import {
   BarChart3,
   UserCog,
   Store,
+  X,
 } from 'lucide-react';
 
 import { useConfig } from '@/lib/context/ConfigContext';
@@ -90,7 +91,7 @@ const menuGroups = [
   {
     title: 'Vendor Management',
     items: [
-      { label: 'Vendors', href: '/mahisadminpanel/vendors', icon: Store, color: 'bg-orange-600' },
+      { label: 'Vendors', href: '/mahisadminpanel/vendors', icon: Store, color: 'text-orange-600' },
       {
         label: 'Vendor Categories',
         href: '/mahisadminpanel/vendor-categories',
@@ -144,60 +145,91 @@ const menuGroups = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen?: boolean;
+  setIsOpen?: (val: boolean) => void;
+}) {
   const pathname = usePathname();
   const { config } = useConfig();
   const appName = config?.appName || 'Agni Pengal';
 
+  useEffect(() => {
+    if (setIsOpen) setIsOpen(false);
+  }, [pathname, setIsOpen]);
+
   return (
-    <aside className='w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent'>
-      <div className='p-6 flex items-center justify-center'>
-        {/* <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-violet-400">
-                    Admin Panel
-                </h1> */}
-        <Image
-          src={config?.logo || '/logo.jpg'}
-          alt={`${appName} Logo`}
-          width={150}
-          height={120}
-          className='object-contain p-1 rounded-xl'
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className='fixed inset-0 bg-black/50 z-40 md:hidden'
+          onClick={() => setIsOpen && setIsOpen(false)}
         />
-      </div>
+      )}
 
-      <nav className='px-4 space-y-6 flex-1'>
-        {menuGroups.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            {group.title && (
-              <h3 className='mb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider'>
-                {group.title}
-              </h3>
-            )}
-            <div className='space-y-1'>
-              {group.items.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition text-sm ${
-                      isActive
-                        ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                  >
-                    <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex-shrink-0 flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+      >
+        <div className='p-6 flex items-center justify-between'>
+          {/* <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-violet-400">
+                      Admin Panel
+                  </h1> */}
+          <div className='flex justify-center w-full md:w-auto'>
+            <Image
+              src={config?.logo || '/logo.jpg'}
+              alt={`${appName} Logo`}
+              width={150}
+              height={120}
+              className='object-contain p-1 rounded-xl'
+            />
           </div>
-        ))}
-      </nav>
+          <button
+            onClick={() => setIsOpen && setIsOpen(false)}
+            className='md:hidden text-gray-400 hover:text-white'
+          >
+            <X className='w-6 h-6' />
+          </button>
+        </div>
 
-      <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>
-        &copy; {new Date().getFullYear()} {appName}
-      </div>
-    </aside>
+        <nav className='px-4 space-y-6 flex-1'>
+          {menuGroups.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              {group.title && (
+                <h3 className='mb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider'>
+                  {group.title}
+                </h3>
+              )}
+              <div className='space-y-1'>
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition text-sm ${
+                        isActive
+                          ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30'
+                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      }`}
+                    >
+                      <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>
+          &copy; {new Date().getFullYear()} {appName}
+        </div>
+      </aside>
+    </>
   );
 }

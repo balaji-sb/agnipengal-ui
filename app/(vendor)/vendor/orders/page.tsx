@@ -34,7 +34,7 @@ export default function VendorOrders() {
   }
 
   return (
-    <div className='p-6 min-h-screen bg-gray-50'>
+    <div className='w-full max-w-7xl mx-auto'>
       {/* Reusing the Admin Order Manager Component */}
       {/* We pass isVendor=true to enable vendor specific tweaks if needed */}
       <OrderManager orders={orders} isVendor={true} />

@@ -384,8 +384,8 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
                   <h3 className='font-bold text-gray-900 mb-3 flex items-center gap-2'>
                     <Package className='w-4 h-4' /> Order Items ({order.items.length})
                   </h3>
-                  <div className='border rounded-xl overflow-hidden'>
-                    <table className='w-full text-left text-sm'>
+                  <div className='border rounded-xl overflow-hidden overflow-x-auto'>
+        <table className='w-full text-left text-sm'>
                       <thead className='bg-gray-50 border-b'>
                         <tr>
                           <th className='p-3 font-medium text-gray-500'>Product</th>

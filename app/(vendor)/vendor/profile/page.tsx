@@ -317,7 +317,7 @@ export default function VendorProfilePage() {
   if (!vendor) return null;
 
   return (
-    <div className='min-h-screen bg-gray-50 p-6'>
+    <div className='w-full max-w-7xl mx-auto'>
       {/* Processing overlay */}
       {processingPayment && (
         <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm'>
@@ -328,10 +328,12 @@ export default function VendorProfilePage() {
       )}
 
       <div className='max-w-4xl mx-auto'>
-        <div className='flex justify-between items-center mb-8'>
+        <div className='flex justify-between items-center mb-6 md:mb-8'>
           <div>
-            <h1 className='text-3xl font-bold text-gray-800'>Store Profile</h1>
-            <p className='text-gray-500'>Manage your store information and settings</p>
+            <h1 className='text-2xl md:text-3xl font-bold text-gray-800'>Store Profile</h1>
+            <p className='text-sm md:text-base text-gray-500'>
+              Manage your store information and settings
+            </p>
           </div>
         </div>
 

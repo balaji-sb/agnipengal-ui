@@ -17,7 +17,7 @@ export default function HomeCategories({
   title = 'Shop by Category',
 }: HomeCategoriesProps) {
   return (
-    <section className='container mx-auto px-4 py-20'>
+    <section className='container mx-auto px-4 py-10'>
       <MotionSection>
         <div className='flex items-end justify-between mb-12'>
           <div className='space-y-2'>

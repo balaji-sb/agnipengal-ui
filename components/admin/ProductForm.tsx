@@ -276,7 +276,7 @@ export default function ProductForm({
 
       <form
         onSubmit={handleSubmit}
-        className='space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-100'
+        className='space-y-8 bg-white p-4 md:p-8 rounded-xl shadow-sm border border-gray-100'
       >
         {/* Basic Info */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>

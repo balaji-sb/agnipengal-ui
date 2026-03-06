@@ -71,7 +71,7 @@ export default function AdminProductsPage() {
         <Search className='w-5 h-5 text-gray-400 absolute left-3 top-2.5' />
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-hidden'>
         <table className='w-full text-left'>
           <thead className='bg-gray-50 border-b border-gray-100'>
             <tr>

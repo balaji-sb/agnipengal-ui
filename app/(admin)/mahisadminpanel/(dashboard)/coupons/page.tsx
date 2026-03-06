@@ -63,7 +63,7 @@ export default function CouponsPage() {
         </Link>
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-hidden'>
         <table className='w-full text-left'>
           <thead className='bg-gray-50 border-b border-gray-100'>
             <tr>

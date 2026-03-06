@@ -50,135 +50,130 @@ export default function Carousel({ items }: CarouselProps) {
 
   const imageIndex = Math.abs(page % items.length);
 
-  const paginate = useCallback((newDirection: number) => {
-    setPage([page + newDirection, newDirection]);
-  }, [page]);
+  const paginate = useCallback(
+    (newDirection: number) => {
+      setPage([page + newDirection, newDirection]);
+    },
+    [page],
+  );
 
   useEffect(() => {
     if (items.length <= 1) return;
     const timer = setInterval(() => {
-        paginate(1);
+      paginate(1);
     }, 6000);
     return () => clearInterval(timer);
   }, [items.length, paginate]);
-
 
   if (!items || items.length === 0) return null;
 
   const currentItem = items[imageIndex];
 
   return (
-    <div className="w-full py-6 md:py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden bg-gray-900 group rounded-3xl shadow-2xl ring-1 ring-white/10">
-          <AnimatePresence initial={false} custom={direction} mode="popLayout">
-            <motion.div
-              key={page}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.4 },
-                filter: { duration: 0.4 }
-              }}
-              className="absolute inset-0"
-            >
-              <div className="relative w-full h-full">
-                <Image
-                  src={currentItem.image}
-                  alt={currentItem.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  draggable={false}
-                />
-                
-                {/* Cinematic Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-                
-                {/* Bottom Gradient for text readability */}
-                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+    <div className='relative w-full h-[45vh] md:h-[55vh] overflow-hidden bg-white/5 flex items-center justify-center'>
+      <AnimatePresence initial={false} custom={direction} mode='popLayout'>
+        <motion.div
+          key={page}
+          custom={direction}
+          variants={slideVariants}
+          initial='enter'
+          animate='center'
+          exit='exit'
+          transition={{
+            x: { type: 'tween', ease: 'easeInOut', duration: 0.6 },
+            opacity: { duration: 0.6 },
+            filter: { duration: 0.6 },
+          }}
+          className='absolute inset-0'
+        >
+          <div className='relative w-full h-full'>
+            <Image
+              src={currentItem.image}
+              alt={currentItem.title}
+              fill
+              className='object-cover object-center'
+              priority
+              draggable={false}
+            />
 
-                {/* Content Container */}
-                <div className="absolute inset-0 flex flex-col justify-center items-center md:items-start p-8 md:p-20 lg:p-32 max-w-7xl mx-auto w-full">
-                    <div className="max-w-4xl w-full space-y-6 md:space-y-8">
-                        <motion.div 
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3, duration: 0.8 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium uppercase tracking-[0.2em] text-xs md:text-sm"
-                        >
-                             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-pink-500 animate-pulse" />
-                            Exclusive Collection
-                        </motion.div>
+            {/* Elegant Vignette & Gradient Overlay for text contrast */}
+            <div className='absolute inset-0 bg-black/20' />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10' />
 
-                        <motion.h2 
-                            initial={{ y: 50, opacity: 0, letterSpacing: '0.05em' }}
-                            animate={{ y: 0, opacity: 1, letterSpacing: '-0.02em' }}
-                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-                            className="text-4xl md:text-7xl lg:text-8xl font-black text-white mb-4 md:mb-6 drop-shadow-2xl leading-tight"
-                        >
-                            {currentItem.title}
-                        </motion.h2>
-                        
-                        <motion.div
-                            initial={{ y: 40, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.6, duration: 0.6 }}
-                            className="flex flex-col sm:flex-row gap-4 md:gap-6 pt-2 md:pt-4"
-                        >
-                            <Link 
-                                href={currentItem.link} 
-                                className="group relative inline-flex items-center justify-center gap-3 md:gap-4 px-8 py-4 md:px-10 md:py-5 bg-white text-black font-bold text-base md:text-lg rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)]"
-                            >
-                                 <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                                <span className="relative z-10 tracking-wide">SHOP NOW</span>
-                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 relative z-10 group-hover:translate-x-2 transition-transform" />
-                            </Link>
-                        </motion.div>
-                    </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+            {/* Content Container - Bottom aligned for sleek half-screen look */}
+            <div className='absolute inset-0 flex flex-col justify-end items-center text-center pb-16 md:pb-24 px-6 max-w-5xl mx-auto w-full'>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className='flex items-center gap-3 mb-4'
+              >
+                <span className='w-8 h-[1px] bg-white/60'></span>
+                <span className='text-white/90 text-[10px] md:text-sm font-medium uppercase tracking-[0.4em]'>
+                  New Arrival
+                </span>
+                <span className='w-8 h-[1px] bg-white/60'></span>
+              </motion.div>
 
-          {/* Navigation Controls */}
-          <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20 flex gap-4">
-            {/* Indicators */}
-             <div className="hidden md:flex items-center gap-3 mr-8">
-                {items.map((_, idx) => (
-                    <button 
-                        key={idx} 
-                        onClick={() => {
-                          const direction = idx > imageIndex ? 1 : -1;
-                          setPage([page + (idx - imageIndex), direction]);
-                        }}
-                        className={`h-1 transition-all duration-500 rounded-full ${
-                          idx === imageIndex 
-                              ? 'bg-white w-12' 
-                              : 'bg-white/30 w-6 hover:bg-white/60'
-                        }`}
-                    />
-                ))}
+              <motion.h2
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+                className='text-3xl md:text-5xl lg:text-6xl font-serif text-white mb-6 md:mb-10 tracking-tight leading-tight drop-shadow-md pb-2'
+              >
+                {currentItem.title}
+              </motion.h2>
+
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+              >
+                <Link
+                  href={currentItem.link}
+                  className='group flex items-center gap-3 px-8 py-3.5 bg-white text-black font-semibold text-xs md:text-sm tracking-[0.15em] hover:bg-black hover:text-white transition-all duration-300 rounded-sm'
+                >
+                  EXPLORE
+                  <ArrowRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
+                </Link>
+              </motion.div>
             </div>
-
-              <button 
-                  onClick={() => paginate(-1)} 
-                  className="p-3 md:p-4 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all active:scale-90"
-              >
-                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
-              <button 
-                  onClick={() => paginate(1)} 
-                  className="p-3 md:p-4 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all active:scale-90"
-              >
-                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
           </div>
-        </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation Controls - Minimal floating style */}
+      <button
+        onClick={() => paginate(-1)}
+        className='absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 text-white/50 hover:text-white hover:bg-black/20 rounded-full backdrop-blur-sm transition-all z-20'
+        aria-label='Previous'
+      >
+        <ChevronLeft className='w-6 h-6 md:w-8 md:h-8' strokeWidth={1.5} />
+      </button>
+
+      <button
+        onClick={() => paginate(1)}
+        className='absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 text-white/50 hover:text-white hover:bg-black/20 rounded-full backdrop-blur-sm transition-all z-20'
+        aria-label='Next'
+      >
+        <ChevronRight className='w-6 h-6 md:w-8 md:h-8' strokeWidth={1.5} />
+      </button>
+
+      {/* Modern thin indicators */}
+      <div className='absolute bottom-6 left-0 right-0 z-20 flex justify-center items-center gap-3'>
+        {items.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => {
+              const direction = idx > imageIndex ? 1 : -1;
+              setPage([page + (idx - imageIndex), direction]);
+            }}
+            className={`h-0.5 transition-all duration-500 rounded-none overflow-hidden ${
+              idx === imageIndex ? 'bg-white w-10 md:w-16' : 'bg-white/30 w-6 hover:bg-white/60'
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
       </div>
     </div>
   );

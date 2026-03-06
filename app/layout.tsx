@@ -64,7 +64,16 @@ export async function generateMetadata(): Promise<Metadata> {
       'Aari embroidery India',
       'Aari materials online',
       'boutique India',
+      'Made in India',
+      'Indian handmade products',
     ],
+
+    other: {
+      'Made-In': 'India',
+      Country: 'IN',
+      'geo.region': 'IN',
+      'geo.country': 'IN',
+    },
 
     authors: [{ name: appName, url: siteUrl }],
     creator: appName,

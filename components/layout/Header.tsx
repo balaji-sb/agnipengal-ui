@@ -62,10 +62,10 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    // { name: 'Collections', href: '/category' },
+    { name: 'Collections', href: '/category' },
     ...(!storeSlug ? [{ name: 'Shops', href: '/shops' }] : []), // Hide Shops link on Vendor Subdomains
     { name: 'Products', href: '/products' },
-    { name: 'Deals', href: '/deals' },
+    // { name: 'Deals', href: '/deals' },
     { name: 'Partnership', href: '/partnership' },
     { name: 'Refer & Earn', href: '/refer-and-earn' },
   ];
@@ -114,7 +114,7 @@ export default function Header() {
                 key={link.name}
                 href={link.href}
                 className={clsx(
-                  'relative px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full transition-all duration-300 overflow-hidden group',
+                  'relative px-4 py-2 text-sm font-bold uppercase tracking-wide rounded-full transition-all duration-300 overflow-hidden group whitespace-nowrap',
                   pathname === link.href ? 'text-red-700' : 'text-gray-600 hover:text-red-700',
                 )}
               >

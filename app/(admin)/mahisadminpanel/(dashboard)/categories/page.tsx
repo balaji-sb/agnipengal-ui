@@ -231,8 +231,8 @@ export default function AdminCategoriesPage() {
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
         {/* List */}
         <div className='lg:col-span-2'>
-          <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
-            <table className='w-full text-left'>
+          <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-hidden'>
+        <table className='w-full text-left'>
               <thead className='bg-gray-50 border-b border-gray-100'>
                 <tr>
                   <th className='p-4 w-10'></th>

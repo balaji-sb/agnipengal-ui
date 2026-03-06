@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, LogOut, Settings, Store, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Package, LogOut, Settings, Store, ShoppingBag, X } from 'lucide-react';
 import { useConfig } from '@/lib/context/ConfigContext';
 import Cookies from 'js-cookie';
 import api from '@/lib/api';
@@ -39,62 +39,92 @@ const menuItems = [
   },
 ];
 
-export default function VendorSidebar() {
+export default function VendorSidebar({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen?: boolean;
+  setIsOpen?: (val: boolean) => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useVendorAuth();
   const { config } = useConfig();
   const appName = config?.appName || 'Agni Pengal';
 
+  useEffect(() => {
+    if (setIsOpen) setIsOpen(false);
+  }, [pathname, setIsOpen]);
+
   const handleLogout = async () => {
     logout();
   };
 
   return (
-    <aside className='w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent'>
-      <div className='p-6 flex items-center justify-center'>
-        <Image
-          src={config?.logo || '/logo.jpg'}
-          alt={`${appName} Logo`}
-          width={150}
-          height={120}
-          className='object-contain p-1 rounded-xl'
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className='fixed inset-0 bg-black/50 z-40 md:hidden'
+          onClick={() => setIsOpen && setIsOpen(false)}
         />
-      </div>
+      )}
 
-      <div className='px-6 mb-4'>
-        <h2 className='text-xs uppercase text-gray-500 font-semibold tracking-wider'>
-          Vendor Portal
-        </h2>
-      </div>
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex-shrink-0 flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+      >
+        <div className='p-6 flex items-center justify-between'>
+          <div className='flex justify-center w-full md:w-auto'>
+            <Image
+              src={config?.logo || '/logo.jpg'}
+              alt={`${appName} Logo`}
+              width={150}
+              height={120}
+              className='object-contain p-1 rounded-xl'
+            />
+          </div>
+          <button
+            onClick={() => setIsOpen && setIsOpen(false)}
+            className='md:hidden text-gray-400 hover:text-white'
+          >
+            <X className='w-6 h-6' />
+          </button>
+        </div>
 
-      <nav className='px-4 space-y-2 flex-1'>
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${isActive ? 'bg-orange-600 text-white' : 'hover:bg-gray-800 text-gray-400'}`}
-            >
-              <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className='flex w-full items-center space-x-3 px-4 py-3 mt-auto rounded-lg transition hover:bg-gray-800 text-red-500 hover:text-red-400'
-        >
-          <LogOut className='w-5 h-5 text-red-500' />
-          <span>Sign Out</span>
-        </button>
-      </nav>
+        <div className='px-6 mb-4'>
+          <h2 className='text-xs uppercase text-gray-500 font-semibold tracking-wider'>
+            Vendor Portal
+          </h2>
+        </div>
 
-      <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>
-        &copy; {new Date().getFullYear()} {appName}
-      </div>
-    </aside>
+        <nav className='px-4 space-y-2 flex-1'>
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${isActive ? 'bg-orange-600 text-white' : 'hover:bg-gray-800 text-gray-400'}`}
+              >
+                <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className='flex w-full items-center space-x-3 px-4 py-3 mt-auto rounded-lg transition hover:bg-gray-800 text-red-500 hover:text-red-400'
+          >
+            <LogOut className='w-5 h-5 text-red-500' />
+            <span>Sign Out</span>
+          </button>
+        </nav>
+
+        <div className='p-4 border-t border-gray-800 text-xs text-center text-gray-500'>
+          &copy; {new Date().getFullYear()} {appName}
+        </div>
+      </aside>
+    </>
   );
 }

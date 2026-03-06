@@ -1,5 +1,5 @@
-"use client"
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Sidebar from '@/components/admin/Sidebar';
 
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -7,43 +7,38 @@ import { useAdminAuth } from '@/lib/context/AdminAuthContext';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { admin, loading } = useAdminAuth();
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (loading) {
-      return (
-          <div className="flex h-screen items-center justify-center bg-gray-50">
-              <Loader2 className="w-10 h-10 text-pink-600 animate-spin" />
-              <p className="ml-3 text-gray-500">Loading Admin Panel...</p>
-          </div>
-      );
+    return (
+      <div className='flex h-screen items-center justify-center bg-gray-50'>
+        <Loader2 className='w-10 h-10 text-pink-600 animate-spin' />
+        <p className='ml-3 text-gray-500'>Loading Admin Panel...</p>
+      </div>
+    );
   }
 
   if (!admin) {
-      // Middleware should capture this, but just in case
-      router.push('/mahisadminpanel/login');
-      return null; 
+    // Middleware should capture this, but just in case
+    router.push('/mahisadminpanel/login');
+    return null;
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+    <div className='flex h-screen overflow-hidden bg-gray-100'>
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className='flex-1 flex flex-col h-full overflow-hidden'>
         {/* Header */}
-        <AdminHeader />
-        
+        <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
+
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-8">
-          {children}
-        </main>
+        <main className='flex-1 overflow-y-auto p-4 md:p-8'>{children}</main>
       </div>
     </div>
   );

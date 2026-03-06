@@ -5,6 +5,7 @@ import ProductShare from './ProductShare';
 import ProductGallery from './ProductGallery';
 import { Star, ShieldCheck, Truck, RotateCcw, Store } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/lib/context/CartContext';
 
 interface ProductDetailsProps {
   product: any;
@@ -107,7 +108,17 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
     : null;
 
+  const { items: cart } = useCart();
   const currentStock = currentVariant ? currentVariant.stock : product.stock;
+
+  const currentCartItem = cart.find(
+    (item) =>
+      item.product._id === product._id &&
+      (currentVariant ? item.variant?._id === currentVariant._id : !item.variant),
+  );
+
+  const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;
+  const remainingStock = Math.max(0, currentStock - cartQuantity);
 
   // Calculate images for gallery
   // If variant has image, prepend it to the list.
@@ -254,27 +265,27 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 <>
                   <span
                     className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
-                      currentVariant.stock > 10
+                      remainingStock > 10
                         ? 'bg-green-50 text-green-700 border border-green-200'
-                        : currentVariant.stock > 0
+                        : remainingStock > 0
                           ? 'bg-amber-50 text-amber-700 border border-amber-200'
                           : 'bg-red-50 text-red-600 border border-red-200'
                     }`}
                   >
                     <span
                       className={`w-1.5 h-1.5 rounded-full inline-block ${
-                        currentVariant.stock > 10
+                        remainingStock > 10
                           ? 'bg-green-500'
-                          : currentVariant.stock > 0
+                          : remainingStock > 0
                             ? 'bg-amber-500'
                             : 'bg-red-500'
                       }`}
                     />
-                    {currentVariant.stock > 10
+                    {remainingStock > 10
                       ? 'In Stock'
-                      : currentVariant.stock > 0
-                        ? `Only ${currentVariant.stock} left`
-                        : 'Out of Stock'}
+                      : remainingStock > 0
+                        ? `Only ${remainingStock} left`
+                        : 'Out of Stock (Max in Cart)'}
                   </span>
                   {currentVariant.sku && (
                     <span className='text-xs text-gray-400 font-mono'>

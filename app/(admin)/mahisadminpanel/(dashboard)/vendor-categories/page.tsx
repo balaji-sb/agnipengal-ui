@@ -158,8 +158,8 @@ export default function VendorCategoriesPage() {
           <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600'></div>
         </div>
       ) : (
-        <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
-          <table className='w-full text-left'>
+        <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-hidden'>
+        <table className='w-full text-left'>
             <thead className='bg-gray-50 text-gray-500 font-medium'>
               <tr>
                 <th className='p-4 w-10'></th>

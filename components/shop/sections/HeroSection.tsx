@@ -21,7 +21,7 @@ export default function HeroSection() {
           {/* Main Typography Content */}
           <div className='max-w-2xl mx-auto lg:mx-0 text-center lg:text-left flex flex-col justify-center h-full'>
             <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/50 mb-8 self-center lg:self-start transition-colors hover:bg-orange-100 dark:hover:bg-orange-900/50'>
-              <Sparkles className='w-3.5 h-3.5 bg-orange-600 dark:text-orange-400' />
+              <Sparkles className='w-3.5 h-3.5 text-orange-600 dark:text-orange-400' />
               <span className='text-sm font-medium text-orange-800 dark:text-orange-300 tracking-wide uppercase text-xs'>
                 Join our thriving community
               </span>

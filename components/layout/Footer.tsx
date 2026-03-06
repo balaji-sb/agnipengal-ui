@@ -393,39 +393,31 @@ export default function Footer() {
           </p>
 
           {/* Made in India badge */}
-          <div className='flex items-center gap-2 px-4 py-2 bg-gray-900 rounded-full border border-gray-700'>
-            {/* Tricolour stripes */}
-            <div className='flex flex-col gap-[3px]'>
-              <div className='w-6 h-[3px] rounded-full bg-orange-500' />
-              <div className='w-6 h-[3px] rounded-full bg-white' />
-              <div className='w-6 h-[3px] rounded-full bg-green-600' />
-            </div>
-            <span className='text-gray-300 font-semibold text-[11px] tracking-wide'>
-              Made in India
+          <div className='flex items-center gap-2.5 px-4 py-1.5 bg-gray-900/50 rounded-full border border-gray-800/60 shadow-inner backdrop-blur-sm'>
+            <span className='text-gray-400 font-medium text-[11px] tracking-widest uppercase'>
+              Crafted in
             </span>
-            {/* Ashoka Chakra simplified */}
-            <svg viewBox='0 0 24 24' className='w-4 h-4 text-blue-400' fill='currentColor'>
-              <circle cx='12' cy='12' r='3' fill='none' stroke='currentColor' strokeWidth='1.5' />
-              <circle cx='12' cy='12' r='10' fill='none' stroke='currentColor' strokeWidth='1' />
-              {[...Array(12)].map((_, i) => {
-                const angle = (i * 30 * Math.PI) / 180;
-                const x1 = 12 + 3.5 * Math.cos(angle);
-                const y1 = 12 + 3.5 * Math.sin(angle);
-                const x2 = 12 + 9.5 * Math.cos(angle);
-                const y2 = 12 + 9.5 * Math.sin(angle);
-                return (
-                  <line
-                    key={i}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke='currentColor'
-                    strokeWidth='0.8'
-                  />
-                );
-              })}
-            </svg>
+            <div className='flex items-center gap-1.5'>
+              <span className='font-bold text-[12px] tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-white to-green-400'>
+                INDIA
+              </span>
+              <svg
+                viewBox='0 0 24 24'
+                className='w-3.5 h-3.5 text-blue-500 animate-[spin_15s_linear_infinite]'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='1.5'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              >
+                <circle cx='12' cy='12' r='10' />
+                <circle cx='12' cy='12' r='2' />
+                <line x1='12' y1='2' x2='12' y2='22' />
+                <line x1='2' y1='12' x2='22' y2='12' />
+                <line x1='4.93' y1='4.93' x2='19.07' y2='19.07' />
+                <line x1='4.93' y1='19.07' x2='19.07' y2='4.93' />
+              </svg>
+            </div>
           </div>
         </div>
       </div>

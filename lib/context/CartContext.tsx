@@ -78,13 +78,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number, variantId?: string) => {
     if (quantity < 1) {
-      removeItem(productId);
+      removeItem(productId, variantId);
       return;
     }
     setItems((prev) =>
-      prev.map((item) => (item.product._id === productId ? { ...item, quantity } : item)),
+      prev.map((item) => {
+        if (item.product._id !== productId) return item;
+        if (variantId) {
+          if (item.variant?._id === variantId) return { ...item, quantity };
+          return item;
+        }
+        if (!item.variant) return { ...item, quantity };
+        return item;
+      }),
     );
   };
 

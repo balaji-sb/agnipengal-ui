@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Check, Star, ArrowRight, Zap, Gift } from 'lucide-react';
+import HeroSection from '@/components/shop/sections/HeroSection';
 
 interface Plan {
   _id: string;
@@ -40,7 +41,7 @@ export default function PartnershipPage() {
   return (
     <div className='min-h-screen bg-gray-50 font-sans'>
       {/* Hero — site theme orange/red */}
-      <div className='bg-gradient-to-r from-orange-600 to-red-600 text-white py-20 px-8 text-center relative overflow-hidden'>
+      {/* <div className='bg-gradient-to-r from-orange-600 to-red-600 text-white py-20 px-8 text-center relative overflow-hidden'>
         <div
           className='absolute inset-0 opacity-10'
           style={{
@@ -57,7 +58,8 @@ export default function PartnershipPage() {
             tools, endless growth.
           </p>
         </div>
-      </div>
+      </div> */}
+      <HeroSection />
 
       {/* Plans */}
       <div className='max-w-7xl mx-auto px-8 py-20'>
