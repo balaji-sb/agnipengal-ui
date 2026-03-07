@@ -14,7 +14,7 @@ export default function Footer() {
   const [cmsPages, setCmsPages] = React.useState<any[]>([]);
   const [shops, setShops] = React.useState<any[]>([]);
   const { config } = useConfig();
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   React.useEffect(() => {
     const fetchPages = async () => {
@@ -65,7 +65,7 @@ export default function Footer() {
       <div className='bg-gray-900 text-gray-300 pt-16 pb-8'>
         <div className='container mx-auto px-4'>
           {/* Newsletter Section - Catchy & Prominent */}
-          <div className='max-w-4xl mx-auto mb-16 text-center'>
+          {/* <div className='max-w-4xl mx-auto mb-16 text-center'>
             <h2 className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-400 mb-4'>
               Join the {appName} Family
             </h2>
@@ -105,15 +105,22 @@ export default function Footer() {
                 )}
               </button>
             </form>
-          </div>
+          </div> */}
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-t border-gray-800 pt-12'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'>
             {/* Brand Section */}
             <div className='space-y-6'>
-              <h3 className='text-2xl font-bold text-white tracking-tight'>{appName}</h3>
+              <div className='flex items-center gap-3'>
+                {config?.logo ? (
+                  <img src={config.logo} alt={appName} className='h-14 w-auto' />
+                ) : (
+                  <h3 className='text-2xl font-bold text-white tracking-tight'>{appName}</h3>
+                )}
+              </div>
               <p className='text-sm leading-relaxed text-gray-400'>
-                Your premium destination for Aari raw materials, custom sewing kits, and exquisite
-                decoration items. We empower your creativity with quality.
+                Agnipengal is a community-driven platform empowering women entrepreneurs across
+                India. We celebrate creativity, resilience, and financial independence by connecting
+                artisans with a global audience.
               </p>
               <div className='flex gap-4'>
                 <a
@@ -157,7 +164,7 @@ export default function Footer() {
                   </svg>
                 </a>
                 <a
-                  href='https://www.youtube.com/@agnipengal16'
+                  href='https://www.youtube.com/@agnipengaldotcom'
                   className='w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1'
                   target='_blank'
                 >
@@ -214,7 +221,7 @@ export default function Footer() {
                 </a>
                 {/* Pinterest */}
                 <a
-                  href='https://www.pinterest.com/agnipengal16/?actingBusinessId=1139551649371920657'
+                  href='https://www.pinterest.com/agnipengaldotcom/?actingBusinessId=1139551649371920657'
                   className='w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-700 hover:text-white transition-all transform hover:-translate-y-1'
                   target='_blank'
                   rel='noopener noreferrer'
@@ -234,7 +241,7 @@ export default function Footer() {
             </div>
 
             {/* Shop — dynamic vendor shops */}
-            <div>
+            <div className='ms-10'>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
                 <span className='w-8 h-1 bg-red-500 rounded-full'></span>
                 Shop
@@ -339,11 +346,21 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href='/blog' className='text-gray-400 hover:text-white transition'>
+                    Blog
+                  </Link>
+                </li>
+                <li>
                   <Link
                     href='/account/support'
                     className='text-gray-400 hover:text-white transition'
                   >
                     Customer Support
+                  </Link>
+                </li>
+                <li>
+                  <Link href='/contact' className='text-gray-400 hover:text-white transition'>
+                    Contact Us
                   </Link>
                 </li>
               </ul>

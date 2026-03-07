@@ -20,12 +20,12 @@ import * as Motion from 'framer-motion/client'; // Server Component compatible i
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Agni Pengal – Empowering Women Entrepreneurs',
+  title: 'Agnipengal – Empowering Women Entrepreneurs',
   description:
-    'Welcome to Agni Pengal – a community platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement celebrating creativity and financial independence.',
+    'Welcome to Agnipengal – a community platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement celebrating creativity and financial independence.',
   keywords: [
-    'Agni Pengal',
-    'Agni Pengal platform',
+    'Agnipengal',
+    'Agnipengal platform',
     'empowering women entrepreneurs India',
     'women empowerment marketplace',
     'women business community India',
@@ -34,19 +34,22 @@ export const metadata: Metadata = {
     'women artisans marketplace',
     'female entrepreneurs India',
     'buy from women India',
+    'Agnipengal marketplace',
+    'handmade in India',
+    'women entrepreneur marketplace India',
   ],
   openGraph: {
-    title: 'Agni Pengal – Empowering Women Entrepreneurs',
+    title: 'Agnipengal – Empowering Women Entrepreneurs',
     description:
-      "Join Agni Pengal – India's platform empowering women entrepreneurs with a marketplace, mentorship, and community.",
+      "Join Agnipengal – India's platform empowering women entrepreneurs with a marketplace, mentorship, and community.",
     url: 'https://agnipengal.com',
     images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@agnipengal',
-    title: 'Agni Pengal – Empowering Women Entrepreneurs',
-    description: 'Join Agni Pengal – a community empowering women entrepreneurs across India.',
+    title: 'Agnipengal – Empowering Women Entrepreneurs',
+    description: 'Join Agnipengal – a community empowering women entrepreneurs across India.',
     images: ['https://agnipengal.com/og-image.jpg'],
   },
 };
@@ -360,10 +363,10 @@ export default async function Home() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Store',
-            name: 'Agni Pengal',
+            name: 'Agnipengal',
             image: 'https://agnipengal.com/logo.jpg',
             description:
-              'Agni Pengal - Empowering Women Entrepreneurs. Shop handmade, tailored, and creative products.',
+              'Agnipengal - Empowering Women Entrepreneurs. Shop handmade, tailored, and creative products.',
             url: 'https://agnipengal.com',
             telephone: '+91 8088663116', // Update with real number if available
             address: {

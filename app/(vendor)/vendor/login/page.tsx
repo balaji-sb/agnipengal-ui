@@ -14,7 +14,7 @@ import { LogIn } from 'lucide-react';
 export default function VendorLoginPage() {
   const { config } = useConfig();
   const logoSrc = config?.logo || null;
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ export default function VendorLoginPage() {
               <LogIn className='h-8 w-8 text-white' />
             )}
           </div>
-          <h1 className='text-5xl font-extrabold mb-6'>Agin Pengal Vendor Portal</h1>
+          <h1 className='text-5xl font-extrabold mb-6'>Agnipengal Vendor Portal</h1>
           <p className='text-xl text-violet-100 mb-8'>
             Manage your store, track orders, and grow your business.
           </p>

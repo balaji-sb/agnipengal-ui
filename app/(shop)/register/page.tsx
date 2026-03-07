@@ -12,7 +12,7 @@ import Image from 'next/image';
 export default function RegisterPage() {
   const { config } = useConfig();
   const logoSrc = config?.logo || null;
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   const { login } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });

@@ -29,6 +29,40 @@ async function getProducts(categorySlug: string, subCategory: string, sort: stri
   }
 }
 
+import { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; subSlug: string }>;
+}): Promise<Metadata> {
+  const { slug, subSlug } = await params;
+  const subCategoryName = subSlug.replace(/-/g, ' ');
+  const categoryName = slug.replace(/-/g, ' ');
+
+  return {
+    title: `${subCategoryName} - ${categoryName} | Agnipengal`,
+    description: `Shop for ${subCategoryName} in ${categoryName} on Agnipengal. Support women-owned businesses by purchasing these high-quality, handcrafted products.`,
+    keywords: [
+      subCategoryName,
+      categoryName,
+      'women entrepreneurs',
+      'Agnipengal',
+      'handmade',
+      'marketplace India',
+      'made in india',
+    ],
+    alternates: {
+      canonical: `https://agnipengal.com/category/${slug}/${subSlug}`,
+    },
+    openGraph: {
+      title: `${subCategoryName} - ${categoryName} | Agnipengal`,
+      description: `Find the best ${subCategoryName} from women artisans on Agnipengal.`,
+      url: `https://agnipengal.com/category/${slug}/${subSlug}`,
+    },
+  };
+}
+
 export default async function ProductListingPage({
   params,
   searchParams,

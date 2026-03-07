@@ -132,7 +132,7 @@ export default function OrderSummaryPage() {
         key: data.key, // Key from server response
         amount: data.amount,
         currency: 'INR',
-        name: 'Agni Pengal',
+        name: 'Agnipengal',
         description: 'Order Payment',
         order_id: data.orderId,
         handler: async (response: any) => {

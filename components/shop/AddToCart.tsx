@@ -14,56 +14,51 @@ interface AddToCartProps {
 export default function AddToCart({ product, variant, disabled = false }: AddToCartProps) {
   const { addItem, items: cart, updateQuantity } = useCart();
 
-  const [quantity, setQuantity] = useState(1);
-  const [isAdded, setIsAdded] = useState(false);
-
-  const stock = variant ? variant.stock : product.stock;
-
   // CartContext stores items as { product, quantity, variant } — so we access item.product._id
   const currentCartItem = cart.find(
     (item) =>
-      item.product._id === product._id &&
+      item.product._id ===
+        (typeof product._id === 'string' ? product._id : product._id?.toString()) &&
       (variant ? item.variant?._id === variant._id : !item.variant),
   );
-  console.log('currentCartItem', currentCartItem);
   const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;
 
-  console.log(stock, cartQuantity);
-  const remainingStock = Math.max(0, stock - cartQuantity);
-  const isMaxedOut = remainingStock === 0;
+  const [quantity, setQuantity] = useState(cartQuantity || 1);
+  const [isAdded, setIsAdded] = useState(false);
+
+  // Sync internal quantity when cart changes elsewhere (e.g. cart page or header)
+  React.useEffect(() => {
+    if (cartQuantity > 0) {
+      setQuantity(cartQuantity);
+    }
+  }, [cartQuantity]);
+
+  const stock = variant ? variant.stock : product.stock;
+  const isMaxedOut = cartQuantity >= stock && cartQuantity > 0;
   const isInCart = cartQuantity > 0;
+  const isChanged = quantity !== cartQuantity;
 
   const handleDecrement = () => {
-    if (isInCart) {
-      updateQuantity(product._id, cartQuantity - 1, variant?._id);
-    } else if (quantity > 1) {
+    if (quantity > 1) {
       setQuantity(quantity - 1);
     }
   };
 
   const handleIncrement = () => {
-    if (isInCart) {
-      if (cartQuantity < stock) {
-        updateQuantity(product._id, cartQuantity + 1, variant?._id);
-      }
-    } else if (quantity < remainingStock) {
+    if (quantity < stock) {
       setQuantity(quantity + 1);
     }
   };
 
   const handleAddToCart = () => {
-    if (quantity > remainingStock) {
-      setQuantity(Math.max(1, remainingStock));
-      return;
+    if (isInCart) {
+      updateQuantity(product._id, quantity, variant?._id);
+    } else {
+      addItem(product, quantity, variant);
     }
-
-    addItem(product, quantity, variant);
     setIsAdded(true);
 
-    // Reset local quantity to 1 if there's still stock left
-    if (remainingStock - quantity > 0) {
-      setQuantity(1);
-    }
+    // No need to reset quantity to 1 if we're syncing with cart
 
     // Log Firebase Event (Dynamic import handling)
     import('@/lib/firebase').then(({ analytics }) => {
@@ -107,47 +102,47 @@ export default function AddToCart({ product, variant, disabled = false }: AddToC
           <button
             onClick={handleDecrement}
             className='p-3 hover:bg-gray-50 transition'
-            disabled={isInCart ? false : quantity <= 1 || isMaxedOut}
+            disabled={quantity <= 1}
           >
             <Minus className='w-4 h-4 text-gray-600' />
           </button>
-          <span className='w-12 text-center font-medium text-gray-900'>
-            {isInCart ? cartQuantity : quantity}
-          </span>
+          <span className='w-12 text-center font-medium text-gray-900'>{quantity}</span>
           <button
             onClick={handleIncrement}
             className='p-3 hover:bg-gray-50 transition'
-            disabled={isInCart ? isMaxedOut : quantity >= remainingStock || isMaxedOut}
+            disabled={quantity >= stock}
           >
             <Plus className='w-4 h-4 text-gray-600' />
           </button>
         </div>
-        <span className='text-sm text-gray-500'>{remainingStock} items in stock</span>
+        <span className='text-sm text-gray-500'>{stock} items available</span>
       </div>
 
       <button
         onClick={handleAddToCart}
-        disabled={isMaxedOut || isInCart}
+        disabled={(isInCart && !isChanged) || stock === 0}
         className={`w-full py-4 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all transform active:scale-95 ${
-          isMaxedOut || isInCart
-            ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
+          (isInCart && !isChanged) || stock === 0
+            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
             : isAdded
               ? 'bg-green-600 text-white shadow-lg shadow-green-200'
               : 'bg-black text-white hover:bg-gray-800 shadow-xl shadow-gray-200'
         }`}
       >
         {isAdded ? (
-          <span>Added to Cart!</span>
+          <span>{isInCart ? 'Quantity Updated!' : 'Added to Cart!'}</span>
         ) : isInCart ? (
-          <>
-            <ShoppingCart className='w-5 h-5' />
-            <span>Available in Cart</span>
-          </>
-        ) : isMaxedOut ? (
-          <>
-            <ShoppingCart className='w-5 h-5' />
-            <span>Max Limit Reached</span>
-          </>
+          isChanged ? (
+            <>
+              <ShoppingCart className='w-5 h-5' />
+              <span>Update Quantity</span>
+            </>
+          ) : (
+            <>
+              <ShoppingCart className='w-5 h-5' />
+              <span>Already in Cart</span>
+            </>
+          )
         ) : (
           <>
             <ShoppingCart className='w-5 h-5' />

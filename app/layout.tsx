@@ -15,7 +15,7 @@ import AnalyticsTracker from '@/components/AnalyticsTracker';
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'] });
 
 export async function generateMetadata(): Promise<Metadata> {
-  let appName = 'Agni Pengal';
+  let appName = 'Agnipengal';
 
   try {
     const apiUrl =
@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com';
   const title = `${appName} - Empowering Women Entrepreneurs`;
   const description =
-    'Agni Pengal is a community-driven platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement that celebrates creativity, resilience, and financial independence for women.';
+    'Agnipengal is a community-driven platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement that celebrates creativity, resilience, and financial independence for women.';
 
   return {
     metadataBase: new URL(siteUrl),
@@ -44,8 +44,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
 
     keywords: [
-      'Agni Pengal',
-      'Agni Pengal community',
+      'Agnipengal',
+      'Agnipengal community',
       'empowering women entrepreneurs',
       'women entrepreneurship India',
       'women empowerment platform',
@@ -53,19 +53,20 @@ export async function generateMetadata(): Promise<Metadata> {
       'women entrepreneur network',
       'support women businesses',
       'women artisans India',
-      'women crafters marketplace',
-      'women sellers online India',
-      'handmade by women India',
-      'women business community',
-      'female entrepreneur India',
-      'women empowerment marketplace',
+      'women artisans marketplace',
+      'female entrepreneurs India',
       'buy from women India',
-      'Indian women entrepreneurs',
+      'Agnipengal marketplace',
+      'handmade in India',
+      'women entrepreneur marketplace India',
       'Aari embroidery India',
       'Aari materials online',
       'boutique India',
       'Made in India',
       'Indian handmade products',
+      'women entrepreneur marketplace',
+      'made in india products',
+      'online marketplace for women',
     ],
 
     other: {

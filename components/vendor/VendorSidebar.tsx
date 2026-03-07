@@ -50,7 +50,7 @@ export default function VendorSidebar({
   const router = useRouter();
   const { logout } = useVendorAuth();
   const { config } = useConfig();
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   useEffect(() => {
     if (setIsOpen) setIsOpen(false);

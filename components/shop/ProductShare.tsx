@@ -31,8 +31,8 @@ export default function ProductShare({ productName, productSlug }: ProductShareP
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const shareUrl = `${origin}/product/${productSlug}`;
-  const appName = config?.appName || 'Agni Pengal';
-  const shareText = `Check out ${productName} on ${appName}, Get 10% off on your first order!`;
+  const appName = config?.appName || 'Agnipengal';
+  const shareText = `I found this amazing ${productName} on ${appName}! 🌟 Every purchase supports women entrepreneurs across India. Get 10% off on your first order! 🛍️`;
 
   const handleShare = async () => {
     if (navigator.share) {

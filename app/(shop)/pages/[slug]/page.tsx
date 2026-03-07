@@ -31,7 +31,7 @@ export async function generateMetadata({
 
   return {
     title: page.title,
-    description: `${page.title} | Agni Pengal – Empowering Women Entrepreneurs. Read about ${page.title} on our platform supporting women-owned businesses across India.`,
+    description: `${page.title} | Agnipengal – Empowering Women Entrepreneurs. Read about ${page.title} on our platform supporting women-owned businesses across India.`,
   };
 }
 
@@ -46,7 +46,10 @@ export default async function CMSPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <div className='max-w-4xl mx-auto px-4 py-12'>
-      <h1 className='text-4xl font-bold text-gray-900 mb-8'>{page.title}</h1>
+      <div className='text-center mb-12'>
+        <h1 className='text-4xl font-bold text-gray-900 mb-4'>{page.title}</h1>
+        <hr className='w-24 h-1.5 mx-auto bg-pink-100 border-0 rounded-full' />
+      </div>
       {page.content && (
         <div
           className='prose prose-lg max-w-none text-gray-700 space-y-4 break-words prose-img:max-w-full prose-img:h-auto prose-a:text-pink-600 prose-headings:font-bold'

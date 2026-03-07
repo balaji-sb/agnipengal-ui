@@ -9,31 +9,34 @@ import api from '@/lib/api';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Shop Products | Agni Pengal – Women Entrepreneur Marketplace',
+  title: 'Shop Products | Agnipengal – Women Entrepreneur Marketplace',
   description:
-    'Browse handmade products, Aari embroidery supplies, sewing kits, and decoration items crafted by women entrepreneurs and artisans across India. Every purchase empowers a woman-owned business on Agni Pengal.',
+    'Browse handmade products, Aari embroidery supplies, sewing kits, and decoration items crafted by women entrepreneurs and artisans across India. Every purchase empowers a woman-owned business on Agnipengal.',
   keywords: [
     'women entrepreneur products India',
     'buy from women owned businesses',
-    'Agni Pengal shop',
+    'Agnipengal shop',
     'handmade products women India',
     'Aari embroidery materials online',
     'women artisan marketplace',
     'empowering women through shopping',
     'support women business India',
+    'made in india marketplace',
+    'women entrepreneur marketplace',
+    'handcrafted in India',
   ],
   openGraph: {
-    title: 'Shop Products | Agni Pengal – Empowering Women Entrepreneurs',
+    title: 'Shop Products | Agnipengal – Empowering Women Entrepreneurs',
     description:
-      "Buy handmade and artisan products from women-owned businesses on Agni Pengal – India's women empowerment marketplace.",
+      "Buy handmade and artisan products from women-owned businesses on Agnipengal – India's women empowerment marketplace.",
     url: 'https://agnipengal.com/products',
     images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@agnipengal',
-    title: 'Shop Products | Agni Pengal',
-    description: 'Buy from women-owned businesses on Agni Pengal – Empowering Women Entrepreneurs.',
+    title: 'Shop Products | Agnipengal',
+    description: 'Buy from women-owned businesses on Agnipengal – Empowering Women Entrepreneurs.',
     images: ['https://agnipengal.com/og-image.jpg'],
   },
   alternates: {

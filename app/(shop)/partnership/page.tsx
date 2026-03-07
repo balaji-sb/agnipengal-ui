@@ -51,7 +51,7 @@ export default function PartnershipPage() {
         />
         <div className='relative z-10 max-w-4xl mx-auto'>
           <h1 className='text-4xl md:text-6xl font-extrabold mb-6 tracking-tight'>
-            Grow Your Business with <span className='text-yellow-300'>Agni Pengal</span>
+            Grow Your Business with <span className='text-yellow-300'>Agnipengal</span>
           </h1>
           <p className='text-xl md:text-2xl text-orange-100 mb-8 max-w-2xl mx-auto'>
             Join women entrepreneurs reaching new customers every day. Simple subscription, powerful

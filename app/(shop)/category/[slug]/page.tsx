@@ -18,6 +18,42 @@ async function getCategory(slug: string) {
   }
 }
 
+import { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const category = await getCategory(slug);
+
+  if (!category) {
+    return { title: 'Category Not Found | Agnipengal' };
+  }
+
+  return {
+    title: `${category.name} | Agnipengal – Women Entrepreneur Marketplace`,
+    description: `Explore ${category.name} products handcrafted by women entrepreneurs across India. Shop on Agnipengal to support women-owned businesses.`,
+    keywords: [
+      category.name,
+      'women entrepreneurs',
+      'handmade India',
+      'Agnipengal',
+      'women marketplace India',
+      'made in india',
+    ],
+    alternates: {
+      canonical: `https://agnipengal.com/category/${slug}`,
+    },
+    openGraph: {
+      title: `${category.name} | Agnipengal`,
+      description: `Buy ${category.name} from women-owned businesses on Agnipengal.`,
+      url: `https://agnipengal.com/category/${slug}`,
+    },
+  };
+}
+
 export default async function SubCategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = await getCategory(slug);

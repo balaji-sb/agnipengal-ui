@@ -7,7 +7,7 @@ import { useConfig } from '@/lib/context/ConfigContext';
 
 export default function NotFound() {
   const { config } = useConfig();
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   return (
     <div className='min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4'>

@@ -201,8 +201,63 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           </div>
         </div>
 
-        <div className='prose prose-gray prose-lg'>
-          <p>{product.description}</p>
+        <div className='space-y-8 border-t border-gray-100 pt-8'>
+          <div>
+            <h3 className='text-xl font-bold text-gray-900 mb-4 flex items-center gap-2'>
+              Product Description
+            </h3>
+            <div className='prose prose-gray prose-lg max-w-none text-gray-600 leading-relaxed'>
+              {product.description?.split('\n').map((line: string, i: number) => (
+                <p key={i} className='mb-4 last:mb-0'>
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+            <div className='bg-pink-50/50 rounded-2xl p-6 border border-pink-100'>
+              <h4 className='font-bold text-pink-900 mb-3 flex items-center gap-2'>
+                <span className='w-2 h-2 bg-pink-500 rounded-full' />
+                Why Agnipengal?
+              </h4>
+              <ul className='space-y-2 text-sm text-pink-800/80'>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>✨</span>
+                  <span>100% Authentic Handcrafted Products</span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>👩‍🎨</span>
+                  <span>Directly Supports Women Entrepreneurs</span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>🇮🇳</span>
+                  <span>Proudly Made in India</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className='bg-orange-50/50 rounded-2xl p-6 border border-orange-100'>
+              <h4 className='font-bold text-orange-900 mb-3 flex items-center gap-2'>
+                <span className='w-2 h-2 bg-orange-500 rounded-full' />
+                Product Highlights
+              </h4>
+              <ul className='space-y-2 text-sm text-orange-800/80'>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>🚀</span>
+                  <span>Fast & Reliable Shipping</span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>🛡️</span>
+                  <span>Quality Assured by Agnipengal</span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='mt-1'>🤝</span>
+                  <span>Transparent & Ethical Sourcing</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* ── Variant Selector ── */}

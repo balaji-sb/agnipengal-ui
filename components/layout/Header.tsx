@@ -22,7 +22,7 @@ export default function Header() {
 
   const { config } = useConfig();
   const logoSrc = config?.logo || '/logo.jpg';
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   // Handle scroll effect for transparency
   useEffect(() => {

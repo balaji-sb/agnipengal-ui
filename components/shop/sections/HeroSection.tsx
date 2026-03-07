@@ -49,7 +49,7 @@ export default function HeroSection() {
             </h1>
 
             <p className='text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal'>
-              Partner with Agni Pengal. Subscribe today to launch your digital storefront, showcase
+              Partner with Agnipengal. Subscribe today to launch your digital storefront, showcase
               your unique crafts to thousands of buyers, and grow alongside fellow women
               entrepreneurs.
             </p>
@@ -118,8 +118,8 @@ export default function HeroSection() {
               {/* Image inner overlay content */}
               <div className='absolute bottom-10 left-8 right-8 text-white z-20'>
                 <p className='text-xl font-medium leading-snug mb-3'>
-                  &quot;Partnering with Agni Pengal gave me the platform to scale my local craft
-                  into a sustaining business.&quot;
+                  &quot;Partnering with Agnipengal gave me the platform to scale my local craft into
+                  a sustaining business.&quot;
                 </p>
                 <div className='flex items-center gap-3'>
                   <div className='w-12 h-12 rounded-full border-2 border-white/50 overflow-hidden'>

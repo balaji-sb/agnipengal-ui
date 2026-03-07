@@ -50,7 +50,7 @@ export default function VendorRegister() {
             <Store className='h-6 w-6 text-pink-600' />
           </div>
           <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>Become a Vendor</h2>
-          <p className='mt-2 text-sm text-gray-600'>Start selling your products on Agni Pengal</p>
+          <p className='mt-2 text-sm text-gray-600'>Start selling your products on Agnipengal</p>
         </div>
         <form className='mt-8 space-y-6' onSubmit={handleSubmit}>
           <div className='rounded-md shadow-sm -space-y-px'>

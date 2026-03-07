@@ -261,7 +261,7 @@ export default function VendorProfilePage() {
         key: key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: 'Agni Pengal',
+        name: 'Agnipengal',
         description: `Renew — ${selectedPlan.name}`,
         order_id,
         handler: async function (response: any) {
@@ -745,7 +745,7 @@ export default function VendorProfilePage() {
                         key,
                         amount: order.amount,
                         currency: order.currency,
-                        name: 'Agni Pengal',
+                        name: 'Agnipengal',
                         description: 'UPI Verification (₹1)',
                         order_id: order.id,
                         prefill: {

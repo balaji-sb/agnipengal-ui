@@ -36,21 +36,45 @@ export async function generateMetadata(
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
-    title: `${product.name} | Agni Pengal`,
+    title: `${product.name} | Agnipengal`,
     description:
       product.description?.slice(0, 160) ||
-      `Buy ${product.name} from women-owned businesses on Agni Pengal – Empowering Women Entrepreneurs across India.`,
+      `Buy ${product.name} from women-owned businesses on Agnipengal - Empowering Women Entrepreneurs across India.`,
+    keywords: [
+      product.name,
+      product.category?.name,
+      'women entrepreneurs',
+      'handmade India',
+      'Agnipengal',
+      'women marketplace India',
+      'made in india',
+      'buy from women owned businesses',
+      'Agnipengal shop',
+      'handmade products India',
+      'artisan products India',
+      'sustainable products India',
+      'ethical shopping India',
+      'support women entrepreneurs',
+      'Indian crafts',
+      'unique gifts India',
+      'made in india marketplace',
+      'women entrepreneur marketplace',
+    ].filter(Boolean),
+    alternates: {
+      canonical: `https://agnipengal.com/product/${productSlug}`,
+    },
     openGraph: {
-      title: `${product.name} | Agni Pengal`,
+      title: `${product.name} | Agnipengal`,
       description:
         product.description?.slice(0, 200) ||
-        `Shop ${product.name} on Agni Pengal – India's marketplace for handmade and artisan products by women entrepreneurs.`,
+        `Shop ${product.name} on Agnipengal – India's marketplace for handmade and artisan products by women entrepreneurs.`,
+      url: `https://agnipengal.com/product/${productSlug}`,
       images: [
         ...(product.images || []).map((url: string) => ({
           url,
           width: 800,
           height: 600,
-          alt: `${product.name} – available on Agni Pengal`,
+          alt: `${product.name} – available on Agnipengal`,
         })),
         ...previousImages,
       ],
@@ -58,10 +82,10 @@ export async function generateMetadata(
     twitter: {
       card: 'summary_large_image',
       site: '@agnipengal',
-      title: `${product.name} | Agni Pengal`,
+      title: `${product.name} | Agnipengal`,
       description:
         product.description?.slice(0, 160) ||
-        `Buy ${product.name} on Agni Pengal – Empowering Women Entrepreneurs.`,
+        `Buy ${product.name} on Agnipengal – Empowering Women Entrepreneurs.`,
       images: product.images?.[0] ? [product.images[0]] : [],
     },
   };
@@ -148,12 +172,12 @@ export default async function ProductDetailPage({
             description: product.description,
             brand: {
               '@type': 'Brand',
-              name: 'Agni Pengal',
+              name: 'Agnipengal',
               description: 'Empowering Women Entrepreneurs across India',
             },
             seller: {
               '@type': 'Organization',
-              name: 'Agni Pengal',
+              name: 'Agnipengal',
               url: 'https://agnipengal.com',
             },
             offers: {

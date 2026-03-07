@@ -122,6 +122,7 @@ const menuGroups = [
         color: 'text-yellow-500',
       },
       { label: 'CMS', href: '/mahisadminpanel/cms', icon: FileText, color: 'text-blue-500' },
+      { label: 'Blogs', href: '/mahisadminpanel/blogs', icon: FileText, color: 'text-orange-400' },
       { label: 'FAQs', href: '/mahisadminpanel/faqs', icon: HelpCircle, color: 'text-teal-500' },
       {
         label: 'Support Tickets',
@@ -154,7 +155,7 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const { config } = useConfig();
-  const appName = config?.appName || 'Agni Pengal';
+  const appName = config?.appName || 'Agnipengal';
 
   useEffect(() => {
     if (setIsOpen) setIsOpen(false);

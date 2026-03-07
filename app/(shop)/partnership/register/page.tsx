@@ -250,7 +250,7 @@ export default function PartnershipRegister() {
         key: key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Use backend key preferably
         amount: amount,
         currency: currency,
-        name: 'Agni Pengal',
+        name: 'Agnipengal',
         description: `Subscription for ${selectedPlan.name}`,
         order_id: order_id,
         handler: async function (response: any) {
@@ -297,7 +297,7 @@ export default function PartnershipRegister() {
           contact: formData.phone,
         },
         theme: {
-          color: '#ea580c', // Orange-600 — Agni Pengal theme
+          color: '#ea580c', // Orange-600 — Agnipengal theme
         },
         modal: {
           ondismiss: function () {
