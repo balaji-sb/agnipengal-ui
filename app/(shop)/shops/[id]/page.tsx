@@ -106,28 +106,30 @@ export default function ShopDetailsPage() {
       {/* Search Header placeholder if needed later */}
 
       {/* Shop Header / Banner */}
-      <div className='bg-gradient-to-r from-pink-600 to-violet-700 text-white pt-24 pb-32 relative'>
+      <div className='bg-gradient-to-r from-pink-600 to-violet-700 text-white pt-20 pb-20 md:pt-24 md:pb-32 relative'>
         <div className='absolute inset-0 bg-black/10'></div>
         <div className='container mx-auto px-4 relative z-10'>
-          <div className='flex flex-col md:flex-row items-center md:items-end gap-6'>
-            <div className='w-32 h-32 bg-white rounded-2xl p-1 shadow-xl -mb-16 md:mb-0 shrink-0 relative'>
-              <div className='w-full h-full bg-gray-100 rounded-xl flex items-center justify-center text-pink-600 font-bold text-4xl'>
+          <div className='flex flex-col items-center md:items-end gap-6 md:flex-row'>
+            <div className='w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-1 shadow-xl mb-0 md:-mb-12 shrink-0 relative'>
+              <div className='w-full h-full bg-gray-100 rounded-xl flex items-center justify-center text-pink-600 font-bold text-3xl md:text-4xl'>
                 {vendor.storeName.charAt(0)}
               </div>
             </div>
 
             <div className='text-center md:text-left flex-grow pb-4'>
               <div className='flex items-center justify-center md:justify-start gap-3 mb-2'>
-                <h1 className='text-4xl font-extrabold'>{vendor.storeName}</h1>
+                <h1 className='text-2xl md:text-4xl font-extrabold'>{vendor.storeName}</h1>
                 {vendor.category && (
                   <span className='bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium'>
                     {vendor.category.name}
                   </span>
                 )}
               </div>
-              <p className='text-white/90 text-lg max-w-2xl'>{vendor.storeDescription}</p>
+              <p className='text-white/90 text-sm md:text-lg max-w-2xl'>
+                {vendor.storeDescription}
+              </p>
 
-              <div className='flex flex-wrap items-center justify-center md:justify-start gap-6 mt-4 text-sm font-medium text-white/80'>
+              <div className='flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mt-4 text-xs md:text-sm font-medium text-white/80'>
                 <span className='flex items-center gap-2'>
                   <Store className='w-4 h-4' />
                   {vendor.user.name}
@@ -168,7 +170,7 @@ export default function ShopDetailsPage() {
             <p className='text-gray-500'>This shop hasn't listed any products yet.</p>
           </div>
         ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
             {products.map((product) => (
               <Link
                 key={product._id}

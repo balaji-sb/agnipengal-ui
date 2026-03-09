@@ -11,6 +11,7 @@ import VendorCategorySection from '@/components/shop/sections/VendorCategorySect
 import HeroSection from '@/components/shop/sections/HeroSection';
 import FeatureSection from '@/components/shop/sections/FeatureSection';
 import SubscriptionPackagesSection from '@/components/shop/sections/SubscriptionPackagesSection';
+import StatsSection from '@/components/sections/StatsSection';
 
 import api from '@/lib/api';
 import { Package, Sparkles } from 'lucide-react';
@@ -324,9 +325,9 @@ export default async function Home() {
     <div className='bg-gray-50 min-h-screen pb-20 overflow-x-hidden relative'>
       {/* Decorative Background Blobs */}
       <div className='fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0'>
-        <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-100/30 rounded-full blur-[100px] animate-blob' />
-        <div className='absolute top-[20%] right-[-10%] w-[35%] h-[35%] bg-rose-100/30 rounded-full blur-[100px] animate-blob animation-delay-2000' />
-        <div className='absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-orange-100/20 rounded-full blur-[100px] animate-blob animation-delay-4000' />
+        <div className='absolute top-[-5%] left-[-10%] md:top-[-10%] md:left-[-10%] w-[60%] h-[30%] md:w-[40%] md:h-[40%] bg-amber-100/30 rounded-full blur-[60px] md:blur-[100px] animate-blob' />
+        <div className='absolute top-[15%] right-[-10%] md:top-[20%] md:right-[-10%] w-[50%] h-[25%] md:w-[35%] md:h-[35%] bg-rose-100/30 rounded-full blur-[60px] md:blur-[100px] animate-blob animation-delay-2000' />
+        <div className='absolute bottom-[-5%] left-[10%] md:bottom-[-10%] md:left-[20%] w-[70%] h-[35%] md:w-[50%] md:h-[50%] bg-orange-100/20 rounded-full blur-[60px] md:blur-[100px] animate-blob animation-delay-4000' />
       </div>
 
       {/* <HeroSection /> */}
@@ -337,6 +338,8 @@ export default async function Home() {
         {/* <SearchHistorySection /> */}
 
         {sections.map((section: any) => renderSection(section))}
+
+        <StatsSection />
 
         <BuyAgain />
 

@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col h-full ${isOutOfStock ? 'opacity-75' : ''}`}
+      className={`group relative bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_20px_40px_rgb(0,0,0,0.12)] hover:-translate-y-1 flex flex-col h-full ${isOutOfStock ? 'opacity-75' : ''}`}
     >
       {/* Image Area */}
       <div className='relative aspect-[4/5] bg-gray-50 overflow-hidden'>
@@ -150,7 +150,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className='p-5 flex flex-col flex-grow relative bg-white z-10'>
+      <div className='p-4 md:p-5 flex flex-col flex-grow relative bg-white z-10'>
         <div className='mb-2'>
           <span className='text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:text-red-600 transition-colors cursor-pointer'>
             {product.category && typeof product.category === 'object'
@@ -158,17 +158,17 @@ export default function ProductCard({ product }: ProductCardProps) {
               : 'Category'}
           </span>
         </div>
-        <Link href={`/product/${product.slug}`} className='block mb-2'>
+        <Link href={`/product/${product.slug}`} className='block mb-1 md:mb-2'>
           <h3
-            className={`text-[15px] font-bold text-gray-900 leading-snug transition-colors line-clamp-2 ${!isOutOfStock && 'group-hover:text-red-700'}`}
+            className={`text-[13px] md:text-[15px] font-bold text-gray-900 leading-snug transition-colors line-clamp-2 ${!isOutOfStock && 'group-hover:text-red-700'}`}
           >
             {product.name}
           </h3>
         </Link>
         {product.vendor && product.vendor.storeName && (
-          <div className='flex items-center gap-1.5 mb-2 mt-[-4px]'>
-            <Store className='w-3 h-3 text-gray-400' />
-            <span className='text-xs font-medium text-gray-500 line-clamp-1'>
+          <div className='flex items-center gap-1 mb-2 mt-[-4px]'>
+            <Store className='w-2.5 h-2.5 md:w-3 md:h-3 text-gray-400' />
+            <span className='text-[10px] md:text-xs font-medium text-gray-500 line-clamp-1'>
               Sold by: <span className='text-gray-700'>{product.vendor.storeName}</span>
             </span>
           </div>
@@ -181,7 +181,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
             <span
-              className={`text-[17px] font-bold tracking-tight ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}
+              className={`text-sm md:text-[17px] font-bold tracking-tight ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}
             >
               ₹
               {(product.offerPrice && product.offerPrice > 0

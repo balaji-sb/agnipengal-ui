@@ -17,6 +17,7 @@ export default function Header() {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
@@ -96,7 +97,7 @@ export default function Header() {
                   alt={`${appName} Logo`}
                   width={180}
                   height={120}
-                  className='object-contain p-1 rounded-xl'
+                  className='object-contain p-1 rounded-xl w-32 md:w-44'
                 />
               </div>
               {/* <div className="flex flex-col">
@@ -138,13 +139,13 @@ export default function Header() {
               <SearchWithAutocomplete />
             </div>
 
-            {/* Mobile Search Icon */}
-            <Link
-              href='/products'
+            {/* Mobile Search Icon Toggle */}
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
               className='lg:hidden p-2.5 text-gray-600 hover:bg-red-50 hover:text-red-700 rounded-full transition-all'
             >
-              <Search className='h-5 w-5' />
-            </Link>
+              {isSearchOpen ? <X className='h-5 w-5' /> : <Search className='h-5 w-5' />}
+            </button>
 
             <Link
               href='/cart'
@@ -232,6 +233,20 @@ export default function Header() {
             </button>
           </div>
         </div>
+
+        {/* Mobile Search Bar (Expandable) */}
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className='lg:hidden px-4 pb-4'
+            >
+              <SearchWithAutocomplete />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Mobile Nav */}
@@ -241,9 +256,14 @@ export default function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className='md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl w-full shadow-xl overflow-hidden'
+            className='md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl w-full shadow-xl'
           >
             <div className='space-y-1 px-4 py-6'>
+              {/* Mobile Menu Search */}
+              <div className='mb-6'>
+                <SearchWithAutocomplete />
+              </div>
+
               {user && (
                 <div className='flex items-center space-x-3 mb-6 px-2 pb-4 border-b border-gray-100'>
                   <div className='h-10 w-10 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold shadow-md'>

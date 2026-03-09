@@ -62,7 +62,7 @@ export default function Footer() {
       <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-rose-500' />
 
       {/* Main Footer Content */}
-      <div className='bg-gray-900 text-gray-300 pt-16 pb-8'>
+      <div className='bg-gray-900 text-gray-300 pt-12 md:pt-16 pb-8'>
         <div className='container mx-auto px-4'>
           {/* Newsletter Section - Catchy & Prominent */}
           {/* <div className='max-w-4xl mx-auto mb-16 text-center'>
@@ -107,12 +107,12 @@ export default function Footer() {
             </form>
           </div> */}
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8'>
             {/* Brand Section */}
             <div className='space-y-6'>
               <div className='flex items-center gap-3'>
                 {config?.logo ? (
-                  <img src={config.logo} alt={appName} className='h-14 w-auto' />
+                  <img src={config.logo} alt={appName} className='h-14 w-auto rounded-md' />
                 ) : (
                   <h3 className='text-2xl font-bold text-white tracking-tight'>{appName}</h3>
                 )}
@@ -122,7 +122,7 @@ export default function Footer() {
                 India. We celebrate creativity, resilience, and financial independence by connecting
                 artisans with a global audience.
               </p>
-              <div className='flex gap-4'>
+              <div className='flex gap-4 justify-start'>
                 <a
                   href='https://www.instagram.com/agnipengal/'
                   className='w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1'
@@ -241,7 +241,7 @@ export default function Footer() {
             </div>
 
             {/* Shop — dynamic vendor shops */}
-            <div className='ms-10'>
+            <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
                 <span className='w-8 h-1 bg-red-500 rounded-full'></span>
                 Shop

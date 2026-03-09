@@ -147,7 +147,7 @@ export default function SearchWithAutocomplete({ className }: { className?: stri
 
       {/* Dropdown Results */}
       {showDropdown && (
-        <div className='absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[60]'>
+        <div className='absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[100]'>
           {/* Loading State */}
           {loading && (
             <div className='p-4 text-center text-gray-500 text-sm'>Loading suggestions...</div>

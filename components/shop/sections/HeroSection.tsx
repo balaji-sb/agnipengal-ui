@@ -27,7 +27,7 @@ export default function HeroSection() {
               </span>
             </div>
 
-            <h1 className='text-5xl sm:text-6xl lg:text-[4.2rem] font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-[1.1]'>
+            <h1 className='text-3xl sm:text-5xl lg:text-[4.2rem] font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-[1.1]'>
               Turn Your Passion Into a <br className='hidden md:block' />
               <span className='text-orange-600 dark:text-orange-500 relative inline-block'>
                 Thriving Business

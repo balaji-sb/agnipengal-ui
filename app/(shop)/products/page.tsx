@@ -95,7 +95,7 @@ export default async function AllProductsPage({
   const { products, pagination } = await getAllProducts(sort, filters);
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className='container mx-auto px-4 py-4'>
       <ProductListingLayout sidebar={<ProductFilter />}>
         <div className='flex flex-col sm:flex-row items-center justify-between mb-6'>
           <h1 className='text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0'>

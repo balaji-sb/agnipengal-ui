@@ -19,20 +19,21 @@ export default function HomeCategories({
   return (
     <section className='container mx-auto px-4 py-10'>
       <MotionSection>
-        <div className='flex items-end justify-between mb-12'>
-          <div className='space-y-2'>
-            <h2 className='text-4xl md:text-5xl font-black text-gray-900 tracking-tight'>
+        <div className='flex items-center justify-between mb-8 md:mb-12 gap-2'>
+          <div className='space-y-1 md:space-y-2'>
+            <h2 className='text-xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight'>
               {title}
             </h2>
-            <div className='h-1.5 w-24 bg-gradient-to-r from-orange-500 to-red-600 rounded-full' />
+            <div className='h-1 w-12 md:h-1.5 md:w-24 bg-gradient-to-r from-orange-500 to-red-600 rounded-full' />
           </div>
           <Link
             href='/category'
-            className='hidden md:flex items-center gap-2 group text-gray-500 hover:text-red-700 font-bold transition-colors'
+            className='flex items-center gap-2 group text-gray-500 hover:text-red-700 font-bold transition-colors'
           >
-            View All Categories
-            <span className='w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center group-hover:bg-red-50 group-hover:border-red-100 transition-all'>
-              <ArrowRight className='w-4 h-4 text-gray-600 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all outline-none' />
+            <span className='hidden sm:inline text-sm md:text-base'>View All Categories</span>
+            <span className='sm:hidden text-xs'>View All</span>
+            <span className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center group-hover:bg-red-50 group-hover:border-red-100 transition-all shrink-0'>
+              <ArrowRight className='w-3 h-3 md:w-4 md:h-4 text-gray-600 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all outline-none' />
             </span>
           </Link>
         </div>
@@ -74,16 +75,6 @@ export default function HomeCategories({
             <p className='text-gray-400 font-medium'>Categories coming soon.</p>
           </div>
         )}
-
-        <div className='mt-12 text-center md:hidden'>
-          <Link
-            href='/category'
-            className='inline-flex items-center justify-center bg-white px-6 py-3 rounded-full border border-gray-200 text-gray-900 font-bold hover:border-red-200 hover:text-red-700 shadow-sm transition-all group'
-          >
-            View All Categories{' '}
-            <ArrowRight className='ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform' />
-          </Link>
-        </div>
       </MotionSection>
     </section>
   );

@@ -29,20 +29,22 @@ export default function FeaturedShops() {
   return (
     <section className='py-16 bg-white'>
       <div className='container mx-auto px-4'>
-        <div className='flex justify-between items-end mb-10'>
-          <div>
-            <h2 className='text-3xl font-bold text-gray-900 mb-2'>Featured Shops</h2>
-            <p className='text-gray-600'>Browse top-rated sellers and boutiques</p>
+        <div className='flex justify-between items-center mb-10 gap-2'>
+          <div className='space-y-1'>
+            <h2 className='text-xl md:text-3xl font-bold text-gray-900'>Featured Shops</h2>
+            <p className='text-xs md:text-base text-gray-600 line-clamp-1'>
+              Browse top-rated sellers
+            </p>
           </div>
           <Link
             href='/shops'
-            className='text-red-600 font-semibold hover:text-red-700 flex items-center transition'
+            className='text-red-600 font-bold hover:text-red-700 flex items-center transition shrink-0 text-sm md:text-base'
           >
-            View All <ArrowRight className='w-4 h-4 ml-1' />
+            View All <ArrowRight className='w-3.5 h-3.5 md:w-4 md:h-4 ml-1' />
           </Link>
         </div>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+        <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8'>
           {vendors.map((vendor) => (
             <Link key={vendor._id} href={`/shops/${vendor._id}`} className='group'>
               <div className='bg-gray-50 rounded-xl p-6 text-center hover:shadow-md transition border border-transparent hover:border-red-100 h-full flex flex-col items-center justify-center'>

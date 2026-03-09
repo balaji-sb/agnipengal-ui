@@ -70,7 +70,7 @@ export default function Carousel({ items }: CarouselProps) {
   const currentItem = items[imageIndex];
 
   return (
-    <div className='relative w-full h-[45vh] md:h-[55vh] overflow-hidden bg-white/5 flex items-center justify-center'>
+    <div className='relative w-full h-[35vh] md:h-[55vh] overflow-hidden bg-white/5 flex items-center justify-center'>
       <AnimatePresence initial={false} custom={direction} mode='popLayout'>
         <motion.div
           key={page}
@@ -101,7 +101,7 @@ export default function Carousel({ items }: CarouselProps) {
             <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10' />
 
             {/* Content Container - Bottom aligned for sleek half-screen look */}
-            <div className='absolute inset-0 flex flex-col justify-end items-center text-center pb-16 md:pb-24 px-6 max-w-5xl mx-auto w-full'>
+            <div className='absolute inset-0 flex flex-col justify-end items-center text-center pb-10 md:pb-24 px-6 max-w-5xl mx-auto w-full'>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -119,7 +119,7 @@ export default function Carousel({ items }: CarouselProps) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
-                className='text-3xl md:text-5xl lg:text-6xl font-serif text-white mb-6 md:mb-10 tracking-tight leading-tight drop-shadow-md pb-2'
+                className='text-2xl md:text-5xl lg:text-6xl font-serif text-white mb-6 md:mb-10 tracking-tight leading-tight drop-shadow-md pb-2'
               >
                 {currentItem.title}
               </motion.h2>
