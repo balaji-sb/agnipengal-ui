@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import axios from '@/lib/api'; // Using the axios instance
-import { Eye, X, Check, Truck, Package, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, X, Check, Truck, Package, AlertCircle, Loader2, Download } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
+import { generateOrderPdf } from '@/lib/generateOrderPdf';
 
 const ORDER_STATUSES = ['PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURNED'];
 
@@ -178,13 +179,22 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
           )}
         </td>
         <td className='p-4'>
-          <button
-            onClick={() => setShowModal(true)}
-            className='p-2 hover:bg-gray-200 rounded-full transition text-gray-600'
-            title='View Details'
-          >
-            <Eye size={18} />
-          </button>
+          <div className='flex items-center gap-2'>
+            <button
+              onClick={() => setShowModal(true)}
+              className='p-2 hover:bg-gray-200 rounded-full transition text-gray-600'
+              title='View Details'
+            >
+              <Eye size={18} />
+            </button>
+            <button
+              onClick={() => generateOrderPdf(order, isVendor)}
+              className='p-2 hover:bg-gray-200 rounded-full transition text-pink-600'
+              title='Download Invoice PDF'
+            >
+              <Download size={18} />
+            </button>
+          </div>
         </td>
       </tr>
 
@@ -270,12 +280,22 @@ export default function OrderRow({ order, isVendor = false }: OrderRowProps) {
             <div className='bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in-up'>
               <div className='p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10'>
                 <h2 className='text-xl font-bold'>Order Details #{order._id.slice(0, 8)}</h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className='p-2 hover:bg-gray-100 rounded-full'
-                >
-                  <X size={20} />
-                </button>
+                <div className='flex items-center gap-2'>
+                  <button
+                    onClick={() => generateOrderPdf(order, isVendor)}
+                    className='flex items-center gap-2 px-4 py-2 bg-pink-50 text-pink-600 hover:bg-pink-100 rounded-lg text-sm font-medium transition'
+                    title='Download Invoice PDF'
+                  >
+                    <Download size={16} />
+                    Download Invoice
+                  </button>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className='p-2 hover:bg-gray-100 rounded-full'
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
               <div className='p-6 space-y-6'>
