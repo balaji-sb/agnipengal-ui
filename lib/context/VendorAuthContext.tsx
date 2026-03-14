@@ -76,28 +76,30 @@ export const VendorAuthProvider = ({ children }: { children: React.ReactNode }) 
       setUser(vendorData);
       Cookies.set('role', 'vendor', { expires: 30 });
       Cookies.set('userName', vendorData.name, { expires: 30 });
+      
+      if (token) {
+        localStorage.setItem('vendorToken', token);
+        Cookies.set('vendorToken', token, { expires: 30 });
+      }
+
       checkAuth();
     }
-    router.push('/vendor/dashboard');
-    router.refresh();
+    window.location.href = '/vendor/dashboard';
   };
 
   const logout = async () => {
     try {
       await api.get('/vendors/logout');
-      setVendor(null);
-      setUser(null);
-      Cookies.remove('role');
-      Cookies.remove('userName');
-      router.push('/vendor/login');
-      router.refresh();
     } catch (error) {
       console.error('Vendor logout failed', error);
+    } finally {
       setVendor(null);
       setUser(null);
       Cookies.remove('role');
       Cookies.remove('userName');
-      router.push('/vendor/login');
+      localStorage.removeItem('vendorToken');
+      Cookies.remove('vendorToken');
+      window.location.href = '/vendor/login';
     }
   };
 

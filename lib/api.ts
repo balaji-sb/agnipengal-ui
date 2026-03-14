@@ -99,9 +99,8 @@ api.interceptors.request.use(
         token = localStorage.getItem('adminToken');
       } else if (isVendorSection) {
         // For vendor section, we rely on HttpOnly cookies set by the backend.
-        // We explicitly DO NOT want to send the 'authToken' (user token) here,
-        // because that would cause the backend to validate the wrong token and fail strict type checks.
-        token = null;
+        // However, on mobile browsers this can be blocked, so we use vendorToken from localStorage as fallback.
+        token = localStorage.getItem('vendorToken');
       } else {
         // Standard User Auth for Shop (works for root domain AND vendor subdomains)
         // Check cross-domain cookie FIRST, fallback to localStorage for backwards compatibility
