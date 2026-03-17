@@ -1,9 +1,41 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import api from '@/lib/api';
 import ProductCard from '@/components/shop/ProductCard';
 import { Sparkles, Package, AlertCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Curated Value Combos | Agnipengal – Bundle & Save',
+  description:
+    'Explore hand-picked combo bundles with maximum savings. Shop Aari embroidery kits, sewing combos, and artisan product bundles from women-owned businesses on Agnipengal.',
+  keywords: [
+    'combo bundles India',
+    'Aari embroidery kit combo',
+    'handmade product bundles',
+    'Agnipengal combos',
+    'women artisan bundles India',
+    'sewing kit bundle online',
+    'buy combo pack India',
+  ],
+  openGraph: {
+    title: 'Curated Value Combos | Agnipengal',
+    description: 'Hand-picked combo bundles from women-owned businesses. Maximum value, maximum savings.',
+    url: 'https://agnipengal.com/combos',
+    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@agnipengal',
+    title: 'Curated Value Combos | Agnipengal',
+    description: 'Hand-picked artisan combo bundles from women-owned businesses on Agnipengal.',
+    images: ['https://agnipengal.com/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://agnipengal.com/combos',
+  },
+};
 
 async function getCombos() {
   try {

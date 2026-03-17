@@ -1,9 +1,41 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import api from '@/lib/api';
 import DealCard from '@/components/shop/DealCard'; // Verify import path
 import { Sparkles, Timer, AlertCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Deals of the Day | Agnipengal – Limited Time Offers',
+  description:
+    'Shop exclusive limited-time deals and offers on handmade products, Aari embroidery supplies, and more from women entrepreneurs across India. Save big on Agnipengal.',
+  keywords: [
+    'deals of the day India',
+    'limited time offers women business',
+    'Agnipengal deals',
+    'discount handmade products India',
+    'women entrepreneur sale',
+    'Aari embroidery deals',
+    'online shopping deals India',
+  ],
+  openGraph: {
+    title: 'Deals of the Day | Agnipengal',
+    description: 'Exclusive limited-time offers on handmade and artisan products from women-owned businesses.',
+    url: 'https://agnipengal.com/deals',
+    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@agnipengal',
+    title: 'Deals of the Day | Agnipengal',
+    description: 'Limited-time offers from women-owned businesses on Agnipengal.',
+    images: ['https://agnipengal.com/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://agnipengal.com/deals',
+  },
+};
 
 async function getDeals() {
   try {

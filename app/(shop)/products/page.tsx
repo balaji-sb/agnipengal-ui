@@ -96,6 +96,49 @@ export default async function AllProductsPage({
 
   return (
     <div className='container mx-auto px-4 py-4'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://agnipengal.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'All Products',
+                item: 'https://agnipengal.com/products',
+              },
+            ],
+          }),
+        }}
+      />
+      {/* ItemList Schema – helps Google surface individual products */}
+      {products.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: 'Products on Agnipengal',
+              itemListElement: products.map((p: any, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `https://agnipengal.com/product/${p.slug || p._id}`,
+                name: p.name,
+              })),
+            }),
+          }}
+        />
+      )}
       <ProductListingLayout sidebar={<ProductFilter />}>
         <div className='flex flex-col sm:flex-row items-center justify-between mb-6'>
           <h1 className='text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0'>

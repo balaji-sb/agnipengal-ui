@@ -6,7 +6,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com';
 
     // Static routes
-    const routes = ['', '/products', '/deals', '/combos', '/contact', '/login', '/register'].map(
+    const routes = [
+      '',
+      '/products',
+      '/deals',
+      '/combos',
+      '/contact',
+      '/shops',
+      '/partnership',
+      '/faq',
+      '/login',
+      '/register',
+    ].map(
       (route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),

@@ -4,10 +4,23 @@ import { notFound } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductReviews from '@/components/shop/ProductReviews';
 import ProductViewTracker from '@/components/shop/ProductViewTracker';
-
-export const dynamic = 'force-dynamic';
-
 import api from '@/lib/api';
+
+// ISR: revalidate every 10 minutes so Googlebot gets fast cached HTML
+export const revalidate = 600;
+
+// Pre-render the top 100 products at build time for instant first load
+export async function generateStaticParams() {
+  try {
+    const res = await api.get('/products?limit=100&sort=newest');
+    const products = res.data?.data || [];
+    return products.map((p: { slug?: string; _id: string }) => ({
+      productSlug: p.slug || p._id,
+    }));
+  } catch {
+    return [];
+  }
+}
 
 import { Metadata, ResolvingMetadata } from 'next';
 
@@ -161,6 +174,7 @@ export default async function ProductDetailPage({
           </div>
         </section>
       )}
+      {/* Product JSON-LD Schema */}
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
@@ -168,26 +182,80 @@ export default async function ProductDetailPage({
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: product.name,
-            image: product.image || product.images?.[0],
+            image: product.images?.length > 0 ? product.images : [product.image].filter(Boolean),
             description: product.description,
+            sku: product.slug || product._id,
             brand: {
               '@type': 'Brand',
               name: 'Agnipengal',
-              description: 'Empowering Women Entrepreneurs across India',
             },
-            seller: {
-              '@type': 'Organization',
-              name: 'Agnipengal',
-              url: 'https://agnipengal.com',
-            },
+            category: product.category?.name,
             offers: {
               '@type': 'Offer',
               url: `https://agnipengal.com/product/${product.slug || product._id}`,
               priceCurrency: 'INR',
               price: product.offerPrice || product.price,
+              priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split('T')[0],
+              itemCondition: 'https://schema.org/NewCondition',
               availability:
-                product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                product.stock > 0
+                  ? 'https://schema.org/InStock'
+                  : 'https://schema.org/OutOfStock',
+              seller: {
+                '@type': 'Organization',
+                name: 'Agnipengal',
+                url: 'https://agnipengal.com',
+              },
             },
+          }),
+        }}
+      />
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://agnipengal.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Products',
+                item: 'https://agnipengal.com/products',
+              },
+              ...(product.category
+                ? [
+                    {
+                      '@type': 'ListItem',
+                      position: 3,
+                      name: product.category.name,
+                      item: `https://agnipengal.com/category/${product.category.slug || product.category._id}`,
+                    },
+                    {
+                      '@type': 'ListItem',
+                      position: 4,
+                      name: product.name,
+                      item: `https://agnipengal.com/product/${product.slug || product._id}`,
+                    },
+                  ]
+                : [
+                    {
+                      '@type': 'ListItem',
+                      position: 3,
+                      name: product.name,
+                      item: `https://agnipengal.com/product/${product.slug || product._id}`,
+                    },
+                  ]),
+            ],
           }),
         }}
       />
