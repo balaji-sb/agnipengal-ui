@@ -48,7 +48,11 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
+  const siteUrl = 'https://agnipengal.com';
+  const productUrl = `${siteUrl}/product/${productSlug}`;
+
   return {
+    metadataBase: new URL(siteUrl),
     title: `${product.name} | Agnipengal`,
     description:
       product.description?.slice(0, 160) ||
@@ -74,17 +78,19 @@ export async function generateMetadata(
       'women entrepreneur marketplace',
     ].filter(Boolean),
     alternates: {
-      canonical: `https://agnipengal.com/product/${productSlug}`,
+      canonical: productUrl,
     },
     openGraph: {
+      type: 'website' as const,
       title: `${product.name} | Agnipengal`,
       description:
         product.description?.slice(0, 200) ||
         `Shop ${product.name} on Agnipengal – India's marketplace for handmade and artisan products by women entrepreneurs.`,
-      url: `https://agnipengal.com/product/${productSlug}`,
+      url: productUrl,
+      siteName: 'Agnipengal',
       images: [
-        ...(product.images || []).map((url: string) => ({
-          url,
+        ...(product.images || []).map((imgUrl: string) => ({
+          url: imgUrl,
           width: 800,
           height: 600,
           alt: `${product.name} – available on Agnipengal`,
@@ -192,7 +198,7 @@ export default async function ProductDetailPage({
             category: product.category?.name,
             offers: {
               '@type': 'Offer',
-              url: `https://agnipengal.com/product/${product.slug || product._id}`,
+              url: `https://agnipengal.com/product/${productSlug}`,
               priceCurrency: 'INR',
               price: product.offerPrice || product.price,
               priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -244,7 +250,7 @@ export default async function ProductDetailPage({
                       '@type': 'ListItem',
                       position: 4,
                       name: product.name,
-                      item: `https://agnipengal.com/product/${product.slug || product._id}`,
+                      item: `https://agnipengal.com/product/${productSlug}`,
                     },
                   ]
                 : [
@@ -252,7 +258,7 @@ export default async function ProductDetailPage({
                       '@type': 'ListItem',
                       position: 3,
                       name: product.name,
-                      item: `https://agnipengal.com/product/${product.slug || product._id}`,
+                      item: `https://agnipengal.com/product/${productSlug}`,
                     },
                   ]),
             ],

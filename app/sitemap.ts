@@ -43,12 +43,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }));
 
-      const productUrls = products.map((product: any) => ({
-        url: `${baseUrl}/product/${product.slug || product._id}`,
-        lastModified: new Date(product.updatedAt || new Date()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
-      }));
+      const productUrls = products
+        .filter((product: any) => product.slug) // only include products with a slug
+        .map((product: any) => ({
+          url: `${baseUrl}/product/${product.slug}`,
+          lastModified: new Date(product.updatedAt || new Date()),
+          changeFrequency: 'weekly' as const,
+          priority: 0.9,
+          images: (product.images || (product.image ? [product.image] : []))
+            .filter(Boolean)
+            .slice(0, 5) // max 5 images per product
+            .map((imgUrl: string) => ({
+              url: imgUrl,
+              title: product.name,
+            })),
+        }));
 
       return [...routes, ...categoryUrls, ...productUrls];
     } catch (error) {
