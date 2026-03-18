@@ -73,7 +73,7 @@ export default function ProductListingLayout({ children, sidebar }: ProductListi
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto md:overflow-visible no-scrollbar p-0">
-                <div className="min-h-full md:min-h-0 md:sticky md:top-24 bg-white p-6 md:rounded-xl md:border md:border-gray-100 md:shadow-sm">
+                <div className="min-h-full md:min-h-0 md:sticky md:top-24 bg-white p-6 md:rounded-xl md:border md:border-gray-100 md:shadow-sm md:max-h-[calc(100vh-7rem)] md:overflow-y-auto">
                      <h2 className="text-xl font-bold mb-4 hidden md:block">Filters</h2>
                     {sidebar}
                 </div>
