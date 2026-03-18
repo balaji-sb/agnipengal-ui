@@ -55,13 +55,13 @@ export default function HeroSection() {
             </p>
 
             <div className='flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-14'>
-              <Link href='/partnership' className='w-full sm:w-auto min-w-[200px]'>
+              <Link href='/partnership/register' className='w-full sm:w-auto min-w-[200px]'>
                 <button className='w-full px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 border border-transparent'>
                   Start Selling Now
                   <ArrowRight className='w-5 h-5' />
                 </button>
               </Link>
-              <Link href='/refer-and-earn' className='w-full sm:w-auto min-w-[200px]'>
+              <Link href='/partnership/how-it-works' className='w-full sm:w-auto min-w-[200px]'>
                 <button className='w-full px-8 py-4 bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-white font-semibold rounded-lg border-2 border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-white transition-all duration-200 flex items-center justify-center gap-2'>
                   See How It Works
                 </button>
