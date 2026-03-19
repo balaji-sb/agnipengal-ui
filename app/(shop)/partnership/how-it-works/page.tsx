@@ -27,11 +27,11 @@ const steps = [
     icon: UserPlus,
     title: 'Register & Choose a Plan',
     description:
-      'Sign up as a vendor partner in minutes. Pick a subscription plan that fits your stage — start free, or go premium to unlock every feature from day one.',
+      'Sign up as a vendor partner in minutes. Pick a subscription plan that fits your stage to unlock every feature from day one.',
     color: 'orange',
     detail: [
       'Fill in your basic details and store name',
-      'Select a free trial or paid plan',
+      'Select a subscription plan',
       'No setup fee, no hidden charges',
     ],
     image:
@@ -150,7 +150,7 @@ const colorMap: Record<string, Record<string, string>> = {
 const faqs = [
   {
     q: 'How much does it cost to become a vendor?',
-    a: 'We offer a free trial plan to get you started — no credit card required. After the trial, choose a paid subscription that suits your business size. There are zero setup fees and no per-transaction commissions beyond your subscription.',
+    a: 'Choose a subscription plan that suits your business size. There are zero setup fees and no per-transaction commissions beyond your subscription.',
   },
   {
     q: 'Do I need a GST number to sell on Agnipengal?',
@@ -515,13 +515,12 @@ export default function HowItWorksPage() {
             Join Thousands of Women Selling on Agnipengal
           </h2>
           <p className='text-gray-400 text-lg mb-10 max-w-xl mx-auto'>
-            Your store. Your prices. Your customers. Get started today with a free trial — no credit
-            card needed.
+            Your store. Your prices. Your customers. Get started today by choosing a subscription plan.
           </p>
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <Link href='/partnership/register'>
               <button className='px-10 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl shadow-xl shadow-orange-900/30 transition-all flex items-center gap-2'>
-                Create Your Store Free <ArrowRight className='w-5 h-5' />
+                Create Your Store <ArrowRight className='w-5 h-5' />
               </button>
             </Link>
             <Link href='/partnership'>

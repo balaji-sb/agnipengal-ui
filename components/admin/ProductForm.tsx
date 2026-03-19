@@ -125,7 +125,7 @@ export default function ProductForm({
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData((prev: any) => {
       const newData = { ...prev, [e.target.name]: value };
-      if (e.target.name === 'name' && !isEditing) {
+      if (e.target.name === 'name') {
         newData.slug = value
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
