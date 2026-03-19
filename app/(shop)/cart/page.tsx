@@ -5,12 +5,14 @@ import { useCart } from '@/lib/context/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Minus, Plus, Trash2, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function CartPage() {
+  const t = useTranslations('Cart');
   const { items, updateQuantity, removeItem, totalPrice } = useCart();
 
   const handleRemove = (productId: string, variantId?: string, productName?: string) => {
-    const confirmed = window.confirm(`Remove "${productName || 'this item'}" from your cart?`);
+    const confirmed = window.confirm(t('removeConfirmTitle', { productName: productName || 'this item' }));
     if (confirmed) {
       removeItem(productId, variantId);
     }
@@ -19,13 +21,13 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className='container mx-auto px-4 py-20 text-center'>
-        <h2 className='text-3xl font-bold mb-4'>Your Cart is Empty</h2>
-        <p className='text-gray-500 mb-8'>Looks like you haven't added anything yet.</p>
+        <h2 className='text-3xl font-bold mb-4'>{t('emptyCartTitle')}</h2>
+        <p className='text-gray-500 mb-8'>{t('emptyCartSub')}</p>
         <Link
           href='/products'
           className='inline-flex items-center px-6 py-3 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition'
         >
-          Start Shopping
+          {t('startShopping')}
         </Link>
       </div>
     );
@@ -33,7 +35,7 @@ export default function CartPage() {
 
   return (
     <div className='container mx-auto px-4 py-12'>
-      <h1 className='text-3xl font-bold mb-8'>Shopping Cart</h1>
+      <h1 className='text-3xl font-bold mb-8'>{t('shoppingCartTitle')}</h1>
 
       <div className='flex flex-col lg:flex-row gap-12'>
         {/* Cart Items */}
@@ -71,7 +73,7 @@ export default function CartPage() {
                   <p className='text-pink-600 font-bold mt-1'>₹{displayPrice}</p>
                   {item.variant?.sku && (
                     <p className='text-xs text-gray-400 font-mono mt-0.5'>
-                      SKU: {item.variant.sku}
+                      {t('sku')} {item.variant.sku}
                     </p>
                   )}
                 </div>
@@ -104,7 +106,7 @@ export default function CartPage() {
                     )
                   }
                   className='p-2 text-gray-400 hover:text-red-500 transition'
-                  title='Remove item'
+                  title={t('removeItemText')}
                 >
                   <Trash2 className='w-5 h-5' />
                 </button>
@@ -116,16 +118,16 @@ export default function CartPage() {
         {/* Summary */}
         <div className='w-full lg:w-96 flex-shrink-0'>
           <div className='bg-white p-8 rounded-xl shadow-sm border border-gray-100 sticky top-24'>
-            <h2 className='text-xl font-bold mb-6'>Order Summary</h2>
+            <h2 className='text-xl font-bold mb-6'>{t('orderSummary')}</h2>
 
             <div className='space-y-4 mb-6'>
               <div className='flex justify-between text-gray-600'>
-                <span>Subtotal</span>
+                <span>{t('subtotal')}</span>
                 <span>₹{totalPrice.toLocaleString('en-IN')}</span>
               </div>
 
               <div className='border-t border-gray-100 pt-4 flex justify-between font-bold text-lg text-gray-900'>
-                <span>Total</span>
+                <span>{t('total')}</span>
                 <span>₹{totalPrice.toLocaleString('en-IN')}</span>
               </div>
             </div>
@@ -134,7 +136,7 @@ export default function CartPage() {
               href='/checkout'
               className='block w-full py-4 text-center bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2'
             >
-              Proceed to Checkout <ArrowRight className='w-4 h-4' />
+              {t('proceedToCheckout')} <ArrowRight className='w-4 h-4' />
             </Link>
           </div>
         </div>

@@ -18,6 +18,7 @@ import {
   Clock,
   Headphones,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // ─── Data ───────────────────────────────────────────────────────────────────
 
@@ -212,8 +213,31 @@ const perks = [
 export default function HowItWorksPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const t = useTranslations('PartnershipHowItWorks');
 
-  const step = steps[activeStep];
+  const translatedSteps = steps.map((s, idx) => ({
+    ...s,
+    title: t(`step${idx}Title` as any),
+    description: t(`step${idx}Desc` as any),
+    detail: [
+      t(`step${idx}Detail0` as any),
+      t(`step${idx}Detail1` as any),
+      t(`step${idx}Detail2` as any),
+    ]
+  }));
+
+  const translatedFaqs = faqs.map((f, idx) => ({
+    q: t(`faq${idx}Q` as any),
+    a: t(`faq${idx}A` as any),
+  }));
+
+  const translatedPerks = perks.map((p, idx) => ({
+    ...p,
+    title: t(`perk${idx}Title` as any),
+    desc: t(`perk${idx}Desc` as any),
+  }));
+
+  const step = translatedSteps[activeStep];
   const c = colorMap[step.color];
 
   return (
@@ -231,13 +255,13 @@ export default function HowItWorksPage() {
           <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 mb-8'>
             <Sparkles className='w-3.5 h-3.5 text-orange-600' />
             <span className='text-xs font-semibold text-orange-700 uppercase tracking-wider'>
-              For Women Entrepreneurs
+              {t('forWomenEntrepreneurs')}
             </span>
           </div>
           <h1 className='text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-6 leading-tight'>
-            How Selling on{' '}
+            {t('titlePart1')}{' '}
             <span className='text-orange-600 relative inline-block'>
-              Agnipengal
+              {t('titleAgnipengal')}
               <svg
                 className='absolute w-full h-2.5 -bottom-1 left-0 text-orange-200'
                 viewBox='0 0 100 10'
@@ -252,21 +276,20 @@ export default function HowItWorksPage() {
                 />
               </svg>
             </span>{' '}
-            Works
+            {t('titlePart2')}
           </h1>
           <p className='text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed mb-10'>
-            From sign-up to your first sale — here's everything you need to know about launching
-            your store and reaching thousands of buyers.
+            {t('heroSubtitle')}
           </p>
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <Link href='/partnership/register'>
               <button className='px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 transition-all flex items-center gap-2'>
-                Start Now <ArrowRight className='w-5 h-5' />
+                {t('startNow')} <ArrowRight className='w-5 h-5' />
               </button>
             </Link>
             <Link href='/partnership'>
               <button className='px-8 py-4 bg-white border-2 border-gray-200 text-gray-800 font-semibold rounded-lg hover:border-gray-900 transition-all'>
-                View Plans
+                {t('viewPlans')}
               </button>
             </Link>
           </div>
@@ -278,17 +301,17 @@ export default function HowItWorksPage() {
         <div className='container mx-auto max-w-6xl'>
           <div className='text-center mb-16'>
             <h2 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4'>
-              5 Steps to Your First Sale
+              {t('stepsTitle')}
             </h2>
             <p className='text-gray-500 text-lg max-w-xl mx-auto'>
-              Click any step to explore the details.
+              {t('stepsSubtitle')}
             </p>
           </div>
 
           <div className='grid lg:grid-cols-12 gap-10 items-start'>
             {/* Step Selector */}
             <div className='lg:col-span-4 flex flex-col gap-3'>
-              {steps.map((s, idx) => {
+              {translatedSteps.map((s, idx) => {
                 const Icon = s.icon;
                 const isActive = idx === activeStep;
                 const cm = colorMap[s.color];
@@ -311,7 +334,7 @@ export default function HowItWorksPage() {
                       <span
                         className={`text-xs font-bold uppercase tracking-wider ${isActive ? cm.number : 'text-gray-400'}`}
                       >
-                        Step {s.number}
+                        {t('stepLabel')} {s.number}
                       </span>
                       <p
                         className={`text-sm font-semibold truncate ${isActive ? 'text-gray-900' : 'text-gray-600'}`}
@@ -341,7 +364,7 @@ export default function HowItWorksPage() {
                 <div
                   className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${c.badge}`}
                 >
-                  Step {step.number}
+                  {t('stepLabel')} {step.number}
                 </div>
                 <div
                   className={`absolute bottom-4 left-4 w-12 h-12 rounded-xl flex items-center justify-center ${c.icon}`}
@@ -372,10 +395,10 @@ export default function HowItWorksPage() {
                     disabled={activeStep === 0}
                     className='text-sm font-semibold text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-colors'
                   >
-                    ← Previous
+                    {t('previous')}
                   </button>
                   <div className='flex gap-2'>
-                    {steps.map((_, i) => (
+                    {translatedSteps.map((_, i) => (
                       <button
                         key={i}
                         onClick={() => setActiveStep(i)}
@@ -383,17 +406,17 @@ export default function HowItWorksPage() {
                       />
                     ))}
                   </div>
-                  {activeStep < steps.length - 1 ? (
+                  {activeStep < translatedSteps.length - 1 ? (
                     <button
-                      onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
+                      onClick={() => setActiveStep(Math.min(translatedSteps.length - 1, activeStep + 1))}
                       className='text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors'
                     >
-                      Next →
+                      {t('next')}
                     </button>
                   ) : (
                     <Link href='/partnership/register'>
                       <button className='text-sm font-semibold text-orange-600 hover:text-orange-800 transition-colors flex items-center gap-1'>
-                        Get Started <ArrowRight className='w-4 h-4' />
+                        {t('getStarted')} <ArrowRight className='w-4 h-4' />
                       </button>
                     </Link>
                   )}
@@ -409,14 +432,14 @@ export default function HowItWorksPage() {
         <div className='container mx-auto max-w-6xl'>
           <div className='text-center mb-16'>
             <h2 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4'>
-              Everything You Need to Succeed
+              {t('perksTitle')}
             </h2>
             <p className='text-gray-500 text-lg max-w-xl mx-auto'>
-              Agnipengal gives you the tools, community, and platform to build a real business.
+              {t('perksSubtitle')}
             </p>
           </div>
           <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {perks.map((perk, i) => {
+            {translatedPerks.map((perk, i) => {
               const Icon = perk.icon;
               return (
                 <div
@@ -456,12 +479,10 @@ export default function HowItWorksPage() {
                 />
               </div>
               <blockquote className='text-xl md:text-2xl font-medium leading-relaxed mb-6 max-w-2xl mx-auto'>
-                &ldquo;Within 3 months of joining Agnipengal, I went from selling at local fairs to
-                receiving orders from across India. The platform is simple, the support is
-                real.&rdquo;
+                &ldquo;{t('testimonialQuote')}&rdquo;
               </blockquote>
-              <p className='font-bold text-orange-100'>Kavitha R.</p>
-              <p className='text-orange-200 text-sm'>Aari Embroidery Artist, Coimbatore</p>
+              <p className='font-bold text-orange-100'>{t('testimonialAuthor')}</p>
+              <p className='text-orange-200 text-sm'>{t('testimonialRole')}</p>
             </div>
           </div>
         </div>
@@ -472,12 +493,12 @@ export default function HowItWorksPage() {
         <div className='container mx-auto max-w-3xl'>
           <div className='text-center mb-14'>
             <h2 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4'>
-              Frequently Asked Questions
+              {t('faqTitle')}
             </h2>
-            <p className='text-gray-500 text-lg'>Still have questions? We&apos;re here to help.</p>
+            <p className='text-gray-500 text-lg'>{t('faqSubtitle')}</p>
           </div>
           <div className='space-y-3'>
-            {faqs.map((faq, i) => (
+            {translatedFaqs.map((faq, i) => (
               <div
                 key={i}
                 className='bg-[#FAF9F6] rounded-xl border border-gray-100 overflow-hidden'
@@ -508,24 +529,24 @@ export default function HowItWorksPage() {
           <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/30 mb-8'>
             <Sparkles className='w-3.5 h-3.5 text-orange-400' />
             <span className='text-xs font-semibold text-orange-300 uppercase tracking-wider'>
-              Ready to start?
+              {t('ctaBadge')}
             </span>
           </div>
           <h2 className='text-3xl sm:text-4xl font-bold text-white mb-6'>
-            Join Thousands of Women Selling on Agnipengal
+            {t('ctaTitle')}
           </h2>
           <p className='text-gray-400 text-lg mb-10 max-w-xl mx-auto'>
-            Your store. Your prices. Your customers. Get started today by choosing a subscription plan.
+            {t('ctaSubtitle')}
           </p>
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <Link href='/partnership/register'>
               <button className='px-10 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl shadow-xl shadow-orange-900/30 transition-all flex items-center gap-2'>
-                Create Your Store <ArrowRight className='w-5 h-5' />
+                {t('createYourStore')} <ArrowRight className='w-5 h-5' />
               </button>
             </Link>
             <Link href='/partnership'>
               <button className='px-10 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all'>
-                Compare Plans
+                {t('comparePlans')}
               </button>
             </Link>
           </div>

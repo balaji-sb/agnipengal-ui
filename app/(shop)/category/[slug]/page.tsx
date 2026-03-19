@@ -2,6 +2,7 @@ import React from 'react';
 
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,6 +56,7 @@ export async function generateMetadata({
 }
 
 export default async function SubCategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const t = await getTranslations('SubCategory');
   const { slug } = await params;
   const category = await getCategory(slug);
 
@@ -68,7 +70,7 @@ export default async function SubCategoryPage({ params }: { params: Promise<{ sl
         <h1 className='text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 mb-4'>
           {category.name}
         </h1>
-        <p className='text-gray-600'>Explore subcategories</p>
+        <p className='text-gray-600'>{t('explore')}</p>
       </div>
 
       {category.subcategories && category.subcategories.length > 0 ? (
@@ -99,7 +101,7 @@ export default async function SubCategoryPage({ params }: { params: Promise<{ sl
         </div>
       ) : (
         <div className='text-center py-12 bg-white rounded-xl border border-dashed border-gray-300'>
-          <p className='text-gray-500'>No subcategories found in this category.</p>
+          <p className='text-gray-500'>{t('noSubcategories')}</p>
         </div>
       )}
     </div>

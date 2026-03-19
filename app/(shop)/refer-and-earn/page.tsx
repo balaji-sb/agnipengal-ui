@@ -13,45 +13,46 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function ReferAndEarn() {
+  const t = useTranslations('ReferAndEarn');
+  
   const steps = [
     {
       icon: <Share2 className='w-8 h-8 text-pink-500' />,
-      title: '1. Share Your Code',
-      description:
-        'Find your unique referral code in your Partner Dashboard and share it with your network.',
+      title: t('step1Title'),
+      description: t('step1Desc'),
     },
     {
       icon: <Users className='w-8 h-8 text-violet-500' />,
-      title: '2. Friend Registers',
-      description:
-        'When they sign up for a Partner subscription, they enter your code at checkout.',
+      title: t('step2Title'),
+      description: t('step2Desc'),
     },
     {
       icon: <Gift className='w-8 h-8 text-orange-500' />,
-      title: '3. Both Earn Rewards',
-      description: 'You both get bonus subscription days added automatically to your accounts!',
+      title: t('step3Title'),
+      description: t('step3Desc'),
     },
   ];
 
   const rewards = [
     {
-      plan: '1-Month Plan',
-      referrer: '10 Bonus Days',
-      referee: '5 Bonus Days',
+      plan: t('plan1Month'),
+      referrer: t('bonusDays10'),
+      referee: t('bonusDays5'),
       color: 'from-blue-400 to-indigo-500',
     },
     {
-      plan: '6-Month Plan',
-      referrer: '20 Bonus Days',
-      referee: '10 Bonus Days',
+      plan: t('plan6Month'),
+      referrer: t('bonusDays20'),
+      referee: t('bonusDays10'),
       color: 'from-violet-400 to-fuchsia-500',
     },
     {
-      plan: '1-Year Plan',
-      referrer: '30 Bonus Days (1 Month)',
-      referee: '15 Bonus Days',
+      plan: t('plan1Year'),
+      referrer: t('bonusDays30'),
+      referee: t('bonusDays15'),
       color: 'from-orange-400 to-pink-500',
       popular: true,
     },
@@ -72,30 +73,29 @@ export default function ReferAndEarn() {
             transition={{ duration: 0.6 }}
           >
             <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 text-pink-200 text-sm font-semibold tracking-wide uppercase'>
-              <Sparkles className='w-4 h-4' /> Partner Rewards Program
+              <Sparkles className='w-4 h-4' /> {t('badge')}
             </div>
             <h1 className='text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight'>
-              Grow Together, <br className='hidden md:block' />
+              {t('titleLine1')} <br className='hidden md:block' />
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-orange-400'>
-                Earn Together.
+                {t('titleLine2')}
               </span>
             </h1>
             <p className='text-lg md:text-xl text-indigo-100 mb-10 max-w-2xl mx-auto leading-relaxed'>
-              Invite other businesses to join our vibrant marketplace. When they subscribe using
-              your referral code, both of you get free bonus days added to your subscription!
+              {t('subtitle')}
             </p>
             <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
               <Link
                 href='/partnership/register'
                 className='w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-full font-bold text-lg hover:shadow-[0_0_30px_rgba(236,72,153,0.4)] transition-all transform hover:-translate-y-1 flex items-center justify-center'
               >
-                Become a Partner <ArrowRight className='w-5 h-5 ml-2' />
+                {t('btnBecomePartner')} <ArrowRight className='w-5 h-5 ml-2' />
               </Link>
               <Link
                 href='/vendor/login'
                 className='w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center'
               >
-                Get Your Code
+                {t('btnGetCode')}
               </Link>
             </div>
           </motion.div>
@@ -105,9 +105,9 @@ export default function ReferAndEarn() {
       {/* How It Works */}
       <section className='py-20 px-6 container mx-auto max-w-6xl'>
         <div className='text-center mb-16'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>How It Works</h2>
+          <h2 className='text-3xl font-bold text-gray-900 mb-4'>{t('howItWorksTitle')}</h2>
           <p className='text-gray-600 max-w-2xl mx-auto'>
-            Three simple steps to start earning free subscription extensions for your business.
+            {t('howItWorksSubtitle')}
           </p>
         </div>
 
@@ -136,11 +136,10 @@ export default function ReferAndEarn() {
         <div className='container mx-auto max-w-5xl'>
           <div className='text-center mb-16'>
             <h2 className='text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3'>
-              <Award className='w-8 h-8 text-violet-600' /> Reward Structure
+              <Award className='w-8 h-8 text-violet-600' /> {t('rewardStructureTitle')}
             </h2>
             <p className='text-gray-600 max-w-2xl mx-auto'>
-              The longer the subscription plan your friend chooses, the bigger the reward for both
-              of you! There is no limit to how many businesses you can refer.
+              {t('rewardStructureSubtitle')}
             </p>
           </div>
 
@@ -153,7 +152,7 @@ export default function ReferAndEarn() {
               >
                 {reward.popular && (
                   <div className='absolute top-0 inset-x-0 bg-gradient-to-r from-pink-500 to-orange-500 text-white text-[10px] font-bold py-1.5 text-center uppercase tracking-wider'>
-                    Most Rewarding
+                    {t('mostRewarding')}
                   </div>
                 )}
                 <div className={`h-2 bg-gradient-to-r ${reward.color}`}></div>
@@ -165,7 +164,7 @@ export default function ReferAndEarn() {
                   <div className='space-y-4'>
                     <div className='bg-gray-50 rounded-xl p-4 border border-gray-100'>
                       <p className='text-xs text-gray-500 uppercase font-semibold mb-1'>
-                        Referrer Gets
+                        {t('referrerGets')}
                       </p>
                       <p className='text-lg font-bold text-violet-700 flex items-center gap-2'>
                         <CheckCircle2 className='w-5 h-5 text-violet-500' /> +{reward.referrer}
@@ -174,7 +173,7 @@ export default function ReferAndEarn() {
 
                     <div className='bg-pink-50 rounded-xl p-4 border border-pink-100'>
                       <p className='text-xs text-gray-500 uppercase font-semibold mb-1'>
-                        New Partner Gets
+                        {t('newPartnerGets')}
                       </p>
                       <p className='text-lg font-bold text-pink-700 flex items-center gap-2'>
                         <CheckCircle2 className='w-5 h-5 text-pink-500' /> +{reward.referee}
@@ -190,16 +189,15 @@ export default function ReferAndEarn() {
 
       {/* CTA */}
       <section className='py-24 px-6 text-center'>
-        <h2 className='text-3xl font-bold text-gray-900 mb-6'>Ready to expand your business?</h2>
+        <h2 className='text-3xl font-bold text-gray-900 mb-6'>{t('ctaTitle')}</h2>
         <p className='text-gray-600 mb-10 max-w-md mx-auto'>
-          Join our platform today, grab your referral code, and start growing your network while
-          earning free subscription days.
+          {t('ctaSubtitle')}
         </p>
         <Link
           href='/partnership/register'
           className='inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-colors shadow-lg'
         >
-          Register as Partner
+          {t('btnRegister')}
         </Link>
       </section>
     </div>

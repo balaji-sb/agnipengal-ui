@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Send, CreditCard, ShieldCheck, Truck, Loader2 } from 'lucide-react';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 import { useConfig } from '@/lib/context/ConfigContext';
 
@@ -15,6 +16,7 @@ export default function Footer() {
   const [shops, setShops] = React.useState<any[]>([]);
   const { config } = useConfig();
   const appName = config?.appName || 'Agnipengal';
+  const t = useTranslations('Footer');
 
   React.useEffect(() => {
     const fetchPages = async () => {
@@ -118,9 +120,7 @@ export default function Footer() {
                 )}
               </div>
               <p className='text-sm leading-relaxed text-gray-400'>
-                Agnipengal is a community-driven platform empowering women entrepreneurs across
-                India. We celebrate creativity, resilience, and financial independence by connecting
-                artisans with a global audience.
+                {t('brandDescription')}
               </p>
               <div className='flex gap-4 justify-start'>
                 <a
@@ -244,7 +244,7 @@ export default function Footer() {
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
                 <span className='w-8 h-1 bg-red-500 rounded-full'></span>
-                Shop
+                {t('shop')}
               </h4>
               <ul className='space-y-3 text-sm'>
                 {/* Always-visible link */}
@@ -254,7 +254,7 @@ export default function Footer() {
                     className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                   >
                     <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>
-                    All Products
+                    {t('allProducts')}
                   </a>
                 </li>
                 {/* Dynamic vendor shops */}
@@ -278,7 +278,7 @@ export default function Footer() {
                         className='hover:text-red-400 transition-colors flex items-center gap-2 group'
                       >
                         <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>
-                        New Arrivals
+                        {t('newArrivals')}
                       </a>
                     </li>
                   </>
@@ -315,7 +315,7 @@ export default function Footer() {
                         className='hover:text-red-400 transition-colors flex items-center gap-2 group mt-1'
                       >
                         <span className='w-1 h-1 bg-gray-600 rounded-full group-hover:bg-red-500 transition-colors'></span>
-                        Browse All Shops →
+                        {t('browseAllShops')}
                       </a>
                     </li>
                   );
@@ -327,7 +327,7 @@ export default function Footer() {
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
                 <span className='w-8 h-1 bg-orange-500 rounded-full'></span>
-                Support
+                {t('support')}
               </h4>
               <ul className='space-y-3 text-sm'>
                 {cmsPages.map((page) => (
@@ -342,12 +342,12 @@ export default function Footer() {
                 ))}
                 <li>
                   <Link href='/faq' className='text-gray-400 hover:text-white transition'>
-                    FAQ
+                    {t('faq')}
                   </Link>
                 </li>
                 <li>
                   <Link href='/blog' className='text-gray-400 hover:text-white transition'>
-                    Blog
+                    {t('blog')}
                   </Link>
                 </li>
                 <li>
@@ -355,12 +355,12 @@ export default function Footer() {
                     href='/account/support'
                     className='text-gray-400 hover:text-white transition'
                   >
-                    Customer Support
+                    {t('customerSupport')}
                   </Link>
                 </li>
                 <li>
                   <Link href='/contact' className='text-gray-400 hover:text-white transition'>
-                    Contact Us
+                    {t('contactUs')}
                   </Link>
                 </li>
               </ul>
@@ -370,7 +370,7 @@ export default function Footer() {
             <div>
               <h4 className='text-lg font-semibold text-white mb-6 flex items-center gap-2'>
                 <span className='w-8 h-1 bg-amber-500 rounded-full'></span>
-                We Accept
+                {t('weAccept')}
               </h4>
               <div className='grid grid-cols-2 gap-3 mb-6'>
                 {/* Simulate Payment Badges */}
@@ -391,11 +391,11 @@ export default function Footer() {
               <div className='space-y-3 text-sm text-gray-400'>
                 <div className='flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-800'>
                   <Truck className='w-5 h-5 text-indigo-400' />
-                  <span>Fast Delivery across India</span>
+                  <span>{t('fastDelivery')}</span>
                 </div>
                 <div className='flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-800'>
                   <ShieldCheck className='w-5 h-5 text-green-400' />
-                  <span>Secure Checkout</span>
+                  <span>{t('secureCheckout')}</span>
                 </div>
               </div>
             </div>
@@ -412,11 +412,11 @@ export default function Footer() {
           {/* Made in India badge */}
           <div className='flex items-center gap-2.5 px-4 py-1.5 bg-gray-900/50 rounded-full border border-gray-800/60 shadow-inner backdrop-blur-sm'>
             <span className='text-gray-400 font-medium text-[11px] tracking-widest uppercase'>
-              Crafted in
+              {t('craftedIn')}
             </span>
             <div className='flex items-center gap-1.5'>
               <span className='font-bold text-[12px] tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-white to-green-400'>
-                INDIA
+                {t('india')}
               </span>
               <svg
                 viewBox='0 0 24 24'

@@ -11,6 +11,8 @@ import { ConfigProvider } from '@/lib/context/ConfigContext';
 import { VendorAuthProvider } from '@/lib/context/VendorAuthContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
 
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'] });
 
@@ -144,33 +146,38 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang='en-IN'>
+    <html lang={locale}>
       <body className={plusJakarta.className}>
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID'}
-        >
-          <ConfigProvider>
-            <AuthProvider>
-              <VendorAuthProvider>
-                <CartProvider>
-                  <WishlistProvider>
-                    <Suspense fallback={null}>
-                      <AnalyticsTracker />
-                    </Suspense>
-                    {children}
-                    <Toaster position='top-right' />
-                  </WishlistProvider>
-                </CartProvider>
-              </VendorAuthProvider>
-            </AuthProvider>
-          </ConfigProvider>
-        </GoogleOAuthProvider>
+        <NextIntlClientProvider messages={messages}>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID'}
+          >
+            <ConfigProvider>
+              <AuthProvider>
+                <VendorAuthProvider>
+                  <CartProvider>
+                    <WishlistProvider>
+                      <Suspense fallback={null}>
+                        <AnalyticsTracker />
+                      </Suspense>
+                      {children}
+                      <Toaster position='top-right' />
+                    </WishlistProvider>
+                  </CartProvider>
+                </VendorAuthProvider>
+              </AuthProvider>
+            </ConfigProvider>
+          </GoogleOAuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

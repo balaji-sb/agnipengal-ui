@@ -18,6 +18,7 @@ import axios from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
+import { useTranslations } from 'next-intl';
 
 export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState([]);
@@ -32,6 +33,7 @@ export default function SupportTicketsPage() {
     attachment: '',
   });
   const router = useRouter();
+  const t = useTranslations('Support');
 
   const { user } = useAuth();
 
@@ -128,21 +130,21 @@ export default function SupportTicketsPage() {
   };
 
   if (loading)
-    return <div className='p-12 text-center text-gray-500'>Loading support tickets...</div>;
+    return <div className='p-12 text-center text-gray-500'>{t('loading')}</div>;
 
   return (
     <div className='max-w-5xl mx-auto px-4 py-8'>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4'>
         <div>
-          <h1 className='text-2xl font-bold text-gray-900'>My Support Tickets</h1>
-          <p className='text-gray-600 mt-1'>View and track your support requests</p>
+          <h1 className='text-2xl font-bold text-gray-900'>{t('title')}</h1>
+          <p className='text-gray-600 mt-1'>{t('subtitle')}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className='flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-sm font-medium'
         >
           <Plus className='w-5 h-5' />
-          <span>Raise New Ticket</span>
+          <span>{t('raiseNewTicket')}</span>
         </button>
       </div>
 
@@ -150,13 +152,13 @@ export default function SupportTicketsPage() {
         {tickets.length === 0 ? (
           <div className='p-12 text-center flex flex-col items-center'>
             <MessageSquare className='w-12 h-12 text-gray-300 mb-4' />
-            <h3 className='text-lg font-medium text-gray-900 mb-1'>No tickets found</h3>
-            <p className='text-gray-500 mb-6'>You haven't raised any support tickets yet.</p>
+            <h3 className='text-lg font-medium text-gray-900 mb-1'>{t('noTicketsFound')}</h3>
+            <p className='text-gray-500 mb-6'>{t('noTicketsMessage')}</p>
             <button
               onClick={() => setShowCreateModal(true)}
               className='text-pink-600 font-medium hover:underline'
             >
-              Create your first ticket
+              {t('createFirstTicket')}
             </button>
           </div>
         ) : (
@@ -188,7 +190,7 @@ export default function SupportTicketsPage() {
                               : 'border-green-200 text-green-600 bg-green-50'
                         }`}
                       >
-                        {ticket.priority} Priority
+                        {ticket.priority} {t('priorityLabel')}
                       </span>
                     </div>
                     <h3 className='text-lg font-semibold text-gray-900 truncate pr-4 group-hover:text-pink-600 transition-colors'>
@@ -211,7 +213,7 @@ export default function SupportTicketsPage() {
         <div className='fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4'>
           <div className='bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-200'>
             <div className='p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10'>
-              <h2 className='text-xl font-bold text-gray-900'>Raise a New Ticket</h2>
+              <h2 className='text-xl font-bold text-gray-900'>{t('raiseNewTicketTitle')}</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className='text-gray-400 hover:text-gray-600'
@@ -222,45 +224,45 @@ export default function SupportTicketsPage() {
 
             <form onSubmit={handleSubmit} className='p-6 space-y-6'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Subject</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('subject')}</label>
                 <input
                   type='text'
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition'
-                  placeholder='Briefly describe your issue'
+                  placeholder={t('subjectPlaceholder')}
                   required
                 />
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Priority</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('priorityLabel')}</label>
                 <select
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                   className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none bg-white transition'
                 >
-                  <option value='Low'>Low - General Question</option>
-                  <option value='Medium'>Medium - Issue with Order</option>
-                  <option value='High'>High - Urgent / Payment Issue</option>
+                  <option value='Low'>{t('lowPriority')}</option>
+                  <option value='Medium'>{t('mediumPriority')}</option>
+                  <option value='High'>{t('highPriority')}</option>
                 </select>
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Message</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('message')}</label>
                 <textarea
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={5}
                   className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition resize-none'
-                  placeholder='Describe your issue in detail...'
+                  placeholder={t('messagePlaceholder')}
                   required
                 />
               </div>
 
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
-                  Attachment (Optional)
+                  {t('attachmentOptional')}
                 </label>
                 {formData.attachment ? (
                   <div className='flex items-center gap-3 p-3 bg-pink-50 border border-pink-100 rounded-xl w-fit'>
@@ -271,7 +273,7 @@ export default function SupportTicketsPage() {
                       className='text-sm font-medium text-pink-700 hover:underline flex items-center gap-2'
                     >
                       <Paperclip className='w-4 h-4' />
-                      View Attached File
+                      {t('viewAttachedFile')}
                     </a>
                     <button
                       type='button'
@@ -290,7 +292,7 @@ export default function SupportTicketsPage() {
                     ) : (
                       <Paperclip className='w-4 h-4' />
                     )}
-                    {uploading ? 'Uploading...' : 'Add Attachment'}
+                    {uploading ? t('uploading') : t('addAttachment')}
                     <input
                       type='file'
                       className='hidden'
@@ -307,7 +309,7 @@ export default function SupportTicketsPage() {
                   onClick={() => setShowCreateModal(false)}
                   className='px-6 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition'
                 >
-                  Cancel
+                  {t('cancel')}
                 </button>
                 <button
                   type='submit'
@@ -317,12 +319,12 @@ export default function SupportTicketsPage() {
                   {createLoading ? (
                     <>
                       <Loader2 className='w-5 h-5 animate-spin' />
-                      Creating...
+                      {t('creating')}
                     </>
                   ) : (
                     <>
                       <Send className='w-5 h-5' />
-                      Submit Ticket
+                      {t('submitTicket')}
                     </>
                   )}
                 </button>

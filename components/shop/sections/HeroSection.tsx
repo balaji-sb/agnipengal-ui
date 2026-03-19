@@ -3,8 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, HandHeart, TrendingUp, Users, CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function HeroSection() {
+  const t = useTranslations('HeroSection');
+
   return (
     <section className='relative bg-[#FAF9F6] dark:bg-[#121212] pt-24 pb-28 lg:pt-32 lg:pb-36 min-h-[90vh] flex items-center overflow-hidden font-sans'>
       {/* Subtle Pattern Overlay */}
@@ -23,14 +26,14 @@ export default function HeroSection() {
             <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/50 mb-8 self-center lg:self-start transition-colors hover:bg-orange-100 dark:hover:bg-orange-900/50'>
               <Sparkles className='w-3.5 h-3.5 text-orange-600 dark:text-orange-400' />
               <span className='text-sm font-medium text-orange-800 dark:text-orange-300 tracking-wide uppercase text-xs'>
-                Join our thriving community
+                {t('joinCommunity')}
               </span>
             </div>
 
             <h1 className='text-3xl sm:text-5xl lg:text-[4.2rem] font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-[1.1]'>
-              Turn Your Passion Into a <br className='hidden md:block' />
+              {t('titlePart1')} <br className='hidden md:block' />
               <span className='text-orange-600 dark:text-orange-500 relative inline-block'>
-                Thriving Business
+                {t('titlePart2')}
                 {/* Decorative underline */}
                 <svg
                   className='absolute w-full h-3 -bottom-1 left-0 text-orange-200 dark:text-orange-900/50 -z-10'
@@ -49,21 +52,19 @@ export default function HeroSection() {
             </h1>
 
             <p className='text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal'>
-              Partner with Agnipengal. Subscribe today to launch your digital storefront, showcase
-              your unique crafts to thousands of buyers, and grow alongside fellow women
-              entrepreneurs.
+              {t('heroSubtitle')}
             </p>
 
             <div className='flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-14'>
               <Link href='/partnership/register' className='w-full sm:w-auto min-w-[200px]'>
                 <button className='w-full px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 border border-transparent'>
-                  Start Selling Now
+                  {t('startSellingNow')}
                   <ArrowRight className='w-5 h-5' />
                 </button>
               </Link>
               <Link href='/partnership/how-it-works' className='w-full sm:w-auto min-w-[200px]'>
                 <button className='w-full px-8 py-4 bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-white font-semibold rounded-lg border-2 border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-white transition-all duration-200 flex items-center justify-center gap-2'>
-                  See How It Works
+                  {t('seeHowItWorks')}
                 </button>
               </Link>
             </div>
@@ -75,8 +76,8 @@ export default function HeroSection() {
                   <HandHeart className='w-5 h-5 text-rose-600 dark:text-rose-400' />
                 </div>
                 <div>
-                  <h4 className='text-sm font-bold text-gray-900 dark:text-white'>Empowerment</h4>
-                  <p className='text-xs text-gray-500 mt-0.5'>By women, for women</p>
+                  <h4 className='text-sm font-bold text-gray-900 dark:text-white'>{t('empowerment')}</h4>
+                  <p className='text-xs text-gray-500 mt-0.5'>{t('empowermentSub')}</p>
                 </div>
               </div>
               <div className='flex items-start gap-3'>
@@ -85,9 +86,9 @@ export default function HeroSection() {
                 </div>
                 <div>
                   <h4 className='text-sm font-bold text-gray-900 dark:text-white'>
-                    Zero Setup Fees
+                    {t('zeroSetupFees')}
                   </h4>
-                  <p className='text-xs text-gray-500 mt-0.5'>Simple subscriptions</p>
+                  <p className='text-xs text-gray-500 mt-0.5'>{t('zeroSetupFeesSub')}</p>
                 </div>
               </div>
               <div className='flex items-start gap-3 col-span-2 md:col-span-1'>
@@ -95,8 +96,8 @@ export default function HeroSection() {
                   <Users className='w-5 h-5 text-green-600 dark:text-green-400' />
                 </div>
                 <div>
-                  <h4 className='text-sm font-bold text-gray-900 dark:text-white'>Global Reach</h4>
-                  <p className='text-xs text-gray-500 mt-0.5'>Access 10k+ buyers</p>
+                  <h4 className='text-sm font-bold text-gray-900 dark:text-white'>{t('globalReach')}</h4>
+                  <p className='text-xs text-gray-500 mt-0.5'>{t('globalReachSub')}</p>
                 </div>
               </div>
             </div>
@@ -118,8 +119,7 @@ export default function HeroSection() {
               {/* Image inner overlay content */}
               <div className='absolute bottom-10 left-8 right-8 text-white z-20'>
                 <p className='text-xl font-medium leading-snug mb-3'>
-                  &quot;Partnering with Agnipengal gave me the platform to scale my local craft into
-                  a sustaining business.&quot;
+                  {t('quoteText')}
                 </p>
                 <div className='flex items-center gap-3'>
                   <div className='w-12 h-12 rounded-full border-2 border-white/50 overflow-hidden'>
@@ -131,8 +131,8 @@ export default function HeroSection() {
                     />
                   </div>
                   <div>
-                    <h5 className='text-base font-bold text-white'>Shreya M.</h5>
-                    <p className='text-sm text-white/80'>Textile Artist, Chennai</p>
+                    <h5 className='text-base font-bold text-white'>{t('quoteAuthor')}</h5>
+                    <p className='text-sm text-white/80'>{t('quoteRole')}</p>
                   </div>
                 </div>
               </div>
@@ -146,28 +146,28 @@ export default function HeroSection() {
                 </div>
                 <div>
                   <h5 className='font-bold text-gray-900 dark:text-white text-lg leading-tight'>
-                    Pro Seller Plan
+                    {t('proSellerPlan')}
                   </h5>
-                  <p className='text-sm text-gray-500'>Unlocks premium tools</p>
+                  <p className='text-sm text-gray-500'>{t('proSellerPlanSub')}</p>
                 </div>
               </div>
               <ul className='space-y-3'>
                 <li className='flex items-start gap-2'>
                   <CheckCircle2 className='w-4 h-4 text-green-500 mt-0.5 shrink-0' />
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
-                    Infinite product listings
+                    {t('feature1')}
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <CheckCircle2 className='w-4 h-4 text-green-500 mt-0.5 shrink-0' />
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
-                    Dedicated storefront URL
+                    {t('feature2')}
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <CheckCircle2 className='w-4 h-4 text-green-500 mt-0.5 shrink-0' />
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
-                    Priority community support
+                    {t('feature3')}
                   </span>
                 </li>
               </ul>
@@ -182,7 +182,7 @@ export default function HeroSection() {
       {/* Scroll Down Indicator */}
       <div className='absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center opacity-60 hover:opacity-100 transition-opacity z-30 pointer-events-none'>
         <span className='text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em] mb-2'>
-          Scroll
+          {t('scroll')}
         </span>
         <div className='w-5 h-8 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center p-0.5'>
           <div className='w-1 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce mt-1' />

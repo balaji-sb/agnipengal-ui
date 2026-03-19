@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, Store, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 declare global {
   interface Window {
@@ -21,10 +22,14 @@ interface Plan {
   durationInMonths: number;
   isFreeTrialPlan: boolean;
   trialPeriodDays: number;
+  description: string;
+  features: string[];
 }
 
-export default function PartnershipRegister() {
+export default function Register() {
   const router = useRouter();
+  const t = useTranslations('PartnershipRegister');
+  const [currentStep, setCurrentStep] = useState(1);
   const searchParams = useSearchParams();
   const planIdParam = searchParams.get('planId');
 
@@ -41,7 +46,7 @@ export default function PartnershipRegister() {
   });
   const [plans, setPlans] = useState<Plan[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Renamed from 'loading'
   const [processingPayment, setProcessingPayment] = useState(false);
 
   // Coupon State
@@ -140,10 +145,10 @@ export default function PartnershipRegister() {
           setRefereeExtensionDays(extraDays);
           if (extraDays > 0) {
             setCouponSuccess(
-              `Referral code applied! You get ${extraDays} extra days of subscription!`,
+              t('referralSuccess', { days: extraDays }),
             );
           } else {
-            setCouponSuccess('Referral code applied! Welcome to the network.');
+            setCouponSuccess(t('referralWelcome'));
           }
         } else {
           // It's a coupon
@@ -151,33 +156,69 @@ export default function PartnershipRegister() {
           const discount = selectedPlan.price - backendAmountInRupees;
           setCouponDiscount(discount);
           setRefereeExtensionDays(0);
-          setCouponSuccess(`Coupon applied! ₹${discount} saved.`);
+          setCouponSuccess(t('couponSuccess', { discount }));
         }
       }
     } catch (error: any) {
       setCouponDiscount(0);
       setRefereeExtensionDays(0);
-      setCouponError(error.response?.data?.error || 'Invalid code');
+      setCouponError(error.response?.data?.error || t('invalidCode'));
     } finally {
       setApplyingCoupon(false);
     }
   };
 
+  const registerUser = async (razorpay_payment_id: string, razorpay_signature: string, order_id: string) => {
+    try {
+      const registerRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/vendors/register`,
+        {
+          ...formData,
+          subscription: {
+            planId: selectedPlan!._id,
+            paymentDetails: {
+              razorpay_order_id: order_id,
+              razorpay_payment_id: razorpay_payment_id,
+              razorpay_signature: razorpay_signature,
+            },
+          },
+          referralCodeUsed: couponSuccess.includes('Referral') ? couponCode : undefined,
+        },
+      );
+
+      if (registerRes.data.success) {
+        toast.success(
+          t('registrationSuccess'),
+          { duration: 6000 },
+        );
+        router.push('/partnership');
+      }
+    } catch (regError: any) {
+      toast.error(
+        regError.response?.data?.error ||
+        t('registrationFailed'),
+      );
+      console.error('Registration Error', regError);
+    } finally {
+      setProcessingPayment(false);
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords don't match");
-      setLoading(false);
+      toast.error(t('passwordsDontMatch'));
       return;
     }
 
     if (!selectedPlan) {
-      toast.error('Please select a plan');
-      setLoading(false);
+      toast.error(t('pleaseSelectPlan'));
       return;
     }
+
+    setIsLoading(true);
 
     try {
       // 0. Check Availability First
@@ -190,8 +231,8 @@ export default function PartnershipRegister() {
       );
 
       if (!checkRes.data.success || !checkRes.data.available) {
-        toast.error(checkRes.data.error || 'Email or Store Name already exists');
-        setLoading(false);
+        toast.error(checkRes.data.error || t('emailStoreNameExists'));
+        setIsLoading(false);
         return;
       }
 
@@ -211,36 +252,15 @@ export default function PartnershipRegister() {
       if (freePayment) {
         setProcessingPayment(true);
         try {
-          const registerRes = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/vendors/register`,
-            {
-              ...formData,
-              subscription: {
-                planId: selectedPlan._id,
-                paymentDetails: {
-                  razorpay_order_id: order_id,
-                  razorpay_payment_id: 'free_payment',
-                  razorpay_signature: 'free_payment',
-                },
-              },
-              referralCodeUsed: isReferral ? couponCode : undefined,
-            },
-          );
-
-          if (registerRes.data.success) {
-            toast.success('Registration Successful! Please check your email for the login link.', {
-              duration: 6000,
-            });
-            router.push('/partnership');
-          }
+          await registerUser('free_payment', 'free_payment', order_id);
         } catch (regError: any) {
           toast.error(
-            regError.response?.data?.error || 'Registration failed. Please contact support.',
+            regError.response?.data?.error || t('registrationFailed'),
           );
           console.error('Registration Error', regError);
         } finally {
           setProcessingPayment(false);
-          setLoading(false);
+          setIsLoading(false);
         }
         return;
       }
@@ -256,40 +276,10 @@ export default function PartnershipRegister() {
         handler: async function (response: any) {
           // 3. On Success -> Register Vendor with Payment Details
           setProcessingPayment(true);
-          try {
-            const registerRes = await axios.post(
-              `${process.env.NEXT_PUBLIC_API_URL}/vendors/register`,
-              {
-                ...formData,
-                subscription: {
-                  planId: selectedPlan._id,
-                  paymentDetails: {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                  },
-                },
-                referralCodeUsed: isReferral ? couponCode : undefined,
-              },
-            );
-
-            if (registerRes.data.success) {
-              toast.success(
-                'Registration and Payment Successful! Please check your email for the login link.',
-                { duration: 6000 },
-              );
-              router.push('/partnership');
-            }
-          } catch (regError: any) {
-            toast.error(
-              regError.response?.data?.error ||
-                'Registration failed after payment. Please contact support.',
-            );
-            console.error('Registration Error', regError);
-          } finally {
-            setProcessingPayment(false);
-            setLoading(false);
-          }
+          setIsLoading(false);
+          const { razorpay_payment_id, razorpay_signature } = response;
+          setCurrentStep(2);
+          await registerUser(razorpay_payment_id, razorpay_signature, order_id);
         },
         prefill: {
           name: formData.name,
@@ -301,8 +291,8 @@ export default function PartnershipRegister() {
         },
         modal: {
           ondismiss: function () {
-            setLoading(false);
-            toast('Payment cancelled');
+            setIsLoading(false);
+            toast.error(t('paymentCancelled'));
           },
         },
       };
@@ -310,8 +300,8 @@ export default function PartnershipRegister() {
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to initiate payment');
-      setLoading(false);
+      toast.error(error.response?.data?.error || t('failedInitiatePayment'));
+      setIsLoading(false);
     }
   };
 
@@ -319,22 +309,33 @@ export default function PartnershipRegister() {
     <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
         <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
-          Partner Registration
+          {t('title')}
         </h2>
         <p className='mt-2 text-center text-sm text-gray-600'>
-          Complete your profile and subscription to start selling.
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Overlay Loader */}
       {processingPayment && (
         <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm'>
-          <div className='w-16 h-16 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin'></div>
-          <h3 className='mt-4 text-xl font-bold text-gray-800'>Finalizing Your Registration...</h3>
-          <p className='mt-2 text-gray-600 text-center max-w-sm px-4'>
-            Please don't close this window. We are creating your partner portal and sending your
-            login details securely.
-          </p>
+          <div className='flex items-center justify-center min-h-[60vh]'>
+            <div className='text-center'>
+              <div className='relative w-20 h-20 mx-auto mb-8'>
+                <div className='absolute inset-0 bg-orange-100 rounded-full animate-ping opacity-75'></div>
+                <div className='relative bg-white rounded-full p-4 shadow-xl border border-orange-100'>
+                  <Store className='w-full h-full text-orange-600' />
+                </div>
+                <div className='absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 border-2 border-white'>
+                  <CheckCircle className='w-4 h-4 text-white' />
+                </div>
+              </div>
+              <h3 className='text-xl sm:text-2xl font-bold text-gray-900 mb-2'>{t('loadingTitle')}</h3>
+              <p className='text-gray-500 max-w-sm mx-auto'>
+                {t('loadingSubtitle')}
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -344,7 +345,7 @@ export default function PartnershipRegister() {
             {/* Personal Info */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Full Name</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('fullName')}</label>
                 <input
                   name='name'
                   type='text'
@@ -355,7 +356,7 @@ export default function PartnershipRegister() {
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Email address</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('emailAddress')}</label>
                 <input
                   name='email'
                   type='email'
@@ -369,7 +370,7 @@ export default function PartnershipRegister() {
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Password</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('password')}</label>
                 <input
                   name='password'
                   type='password'
@@ -380,7 +381,7 @@ export default function PartnershipRegister() {
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Confirm Password</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('confirmPassword')}</label>
                 <input
                   name='confirmPassword'
                   type='password'
@@ -395,7 +396,7 @@ export default function PartnershipRegister() {
             {/* Store Info */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Store Name</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('storeName')}</label>
                 <input
                   name='storeName'
                   type='text'
@@ -408,7 +409,7 @@ export default function PartnershipRegister() {
 
               {/* Category Selection */}
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Business Category</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('businessCategory')}</label>
                 <select
                   name='category'
                   required
@@ -416,7 +417,7 @@ export default function PartnershipRegister() {
                   value={formData.category}
                   onChange={handleChange}
                 >
-                  <option value=''>Select a Category</option>
+                  <option value=''>{t('selectCategory')}</option>
                   {categories.map((cat) => (
                     <option key={cat._id} value={cat._id}>
                       {cat.name}
@@ -425,7 +426,7 @@ export default function PartnershipRegister() {
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                <label className='block text-sm font-medium text-gray-700'>{t('phoneNumber')}</label>
                 <input
                   name='phone'
                   type='text'
@@ -438,12 +439,12 @@ export default function PartnershipRegister() {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-gray-700'>Store Description</label>
+              <label className='block text-sm font-medium text-gray-700'>{t('storeDescription')}</label>
               <textarea
                 name='storeDescription'
                 rows={3}
                 className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400'
-                placeholder='Tell us about your products...'
+                placeholder={t('storeDescriptionPlaceholder')}
                 value={formData.storeDescription}
                 onChange={handleChange}
               />
@@ -451,7 +452,7 @@ export default function PartnershipRegister() {
 
             {/* Plan Selection */}
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Select Plan</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('selectPlan')}</label>
               <div className='grid grid-cols-1 gap-3'>
                 {plans.map((plan) => {
                   const paidPlans = plans.filter((p) => !p.isFreeTrialPlan);
@@ -477,13 +478,13 @@ export default function PartnershipRegister() {
                       {/* Best Value badge */}
                       {isBestValue && (
                         <div className='absolute top-0 right-0 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm tracking-wider uppercase'>
-                          Best Value
+                          {t('bestValue')}
                         </div>
                       )}
                       {/* Free Trial badge */}
                       {plan.isFreeTrialPlan && (
                         <div className='absolute top-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm tracking-wider uppercase'>
-                          Free Trial
+                          {t('freeTrial')}
                         </div>
                       )}
 
@@ -495,12 +496,12 @@ export default function PartnershipRegister() {
                         </span>
                         {!plan.isFreeTrialPlan && (
                           <span className='text-gray-400 text-sm ml-2'>
-                            ({plan.durationInMonths} Mo)
+                            ({plan.durationInMonths} {t('mo')})
                           </span>
                         )}
                         {plan.isFreeTrialPlan && (
                           <span className='text-green-600 text-sm ml-2'>
-                            ({plan.trialPeriodDays} days)
+                            ({plan.trialPeriodDays} {t('days')})
                           </span>
                         )}
                       </div>
@@ -514,7 +515,7 @@ export default function PartnershipRegister() {
                               : 'text-gray-800'
                         }`}
                       >
-                        {plan.isFreeTrialPlan ? 'Free' : `₹${plan.price}`}
+                        {plan.isFreeTrialPlan ? t('free') : `₹${plan.price}`}
                       </span>
                     </div>
                   );
@@ -525,14 +526,14 @@ export default function PartnershipRegister() {
             {/* Coupon Code */}
             <div className='pt-2'>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
-                Have a referral or Coupon code?
+                {t('haveCouponCode')}
               </label>
               <div className='flex gap-2'>
                 <input
                   type='text'
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  placeholder='Enter code'
+                  placeholder={t('enterCode')}
                   className='flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-400 uppercase'
                 />
                 <button
@@ -541,7 +542,7 @@ export default function PartnershipRegister() {
                   disabled={applyingCoupon || !couponCode || !selectedPlan}
                   className='px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors font-medium whitespace-nowrap'
                 >
-                  {applyingCoupon ? 'Applying...' : 'Apply'}
+                  {applyingCoupon ? t('applying') : t('apply')}
                 </button>
               </div>
               {couponError && <p className='mt-1 text-sm text-red-600'>{couponError}</p>}
@@ -556,23 +557,23 @@ export default function PartnershipRegister() {
             <div className='pt-4 border-t border-gray-100'>
               <div className='space-y-2 mb-6'>
                 <div className='flex justify-between items-center text-gray-600'>
-                  <span>Plan Price</span>
+                  <span>{t('planPrice')}</span>
                   <span>₹{selectedPlan ? selectedPlan.price : 0}</span>
                 </div>
                 {couponDiscount > 0 && (
                   <div className='flex justify-between items-center text-green-600 font-medium'>
-                    <span>Discount</span>
+                    <span>{t('discount')}</span>
                     <span>-₹{couponDiscount}</span>
                   </div>
                 )}
                 {refereeExtensionDays > 0 && (
                   <div className='flex justify-between items-center text-pink-600 font-medium'>
-                    <span>Bonus Referral Days</span>
-                    <span>+{refereeExtensionDays} Days</span>
+                    <span>{t('bonusDays')}</span>
+                    <span>+{refereeExtensionDays} {t('days')}</span>
                   </div>
                 )}
                 <div className='flex justify-between items-center pt-2 border-t border-gray-50'>
-                  <span className='text-lg font-bold text-gray-700'>Total Payable</span>
+                  <span className='text-lg font-bold text-gray-700'>{t('totalPayable')}</span>
                   <span className='text-2xl font-extrabold text-gray-900'>
                     ₹{selectedPlan ? Math.max(0, selectedPlan.price - couponDiscount) : 0}
                   </span>
@@ -581,24 +582,24 @@ export default function PartnershipRegister() {
 
               <button
                 type='submit'
-                disabled={loading || !selectedPlan}
+                disabled={isLoading || !selectedPlan}
                 className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors ${
-                  loading
+                  isLoading
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
                 }`}
               >
-                {loading ? 'Processing...' : 'Pay & Register'}
+                {isLoading ? t('processing') : t('payAndRegister')}
               </button>
             </div>
 
             <div className='text-center text-sm'>
-              Already have an account?{' '}
+              {t('alreadyAccount')}{' '}
               <Link
                 href='/vendor/login'
                 className='font-medium text-orange-600 hover:text-orange-500'
               >
-                Sign in here
+                {t('signInHere')}
               </Link>
             </div>
           </form>

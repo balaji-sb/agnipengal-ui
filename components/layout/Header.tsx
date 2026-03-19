@@ -10,10 +10,13 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import SearchWithAutocomplete from '@/components/ui/SearchWithAutocomplete';
 import { useConfig } from '@/lib/context/ConfigContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
+  const t = useTranslations('Header');
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,13 +65,13 @@ export default function Header() {
   const storeSlug = getSubdomain();
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Collections', href: '/category' },
-    ...(!storeSlug ? [{ name: 'Shops', href: '/shops' }] : []), // Hide Shops link on Vendor Subdomains
-    { name: 'Products', href: '/products' },
+    { name: t('home'), href: '/' },
+    { name: t('collections'), href: '/category' },
+    ...(!storeSlug ? [{ name: t('shops'), href: '/shops' }] : []), // Hide Shops link on Vendor Subdomains
+    { name: t('products'), href: '/products' },
     // { name: 'Deals', href: '/deals' },
-    { name: 'Partnership', href: '/partnership' },
-    { name: 'Refer & Earn', href: '/refer-and-earn' },
+    { name: t('partnership'), href: '/partnership' },
+    { name: t('referAndEarn'), href: '/refer-and-earn' },
   ];
 
   return (
@@ -134,17 +137,22 @@ export default function Header() {
 
           {/* Icons & Actions */}
           <div className='flex items-center gap-2 sm:gap-4'>
-            {/* Search Bar - Desktop */}
-            <div className='hidden lg:block w-64 transition-all duration-300 focus-within:w-72'>
-              <SearchWithAutocomplete />
+            {/* Language Switcher */}
+            <div className='hidden sm:block'>
+              <LanguageSwitcher />
             </div>
 
-            {/* Mobile Search Icon Toggle */}
+            {/* Search Icon Toggle (All Screens) */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className='lg:hidden p-2.5 text-gray-600 hover:bg-red-50 hover:text-red-700 rounded-full transition-all'
+              className='p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors relative group'
+              aria-label="Toggle search"
             >
-              {isSearchOpen ? <X className='h-5 w-5' /> : <Search className='h-5 w-5' />}
+              {isSearchOpen ? (
+                <X className='h-[22px] w-[22px]' />
+              ) : (
+                <Search className='h-[22px] w-[22px] stroke-[2.5]' />
+              )}
             </button>
 
             <Link
@@ -183,25 +191,25 @@ export default function Header() {
                         href='/profile'
                         className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
-                        <User className='w-4 h-4' /> My Profile
+                        <User className='w-4 h-4' /> {t('myProfile')}
                       </Link>
                       <Link
                         href='/profile/orders'
                         className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
-                        <ShoppingCart className='w-4 h-4' /> My Orders
+                        <ShoppingCart className='w-4 h-4' /> {t('myOrders')}
                       </Link>
                       <Link
                         href='/profile/wishlist'
                         className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
-                        <Heart className='w-4 h-4' /> Wishlist
+                        <Heart className='w-4 h-4' /> {t('wishlist')}
                       </Link>
                       <Link
                         href='/profile/addresses'
                         className='block px-5 py-2.5 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2'
                       >
-                        <MapPin className='w-4 h-4' /> Saved Addresses
+                        <MapPin className='w-4 h-4' /> {t('savedAddresses')}
                       </Link>
                     </div>
                     <div className='border-t border-gray-100 py-2 bg-gray-50/50'>
@@ -209,7 +217,7 @@ export default function Header() {
                         onClick={logout}
                         className='w-full text-left px-5 py-2.5 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium flex items-center gap-2'
                       >
-                        Sign Out
+                        {t('signOut')}
                       </button>
                     </div>
                   </div>
@@ -220,7 +228,7 @@ export default function Header() {
                 href='/login'
                 className='hidden md:flex items-center px-6 py-2.5 text-sm font-bold text-white bg-gray-900 rounded-full hover:bg-gray-800 hover:shadow-lg transition-all duration-200 tracking-wide transform hover:-translate-y-0.5'
               >
-                Login
+                {t('login')}
               </Link>
             )}
 
@@ -234,16 +242,18 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile Search Bar (Expandable) */}
+        {/* Expandable Search Bar (All Screens) */}
         <AnimatePresence>
           {isSearchOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className='lg:hidden px-4 pb-4'
+              className='px-4 sm:px-6 lg:px-8 pb-6 bg-white/5 border-t border-gray-100 shadow-sm relative z-40'
             >
-              <SearchWithAutocomplete />
+              <div className="pt-6 max-w-4xl mx-auto">
+                <SearchWithAutocomplete />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -259,11 +269,6 @@ export default function Header() {
             className='md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl w-full shadow-xl'
           >
             <div className='space-y-1 px-4 py-6'>
-              {/* Mobile Menu Search */}
-              <div className='mb-6'>
-                <SearchWithAutocomplete />
-              </div>
-
               {user && (
                 <div className='flex items-center space-x-3 mb-6 px-2 pb-4 border-b border-gray-100'>
                   <div className='h-10 w-10 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center font-bold shadow-md'>
@@ -296,31 +301,31 @@ export default function Header() {
                 <>
                   <div className='border-t border-gray-100 my-4 pt-4'>
                     <p className='px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2'>
-                      My Account
+                      {t('myAccount')}
                     </p>
                     <Link
                       href='/profile'
                       className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
-                      <User className='w-5 h-5' /> Profile
+                      <User className='w-5 h-5' /> {t('myProfile')}
                     </Link>
                     <Link
                       href='/profile/orders'
                       className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
-                      <ShoppingCart className='w-5 h-5' /> Orders
+                      <ShoppingCart className='w-5 h-5' /> {t('myOrders')}
                     </Link>
                     <Link
                       href='/profile/addresses'
                       className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
-                      <MapPin className='w-5 h-5' /> Addresses
+                      <MapPin className='w-5 h-5' /> {t('savedAddresses')}
                     </Link>
                     <Link
                       href='/profile/wishlist'
                       className='block py-3 px-4 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-all flex items-center gap-3'
                     >
-                      <Heart className='w-5 h-5' /> Wishlist
+                      <Heart className='w-5 h-5' /> {t('wishlist')}
                     </Link>
                   </div>
                 </>
@@ -332,7 +337,7 @@ export default function Header() {
                   className='block mt-6 w-full py-3.5 px-4 text-center text-white font-bold bg-gray-900 rounded-xl shadow-lg uppercase tracking-wider active:scale-95 transition-transform'
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Login / Sign Up
+                  {t('loginSignUp')}
                 </Link>
               )}
 
@@ -344,7 +349,7 @@ export default function Header() {
                   }}
                   className='block mt-6 w-full py-3 px-4 text-center text-red-500 font-bold bg-red-50 rounded-xl hover:bg-red-100 transition-colors'
                 >
-                  Sign Out
+                  {t('signOut')}
                 </button>
               )}
             </div>

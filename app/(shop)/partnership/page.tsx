@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Check, Star, ArrowRight, Zap, Gift } from 'lucide-react';
 import HeroSection from '@/components/shop/sections/HeroSection';
+import { useTranslations } from 'next-intl';
 
 interface Plan {
   _id: string;
@@ -18,6 +19,7 @@ interface Plan {
 }
 
 export default function PartnershipPage() {
+  const t = useTranslations('Partnership');
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -64,14 +66,14 @@ export default function PartnershipPage() {
       {/* Plans */}
       <div className='max-w-7xl mx-auto px-8 py-20'>
         <h2 className='text-3xl font-bold text-center text-gray-800 mb-2'>
-          Choose Your Partnership Plan
+          {t('title')}
         </h2>
         <p className='text-center text-gray-500 mb-16'>
-          Zero setup fees · Cancel anytime · Join our community of empowered women entrepreneurs
+          {t('subtitle')}
         </p>
 
         {loading ? (
-          <div className='text-center text-gray-400 text-xl py-20'>Loading plans...</div>
+          <div className='text-center text-gray-400 text-xl py-20'>{t('loading')}</div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center pt-8'>
             {plans.map((plan, index) => {
@@ -96,12 +98,12 @@ export default function PartnershipPage() {
                   {/* Top badge */}
                   {isHighlight && (
                     <div className='absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-lg ring-4 ring-white whitespace-nowrap'>
-                      <Star className='w-3.5 h-3.5 fill-white' /> Best Value
+                      <Star className='w-3.5 h-3.5 fill-white' /> {t('bestValue')}
                     </div>
                   )}
                   {plan.isFreeTrialPlan && (
                     <div className='absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-lg ring-4 ring-white whitespace-nowrap'>
-                      <Gift className='w-3.5 h-3.5' /> Free Trial
+                      <Gift className='w-3.5 h-3.5' /> {t('freeTrial')}
                     </div>
                   )}
 
@@ -123,9 +125,9 @@ export default function PartnershipPage() {
                     <div className='mb-5'>
                       {plan.isFreeTrialPlan ? (
                         <>
-                          <span className='text-4xl font-extrabold text-green-600'>Free</span>
+                          <span className='text-4xl font-extrabold text-green-600'>{t('free')}</span>
                           <p className='text-sm text-gray-500 mt-1'>
-                            {plan.trialPeriodDays} days · no credit card required
+                            {plan.trialPeriodDays} {t('daysNoCreditCard')}
                           </p>
                         </>
                       ) : (
@@ -138,7 +140,7 @@ export default function PartnershipPage() {
                             ₹{plan.price}
                           </span>
                           <span className='text-gray-400 text-sm'>
-                            / {plan.durationInMonths} Mo
+                            / {plan.durationInMonths} {t('mo')}
                           </span>
                         </div>
                       )}
@@ -146,7 +148,7 @@ export default function PartnershipPage() {
 
                     {isHighlight && (
                       <p className='text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full inline-block mb-5'>
-                        Most popular among sellers
+                        {t('mostPopular')}
                       </p>
                     )}
 
@@ -160,7 +162,7 @@ export default function PartnershipPage() {
                             isHighlight ? 'text-orange-500' : 'text-green-500'
                           }`}
                         />
-                        Unlimited Products
+                        {t('unlimitedProducts')}
                       </li>
                       <li className='flex items-center text-sm text-gray-600 gap-2'>
                         <Check
@@ -168,7 +170,7 @@ export default function PartnershipPage() {
                             isHighlight ? 'text-orange-500' : 'text-green-500'
                           }`}
                         />
-                        Vendor Dashboard
+                        {t('vendorDashboard')}
                       </li>
                       <li className='flex items-center text-sm text-gray-600 gap-2'>
                         <Check
@@ -176,12 +178,12 @@ export default function PartnershipPage() {
                             isHighlight ? 'text-orange-500' : 'text-green-500'
                           }`}
                         />
-                        Priority Support
+                        {t('prioritySupport')}
                       </li>
                       {plan.durationInMonths >= 6 && (
                         <li className='flex items-center text-sm text-gray-600 gap-2'>
                           <Star className='w-4 h-4 shrink-0 text-yellow-500' />
-                          Featured Listing
+                          {t('featuredListing')}
                         </li>
                       )}
                     </ul>
@@ -202,15 +204,15 @@ export default function PartnershipPage() {
                       {plan.isFreeTrialPlan ? (
                         <>
                           <Gift className='w-4 h-4' />
-                          Start Free Trial
+                          {t('startFreeTrial')}
                         </>
                       ) : isHighlight ? (
                         <>
                           <Zap className='w-4 h-4 fill-white' />
-                          Get Started
+                          {t('getStarted')}
                         </>
                       ) : (
-                        <>Select Plan</>
+                        <>{t('selectPlan')}</>
                       )}
                       <ArrowRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
                     </button>
@@ -222,9 +224,9 @@ export default function PartnershipPage() {
         )}
 
         <p className='text-gray-400 text-sm text-center mt-16'>
-          Need a custom plan?{' '}
+          {t('needCustomPlan')}{' '}
           <a href='/account/support/new' className='text-orange-600 hover:underline font-medium'>
-            Contact our partnership team →
+            {t('contactPartnershipTeam')}
           </a>
         </p>
       </div>

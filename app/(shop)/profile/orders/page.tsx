@@ -7,6 +7,7 @@ import { Package, Star, Eye } from 'lucide-react';
 import api from '@/lib/api';
 import ReviewModal from '@/components/shop/ReviewModal';
 import ViewReviewModal from '@/components/shop/ViewReviewModal';
+import { useTranslations } from 'next-intl';
 
 interface ReviewData {
   rating: number;
@@ -19,6 +20,7 @@ interface ReviewData {
 function OrdersContent() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const t = useTranslations('Orders');
 
   // Custom Hook/Logic to read Subdomain since useSearchParams() can't see middleware rewrites
   const getSubdomain = () => {
@@ -144,16 +146,16 @@ function OrdersContent() {
 
   return (
     <div className='max-w-4xl mx-auto px-4 py-8'>
-      <h1 className='text-3xl font-bold text-gray-800 mb-8'>My Orders</h1>
+      <h1 className='text-3xl font-bold text-gray-800 mb-8'>{t('myOrders')}</h1>
 
       <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-8'>
         <h2 className='text-xl font-bold mb-6 flex items-center'>
           <Package className='w-6 h-6 mr-2 text-pink-600' />
-          Order History
+          {t('orderHistory')}
         </h2>
 
         {loadingOrders ? (
-          <div className='text-center py-8 text-gray-500'>Loading orders...</div>
+          <div className='text-center py-8 text-gray-500'>{t('loading')}</div>
         ) : orders.length > 0 ? (
           <div className='space-y-6'>
             {orders.map((order: any) => (
@@ -163,7 +165,7 @@ function OrdersContent() {
               >
                 <div className='flex flex-col md:flex-row justify-between md:items-center mb-4 pb-4 border-b border-gray-50'>
                   <div>
-                    <span className='text-sm text-gray-500'>Order ID:</span>
+                    <span className='text-sm text-gray-500'>{t('orderId')}</span>
                     <span className='ml-2 font-mono text-sm font-bold text-gray-700'>
                       #{order._id.substring(0, 8)}
                     </span>
@@ -176,7 +178,7 @@ function OrdersContent() {
                       <span
                         className={`px-3 py-1 text-xs font-bold rounded-full ${order.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}
                       >
-                        PAYMENT: {order.status}
+                        {t('payment')} {order.status}
                       </span>
                       {order.orderStatus &&
                         (() => {
@@ -208,7 +210,7 @@ function OrdersContent() {
                             <span
                               className={`px-3 py-1 text-xs font-bold rounded-full uppercase ${colorClass}`}
                             >
-                              STATUS: {order.orderStatus}
+                              {t('status')} {order.orderStatus}
                             </span>
                           );
                         })()}
@@ -218,7 +220,7 @@ function OrdersContent() {
                       onClick={() => router.push(`/profile/orders/${order._id}`)}
                       className='text-pink-600 hover:text-pink-700 font-medium text-sm flex items-center gap-1 hover:underline ml-4'
                     >
-                      View Details
+                      {t('viewDetails')}
                     </button>
                   </div>
                 </div>
@@ -244,14 +246,14 @@ function OrdersContent() {
                       >
                         <div>
                           <span className='font-medium text-gray-900 block'>
-                            {item.product?.name || item.name || 'Unknown Product'}
+                            {item.product?.name || item.name || t('unknownProduct')}
                           </span>
                           {item.vendorName && (
                             <span className='text-[10px] text-pink-600 font-medium block -mt-0.5'>
-                              Vendor: {item.vendorName}
+                              {t('vendor')} {item.vendorName}
                             </span>
                           )}
-                          <span className='text-gray-500 text-xs'>Qty: {item.quantity}</span>
+                          <span className='text-gray-500 text-xs'>{t('qty')} {item.quantity}</span>
                         </div>
                         <div className='flex items-center gap-4'>
                           <span className='font-medium text-gray-900'>₹{item.price}</span>
@@ -266,7 +268,7 @@ function OrdersContent() {
                               >
                                 <span className='text-gray-500 text-xs font-medium flex items-center gap-1 mb-1 group-hover:text-pink-600 transition'>
                                   <Eye className='w-3 h-3' />
-                                  View Review
+                                  {t('viewReview')}
                                 </span>
                                 <div className='flex text-yellow-400'>
                                   {[...Array(5)].map((_, i) => (
@@ -283,7 +285,7 @@ function OrdersContent() {
                                 className='text-pink-600 hover:text-pink-700 font-medium text-xs flex items-center gap-1 hover:underline'
                               >
                                 <Star className='w-3 h-3' />
-                                Write Review
+                                {t('writeReview')}
                               </button>
                             ))}
                         </div>
@@ -296,7 +298,7 @@ function OrdersContent() {
           </div>
         ) : (
           <div className='text-center py-12 bg-gray-50 rounded-lg'>
-            <p className='text-gray-500'>No recent orders found.</p>
+            <p className='text-gray-500'>{t('noOrders')}</p>
           </div>
         )}
       </div>

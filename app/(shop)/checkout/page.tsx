@@ -9,6 +9,7 @@ import { Country, State, City } from 'country-state-city';
 import { useAuth } from '@/lib/context/AuthContext';
 import api from '@/lib/api';
 import { MapPin, Plus, CheckCircle2, Circle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 declare global {
   interface Window {
@@ -17,6 +18,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  const t = useTranslations('Checkout');
   const { items, totalPrice, clearCart } = useCart();
   const router = useRouter();
   const { user } = useAuth();
@@ -44,7 +46,7 @@ export default function CheckoutPage() {
   const countryCode = selectedCountry ? Country.getCountryByCode(selectedCountry)?.phonecode : '';
 
   if (items.length === 0) {
-    return <div className='p-20 text-center'>Your cart is empty.</div>;
+    return <div className='p-20 text-center'>{t('emptyCart')}</div>;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -70,7 +72,7 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (!user) {
-      alert('Please login to complete your purchase');
+      alert(t('loginRequired'));
       router.push('/login');
       return;
     }
@@ -97,7 +99,7 @@ export default function CheckoutPage() {
       router.push('/checkout/summary');
     } catch (error: any) {
       console.error('Checkout navigation failed', error);
-      alert('Something went wrong');
+      alert(t('genericError'));
     } finally {
       setLoading(false);
     }
@@ -190,7 +192,7 @@ export default function CheckoutPage() {
   return (
     <div className='container mx-auto px-4 py-12'>
       <Script src='https://checkout.razorpay.com/v1/checkout.js' />
-      <h1 className='text-3xl font-bold mb-8 text-center'>Checkout</h1>
+      <h1 className='text-3xl font-bold mb-8 text-center'>{t('checkoutTitle')}</h1>
 
       <div className='max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100'>
         <form onSubmit={handleCheckout} className='space-y-6'>
@@ -199,7 +201,7 @@ export default function CheckoutPage() {
             <div className='mb-8'>
               <h2 className='text-lg font-semibold mb-4 text-gray-800 flex items-center'>
                 <MapPin className='w-5 h-5 mr-2 text-pink-600' />
-                Select Delivery Address
+                {t('selectDeliveryAddress')}
               </h2>
               <div className='grid grid-cols-1 gap-4'>
                 {savedAddresses.map((addr) => (
@@ -225,7 +227,7 @@ export default function CheckoutPage() {
                       <div className='font-medium text-gray-900 flex items-center'>
                         {addr.isDefault && (
                           <span className='bg-pink-100 text-pink-700 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full mr-2'>
-                            Default
+                            {t('defaultAddress')}
                           </span>
                         )}
                         {addr.name}
@@ -255,7 +257,7 @@ export default function CheckoutPage() {
                   </div>
                   <span className='font-medium text-gray-900 flex items-center'>
                     <Plus className='w-4 h-4 mr-2' />
-                    Add New Address
+                    {t('addNewAddress')}
                   </span>
                 </div>
               </div>
@@ -264,7 +266,7 @@ export default function CheckoutPage() {
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Full Name</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('fullName')}</label>
               <input
                 required
                 type='text'
@@ -275,10 +277,10 @@ export default function CheckoutPage() {
               />
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Mobile Number</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('mobileNumber')}</label>
               <div className='flex'>
                 <span className='inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm'>
-                  {countryCode ? `+${countryCode}` : 'Code'}
+                  {countryCode ? `+${countryCode}` : t('countryCode')}
                 </span>
                 <input
                   required
@@ -294,7 +296,7 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>Email</label>
+            <label className='block text-sm font-medium text-gray-700 mb-1'>{t('email')}</label>
             <input
               required
               type='email'
@@ -306,7 +308,7 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>Address</label>
+            <label className='block text-sm font-medium text-gray-700 mb-1'>{t('address')}</label>
             <textarea
               required
               name='address'
@@ -319,14 +321,14 @@ export default function CheckoutPage() {
 
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Country</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('country')}</label>
               <select
                 required
                 value={selectedCountry}
                 onChange={handleCountryChange}
                 className='w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition bg-white'
               >
-                <option value=''>Select Country</option>
+                <option value=''>{t('selectCountry')}</option>
                 {countries.map((country) => (
                   <option key={country.isoCode} value={country.isoCode}>
                     {country.name}
@@ -335,7 +337,7 @@ export default function CheckoutPage() {
               </select>
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>State</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('state')}</label>
               <select
                 required
                 value={selectedState}
@@ -343,7 +345,7 @@ export default function CheckoutPage() {
                 disabled={!selectedCountry}
                 className='w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition bg-white disabled:bg-gray-100'
               >
-                <option value=''>Select State</option>
+                <option value=''>{t('selectState')}</option>
                 {states.map((state) => (
                   <option key={state.isoCode} value={state.isoCode}>
                     {state.name}
@@ -352,7 +354,7 @@ export default function CheckoutPage() {
               </select>
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>City</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('city')}</label>
               <select
                 required
                 value={selectedCity}
@@ -360,7 +362,7 @@ export default function CheckoutPage() {
                 disabled={!selectedState}
                 className='w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition bg-white disabled:bg-gray-100'
               >
-                <option value=''>Select City</option>
+                <option value=''>{t('selectCity')}</option>
                 {cities.map((city) => (
                   <option key={city.name} value={city.name}>
                     {city.name}
@@ -371,7 +373,7 @@ export default function CheckoutPage() {
           </div>
 
           <div className='mt-4'>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>Pincode</label>
+            <label className='block text-sm font-medium text-gray-700 mb-1'>{t('pincode')}</label>
             <input
               required
               type='text'
@@ -384,7 +386,7 @@ export default function CheckoutPage() {
 
           <div className='border-t pt-6 mt-6'>
             <div className='flex justify-between items-center text-xl font-bold mb-6'>
-              <span>Total Amount</span>
+              <span>{t('totalAmount')}</span>
               <span>₹{totalPrice}</span>
             </div>
 
@@ -408,8 +410,8 @@ export default function CheckoutPage() {
         <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm'>
           <div className='bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center animate-in fade-in zoom-in duration-300'>
             <div className='w-16 h-16 border-4 border-pink-100 border-t-pink-600 rounded-full animate-spin mb-4'></div>
-            <h3 className='text-xl font-bold text-gray-800'>Processing Payment</h3>
-            <p className='text-gray-500 mt-2'>Please do not close this window...</p>
+            <h3 className='text-xl font-bold text-gray-800'>{t('processingPaymentTitle')}</h3>
+            <p className='text-gray-500 mt-2'>{t('doNotCloseWindow')}</p>
           </div>
         </div>
       )}

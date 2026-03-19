@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Calendar, User, Tag, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,6 +60,7 @@ export async function generateMetadata({
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = await getBlog(slug);
+  const t = await getTranslations('Blog');
 
   if (!blog) {
     notFound();
@@ -75,7 +77,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             className='inline-flex items-center text-pink-400 hover:text-pink-300 mb-8 transition-colors group'
           >
             <ChevronLeft className='w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform' />
-            Back to Blog
+            {t('backToBlog')}
           </Link>
           <div className='max-w-4xl'>
             <div className='flex items-center gap-3 mb-6'>
@@ -101,7 +103,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 </div>
                 <div>
                   <div className='text-sm font-bold text-white'>{blog.author}</div>
-                  <div className='text-xs text-gray-500'>Author</div>
+                  <div className='text-xs text-gray-500'>{t('author')}</div>
                 </div>
               </div>
             </div>
@@ -132,14 +134,14 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             <div className='flex items-center gap-2 text-gray-400 text-sm'>
               <Tag className='w-4 h-4' />
               <span>
-                Categorized in: <span className='text-gray-900 font-medium'>{blog.category}</span>
+                {t('categorizedIn')} <span className='text-gray-900 font-medium'>{blog.category}</span>
               </span>
             </div>
 
             {/* Share placeholder if needed */}
             <div className='flex items-center gap-4'>
               <span className='text-xs font-bold text-gray-400 uppercase tracking-widest'>
-                Share
+                {t('share')}
               </span>
               <div className='flex gap-2'>
                 {/* Simplified social icons */}

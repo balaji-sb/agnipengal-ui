@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import Link from 'next/link';
 import { Store, MapPin } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface Vendor {
   _id: string;
@@ -22,6 +23,7 @@ interface Vendor {
 }
 
 export default function ShopsPage() {
+  const t = useTranslations('Shops');
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,17 +54,17 @@ export default function ShopsPage() {
     <div className='bg-gray-50 min-h-screen py-12'>
       <div className='container mx-auto px-4'>
         <div className='text-center mb-12'>
-          <h1 className='text-4xl font-bold text-gray-900 mb-4'>Discover Our Shops</h1>
+          <h1 className='text-4xl font-bold text-gray-900 mb-4'>{t('title')}</h1>
           <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
-            Explore a variety of unique shops offering specialized products and services.
+            {t('description')}
           </p>
         </div>
 
         {vendors.length === 0 ? (
           <div className='text-center py-20 bg-white rounded-2xl shadow-sm'>
             <Store className='w-16 h-16 text-gray-300 mx-auto mb-4' />
-            <h2 className='text-xl font-semibold text-gray-900'>No Shops Found</h2>
-            <p className='text-gray-500 mt-2'>Check back later for new entries.</p>
+            <h2 className='text-xl font-semibold text-gray-900'>{t('noShops')}</h2>
+            <p className='text-gray-500 mt-2'>{t('checkBack')}</p>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
@@ -93,7 +95,7 @@ export default function ShopsPage() {
                     </div>
 
                     <p className='text-gray-600 text-sm mb-4 line-clamp-2 flex-grow'>
-                      {vendor.storeDescription || 'No description available.'}
+                      {vendor.storeDescription || t('noDescription')}
                     </p>
 
                     <div className='border-t border-gray-100 pt-4 mt-auto flex items-center text-gray-500 text-sm'>

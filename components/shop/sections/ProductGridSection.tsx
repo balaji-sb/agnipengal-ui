@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/shop/ProductCard';
 import MotionSection from '@/components/shop/MotionSection';
+import { useTranslations } from 'next-intl';
 
 interface ProductGridSectionProps {
   title: string;
@@ -22,9 +23,12 @@ export default function ProductGridSection({
   title,
   products,
   link,
-  emptyMessage = 'No products found.',
-  viewAllText = 'View Collection',
+  emptyMessage,
+  viewAllText,
 }: ProductGridSectionProps) {
+  const t = useTranslations('Homepage');
+  const emptyStr = emptyMessage || t('noProductsFound');
+  const viewStr = viewAllText || t('viewCollection');
   return (
     <section className='container mx-auto px-4 py-0'>
       <MotionSection>
@@ -38,8 +42,8 @@ export default function ProductGridSection({
             href={link}
             className='inline-flex items-center px-3 py-1.5 md:px-6 md:py-2.5 rounded-full border border-gray-200 text-gray-600 font-bold bg-white shadow-sm hover:border-red-200 hover:text-red-700 transition-all text-[10px] md:text-[13px] uppercase tracking-wider group shrink-0'
           >
-            <span className='hidden xs:inline'>{viewAllText}</span>
-            <span className='xs:hidden'>View All</span>
+            <span className='hidden xs:inline'>{viewStr}</span>
+            <span className='xs:hidden'>{t('viewAll')}</span>
             <ArrowRight className='ml-1.5 md:ml-2 w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform' />
           </Link>
         </div>
@@ -52,7 +56,7 @@ export default function ProductGridSection({
           </div>
         ) : (
           <div className='text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200'>
-            <p className='text-gray-400 font-medium'>{emptyMessage}</p>
+            <p className='text-gray-400 font-medium'>{emptyStr}</p>
           </div>
         )}
       </MotionSection>

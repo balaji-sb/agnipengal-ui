@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ReactSlider from 'react-slider';
 import api from '@/lib/api';
+import { useTranslations } from 'next-intl';
 
 interface VendorCategory {
   _id: string;
@@ -22,6 +23,7 @@ interface Vendor {
 export default function ProductFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('ProductFilter');
 
   const MIN_PRICE = 0;
   const MAX_PRICE = 10000; // Define a reasonable max price or fetch from backend if possible
@@ -111,7 +113,7 @@ export default function ProductFilter() {
     <div className='space-y-8'>
       {/* Price Range */}
       <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>Price Range</h3>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>{t('priceRange')}</h3>
         <div className='px-2'>
           <ReactSlider
             className='h-1 bg-gray-200 rounded-full cursor-pointer'
@@ -139,12 +141,12 @@ export default function ProductFilter() {
         </div>
         <div className='flex items-center justify-between mt-4'>
           <div className='flex items-center gap-1 border border-gray-300 rounded px-2 py-1 bg-gray-50'>
-            <span className='text-xs text-gray-500'>Min</span>
+            <span className='text-xs text-gray-500'>{t('min')}</span>
             <span className='text-sm font-medium text-gray-900'>₹{priceRange[0]}</span>
           </div>
           <span className='text-gray-400'>-</span>
           <div className='flex items-center gap-1 border border-gray-300 rounded px-2 py-1 bg-gray-50'>
-            <span className='text-xs text-gray-500'>Max</span>
+            <span className='text-xs text-gray-500'>{t('max')}</span>
             <span className='text-sm font-medium text-gray-900'>₹{priceRange[1]}</span>
           </div>
         </div>
@@ -152,7 +154,7 @@ export default function ProductFilter() {
 
       {/* Availability */}
       <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-2'>Availability</h3>
+        <h3 className='text-lg font-medium text-gray-900 mb-2'>{t('availability')}</h3>
         <label className='flex items-center space-x-2'>
           <input
             type='checkbox'
@@ -160,13 +162,13 @@ export default function ProductFilter() {
             onChange={(e) => handleFilterChange('inStock', e.target.checked ? 'true' : '')}
             className='rounded text-pink-600 focus:ring-pink-500'
           />
-          <span className='text-sm text-gray-700'>In Stock Only</span>
+          <span className='text-sm text-gray-700'>{t('inStockOnly')}</span>
         </label>
       </div>
 
       {/* Materials (Hardcoded for Demo) */}
       <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-2'>Material</h3>
+        <h3 className='text-lg font-medium text-gray-900 mb-2'>{t('material')}</h3>
         <div className='space-y-2'>
           {['Silk', 'Cotton', 'Zardosi', 'Beads', 'Stone'].map((mat) => (
             <label key={mat} className='flex items-center space-x-2'>
@@ -190,7 +192,7 @@ export default function ProductFilter() {
               onChange={(e) => handleFilterChange('material', '')}
               className='text-pink-600 focus:ring-pink-500'
             />
-            <span className='text-sm text-gray-700'>All</span>
+            <span className='text-sm text-gray-700'>{t('all')}</span>
           </label>
         </div>
       </div>
@@ -198,7 +200,7 @@ export default function ProductFilter() {
       {/* Vendor Categories */}
       {categories.length > 0 && (
         <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-2'>Vendor Category</h3>
+          <h3 className='text-lg font-medium text-gray-900 mb-2'>{t('vendorCategory')}</h3>
           <div className='space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar'>
             {categories.map((cat) => (
               <label key={cat._id} className='flex items-center space-x-2 cursor-pointer'>
@@ -222,7 +224,7 @@ export default function ProductFilter() {
                 onChange={(e) => handleFilterChange('vendorCategory', '')}
                 className='bg-orange-600 focus:ring-orange-500'
               />
-              <span className='text-sm text-gray-700'>All Categories</span>
+              <span className='text-sm text-gray-700'>{t('allCategories')}</span>
             </label>
           </div>
         </div>
@@ -231,7 +233,7 @@ export default function ProductFilter() {
       {/* Shops (Vendors) - Hide if user is already on a vendor's subdomain */}
       {!storeSlug && vendors.length > 0 && (
         <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-2'>Shops</h3>
+          <h3 className='text-lg font-medium text-gray-900 mb-2'>{t('shops')}</h3>
           <div className='space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar'>
             {vendors.map((vendor) => (
               <label key={vendor._id} className='flex items-center space-x-2 cursor-pointer'>
@@ -261,7 +263,7 @@ export default function ProductFilter() {
                 onChange={(e) => handleFilterChange('vendor', '')}
                 className='bg-orange-600 focus:ring-orange-500'
               />
-              <span className='text-sm text-gray-700'>All Shops</span>
+              <span className='text-sm text-gray-700'>{t('allShops')}</span>
             </label>
           </div>
         </div>
@@ -271,7 +273,7 @@ export default function ProductFilter() {
         onClick={() => router.push(window.location.pathname)}
         className='w-full py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium transition'
       >
-        Clear Filters
+        {t('clearFilters')}
       </button>
     </div>
   );

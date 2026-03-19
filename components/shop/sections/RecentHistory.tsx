@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import ProductGridSection from './ProductGridSection';
 import api from '@/lib/api';
+import { useTranslations } from 'next-intl';
 
 export default function RecentHistory() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations('Homepage');
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -46,10 +48,10 @@ export default function RecentHistory() {
 
   return (
     <ProductGridSection 
-      title="Recently Viewed" 
+      title={t('recentlyViewed')} 
       products={products} 
       link="/products" 
-      viewAllText="Start Shopping"
+      viewAllText={t('startShopping')}
     />
   );
 }

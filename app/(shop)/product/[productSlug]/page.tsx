@@ -5,6 +5,7 @@ import ProductCard from '@/components/shop/ProductCard';
 import ProductReviews from '@/components/shop/ProductReviews';
 import ProductViewTracker from '@/components/shop/ProductViewTracker';
 import api from '@/lib/api';
+import { getTranslations } from 'next-intl/server';
 
 // ISR: revalidate every 10 minutes so Googlebot gets fast cached HTML
 export const revalidate = 600;
@@ -125,6 +126,7 @@ export default async function ProductDetailPage({
 }: {
   params: Promise<{ productSlug: string }>;
 }) {
+  const t = await getTranslations('ProductDetails');
   const { productSlug } = await params;
   const product = await getProduct(productSlug);
 
@@ -144,14 +146,13 @@ export default async function ProductDetailPage({
         <section className='mb-20 border-t border-gray-100 pt-16 bg-pink-50/50 rounded-3xl p-8 lg:p-12'>
           <div className='text-center mb-10'>
             <span className='text-pink-600 font-bold tracking-wider uppercase text-sm'>
-              Great Value Bundle
+              {t('greatValueBundle')}
             </span>
             <h2 className='text-3xl lg:text-4xl font-bold mt-2 text-gray-900'>
-              What&apos;s Inside This Combo?
+              {t('whatsInsideCombo')}
             </h2>
             <p className='text-gray-500 mt-3 max-w-2xl mx-auto'>
-              This bundle includes {product.products.length} premium items curated specially for
-              you.
+              {t('comboIncludes', { count: product.products.length })}
             </p>
           </div>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
@@ -171,7 +172,7 @@ export default async function ProductDetailPage({
       {relatedProducts.length > 0 && (
         <section className='mt-20 border-t border-gray-100 pt-16'>
           <h2 className='text-3xl font-bold mb-10 text-center bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600'>
-            You Might Also Like
+            {t('youMightAlsoLike')}
           </h2>
           <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6'>
             {relatedProducts.map((p: any) => (

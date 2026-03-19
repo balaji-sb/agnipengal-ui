@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { MapPin, Phone, Mail, Grid, Store, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Product {
   _id: string;
@@ -40,6 +41,7 @@ export default function ShopDetailsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const t = useTranslations('ShopDetails');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,15 +88,15 @@ export default function ShopDetailsPage() {
       <div className='min-h-screen flex items-center justify-center bg-gray-50'>
         <div className='text-center p-8 bg-white rounded-2xl shadow-sm max-w-md'>
           <AlertCircle className='w-16 h-16 text-red-400 mx-auto mb-4' />
-          <h2 className='text-2xl font-bold text-gray-900 mb-2'>Shop Not Found</h2>
+          <h2 className='text-2xl font-bold text-gray-900 mb-2'>{t('shopNotFound')}</h2>
           <p className='text-gray-500 mb-6'>
-            {error || "This shop doesn't exist or is currently unavailable."}
+            {error || t('shopNotAvailable')}
           </p>
           <Link
             href='/shops'
             className='px-6 py-2 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition'
           >
-            Browse All Shops
+            {t('browseAllShops')}
           </Link>
         </div>
       </div>
@@ -143,7 +145,7 @@ export default function ShopDetailsPage() {
                 {/* Email might be private, check requirements. Showing for now if public contact. */}
                 <span className='flex items-center gap-2'>
                   <Mail className='w-4 h-4' />
-                  Contact Vendor
+                  {t('contactVendor')}
                 </span>
               </div>
             </div>
@@ -156,7 +158,7 @@ export default function ShopDetailsPage() {
         <div className='flex items-center justify-between mb-8'>
           <h2 className='text-2xl font-bold text-gray-900 flex items-center gap-2'>
             <Grid className='w-6 h-6 text-pink-600' />
-            Store Products{' '}
+            {t('storeProducts')}{' '}
             <span className='text-gray-400 text-lg font-normal'>({products.length})</span>
           </h2>
 
@@ -166,8 +168,8 @@ export default function ShopDetailsPage() {
         {products.length === 0 ? (
           <div className='bg-white rounded-2xl p-12 text-center border border-gray-100'>
             <Store className='w-12 h-12 text-gray-300 mx-auto mb-4' />
-            <h3 className='text-lg font-bold text-gray-900'>No Products Yet</h3>
-            <p className='text-gray-500'>This shop hasn't listed any products yet.</p>
+            <h3 className='text-lg font-bold text-gray-900'>{t('noProductsYet')}</h3>
+            <p className='text-gray-500'>{t('shopNoProductsMessage')}</p>
           </div>
         ) : (
           <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
@@ -189,13 +191,13 @@ export default function ShopDetailsPage() {
                         />
                       ) : (
                         <div className='w-full h-full flex items-center justify-center text-gray-300'>
-                          No Image
+                          {t('noImage')}
                         </div>
                       )}
                     </div>
                     {product.offerPrice && product.offerPrice > 0 && (
                       <div className='absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm'>
-                        SALE
+                        {t('sale')}
                       </div>
                     )}
                   </div>

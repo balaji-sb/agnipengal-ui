@@ -14,9 +14,11 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('Contact');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,7 +37,7 @@ export default function ContactPage() {
     try {
       const res = await api.post('/contacts', formData);
       if (res.data.success) {
-        toast.success(res.data.message || 'Message sent successfully!');
+        toast.success(res.data.message || t('successMessage'));
         setFormData({
           name: '',
           email: '',
@@ -46,7 +48,7 @@ export default function ContactPage() {
       }
     } catch (error: any) {
       console.error('Contact error:', error);
-      toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
+      toast.error(error.response?.data?.message || t('errorMessage'));
     } finally {
       setLoading(false);
     }
@@ -61,14 +63,13 @@ export default function ContactPage() {
           <div className='absolute bottom-0 right-0 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-50 translate-x-1/2 translate-y-1/2 animate-blob animation-delay-2000' />
 
           <h1 className='text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight relative z-10'>
-            Get in{' '}
+            {t('title1')}{' '}
             <span className='text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-orange-600'>
-              Touch
+              {t('title2')}
             </span>
           </h1>
           <p className='text-gray-500 text-lg md:text-xl max-w-2xl mx-auto relative z-10'>
-            Have questions about our products or partnership programs? We&apos;re here to help you
-            empower your business journey.
+            {t('description')}
           </p>
         </div>
       </div>
@@ -81,8 +82,8 @@ export default function ContactPage() {
               <div className='w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600 mb-6'>
                 <Mail className='w-6 h-6' />
               </div>
-              <h3 className='text-xl font-bold text-gray-900 mb-2'>Email Us</h3>
-              <p className='text-gray-500 mb-4'>Our friendly team is here to help.</p>
+              <h3 className='text-xl font-bold text-gray-900 mb-2'>{t('emailUs')}</h3>
+              <p className='text-gray-500 mb-4'>{t('emailUsText')}</p>
               <a
                 href='mailto:agnipengal16@gmail.com'
                 className='text-pink-600 font-bold hover:underline'
@@ -95,8 +96,8 @@ export default function ContactPage() {
               <div className='w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-6'>
                 <Phone className='w-6 h-6' />
               </div>
-              <h3 className='text-xl font-bold text-gray-900 mb-2'>Call Us</h3>
-              <p className='text-gray-500 mb-4'>Mon-Fri from 9am to 6pm.</p>
+              <h3 className='text-xl font-bold text-gray-900 mb-2'>{t('callUs')}</h3>
+              <p className='text-gray-500 mb-4'>{t('callUsText')}</p>
               <a href='tel:+918088663116' className='text-orange-600 font-bold hover:underline'>
                 +91 8088663116
               </a>
@@ -106,12 +107,12 @@ export default function ContactPage() {
               <div className='w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 mb-6'>
                 <MapPin className='w-6 h-6' />
               </div>
-              <h3 className='text-xl font-bold text-gray-900 mb-2'>Office</h3>
-              <p className='text-gray-500 mb-4'>Come say hello at our office.</p>
+              <h3 className='text-xl font-bold text-gray-900 mb-2'>{t('office')}</h3>
+              <p className='text-gray-500 mb-4'>{t('officeText')}</p>
               <p className='text-gray-900 font-medium'>
-                Chennai, Tamil Nadu,
+                {t('address1')}
                 <br />
-                India
+                {t('address2')}
               </p>
             </div>
 
@@ -119,7 +120,7 @@ export default function ContactPage() {
             <div className='bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-3xl shadow-xl text-white'>
               <h3 className='text-xl font-bold mb-6 flex items-center gap-2'>
                 <Send className='w-5 h-5 text-pink-500' />
-                Follow Our Journey
+                {t('followUs')}
               </h3>
               <div className='grid grid-cols-3 gap-4'>
                 <a
@@ -259,15 +260,15 @@ export default function ContactPage() {
           <div className='lg:col-span-8'>
             <div className='bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-gray-100'>
               <div className='mb-10'>
-                <h2 className='text-3xl font-bold text-gray-900 mb-2'>Send us a Message</h2>
-                <p className='text-gray-500'>We usually respond within 24 hours.</p>
+                <h2 className='text-3xl font-bold text-gray-900 mb-2'>{t('sendMessageTitle')}</h2>
+                <p className='text-gray-500'>{t('sendMessageDesc')}</p>
               </div>
 
               <form onSubmit={handleSubmit} className='space-y-6'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div className='space-y-2'>
                     <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <User className='w-4 h-4' /> Full Name
+                      <User className='w-4 h-4' /> {t('fullName')}
                     </label>
                     <input
                       required
@@ -275,13 +276,13 @@ export default function ContactPage() {
                       name='name'
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder='Auroshi Sen'
+                      placeholder={t('fullNamePlaceholder')}
                       className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
                     />
                   </div>
                   <div className='space-y-2'>
                     <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <Mail className='w-4 h-4' /> Email Address
+                      <Mail className='w-4 h-4' /> {t('emailAddress')}
                     </label>
                     <input
                       required
@@ -289,7 +290,7 @@ export default function ContactPage() {
                       name='email'
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder='hello@example.com'
+                      placeholder={t('emailPlaceholder')}
                       className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
                     />
                   </div>
@@ -298,7 +299,7 @@ export default function ContactPage() {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div className='space-y-2'>
                     <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <PhoneCall className='w-4 h-4' /> Mobile Number
+                      <PhoneCall className='w-4 h-4' /> {t('mobileNumber')}
                     </label>
                     <input
                       required
@@ -306,13 +307,13 @@ export default function ContactPage() {
                       name='mobile'
                       value={formData.mobile}
                       onChange={handleChange}
-                      placeholder='+91 XXXXX XXXXX'
+                      placeholder={t('mobilePlaceholder')}
                       className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
                     />
                   </div>
                   <div className='space-y-2'>
                     <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <Tag className='w-4 h-4' /> Subject
+                      <Tag className='w-4 h-4' /> {t('subject')}
                     </label>
                     <input
                       required
@@ -320,7 +321,7 @@ export default function ContactPage() {
                       name='subject'
                       value={formData.subject}
                       onChange={handleChange}
-                      placeholder='How can we help?'
+                      placeholder={t('subjectPlaceholder')}
                       className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
                     />
                   </div>
@@ -328,7 +329,7 @@ export default function ContactPage() {
 
                 <div className='space-y-2'>
                   <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                    <MessageSquare className='w-4 h-4' /> Message
+                    <MessageSquare className='w-4 h-4' /> {t('message')}
                   </label>
                   <textarea
                     required
@@ -336,7 +337,7 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={handleChange}
                     rows={6}
-                    placeholder='Tell us more about your inquiry...'
+                    placeholder={t('messagePlaceholder')}
                     className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all resize-none'
                   />
                 </div>
@@ -350,12 +351,12 @@ export default function ContactPage() {
                     {loading ? (
                       <>
                         <Loader2 className='w-5 h-5 animate-spin' />
-                        Sending...
+                        {t('sending')}
                       </>
                     ) : (
                       <>
                         <Send className='w-5 h-5' />
-                        Send Message
+                        {t('sendMessageBtn')}
                       </>
                     )}
                   </button>

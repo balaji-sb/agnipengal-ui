@@ -4,6 +4,7 @@ import Image from 'next/image';
 import api from '@/lib/api';
 import { Metadata } from 'next';
 import { Calendar, User, ArrowRight } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,15 +37,16 @@ async function getBlogs() {
 
 export default async function BlogPage() {
   const blogs = await getBlogs();
+  const t = await getTranslations('Blog');
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
       {/* Hero Section */}
       <div className='bg-white border-b border-gray-100 mb-12'>
         <div className='container mx-auto px-4 py-16 text-center'>
-          <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>Our Blog</h1>
+          <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>{t('title')}</h1>
           <p className='text-gray-500 max-w-2xl mx-auto'>
-            Insights, updates, and stories from the heart of our women entrepreneur community.
+            {t('description')}
           </p>
         </div>
       </div>
@@ -105,7 +107,7 @@ export default async function BlogPage() {
                     }}
                   />
                   <div className='flex items-center text-pink-600 font-bold text-sm'>
-                    Read More
+                    {t('readMore')}
                     <ArrowRight className='w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform' />
                   </div>
                 </div>
@@ -115,7 +117,7 @@ export default async function BlogPage() {
         ) : (
           <div className='text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200'>
             <p className='text-gray-500 text-xl'>
-              We&apos;re currently crafting some amazing stories. Check back soon!
+              {t('noBlogs')}
             </p>
           </div>
         )}

@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import ProductGridSection from './ProductGridSection';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/context/AuthContext';
+import { useTranslations } from 'next-intl';
 
 export default function BuyAgain() {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
+  const t = useTranslations('Homepage');
 
   useEffect(() => {
     if (user) {
@@ -43,10 +45,10 @@ export default function BuyAgain() {
 
   return (
     <ProductGridSection 
-      title="Buy Again" 
+      title={t('buyAgain')}
       products={products} 
       link="/profile/orders" 
-      viewAllText="View Orders"
+      viewAllText={t('viewOrders')}
     />
   );
 }

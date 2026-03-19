@@ -6,6 +6,7 @@ import ProductGallery from './ProductGallery';
 import { Star, ShieldCheck, Truck, RotateCcw, Store } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/lib/context/CartContext';
+import { useTranslations } from 'next-intl';
 
 interface ProductDetailsProps {
   product: any;
@@ -14,6 +15,7 @@ interface ProductDetailsProps {
 export default function ProductDetails({ product }: ProductDetailsProps) {
   const [selectedOptions, setSelectedOptions] = useState<any>({});
   const [currentVariant, setCurrentVariant] = useState<any>(null);
+  const t = useTranslations('ProductDetails');
 
   // Mongoose Map type fields may come as native Map objects or plain objects depending
   // on the serialization path. This helper normalizes either form to a plain JS object.
@@ -139,7 +141,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       <div className='space-y-8'>
         <div>
           <span className='text-sm font-semibold text-pink-600 uppercase tracking-wider bg-pink-50 px-3 py-1 rounded-full'>
-            {product.category?.name || 'Category'}
+            {product.category?.name || t('category')}
           </span>
           <div className='flex justify-between items-start mt-4 gap-4'>
             <h1 className='text-4xl lg:text-5xl font-bold text-gray-900 leading-tight'>
@@ -153,7 +155,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             <div className='mt-3 flex items-center gap-2'>
               <Store className='w-4 h-4 text-gray-400' />
               <span className='text-sm text-gray-500'>
-                Sold by:{' '}
+                {t('soldBy')}{' '}
                 {product.vendor.storeSlug ? (
                   <Link
                     href={`/vendor-store/${product.vendor.storeSlug}`}
@@ -180,7 +182,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               href='#reviews'
               className='text-sm text-gray-500 hover:text-pink-600 hover:underline'
             >
-              {product.numReviews || 0} ratings
+              {product.numReviews || 0} {t('ratings')}
             </a>
           </div>
 
@@ -194,7 +196,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                   ₹{strikePrice.toLocaleString('en-IN')}
                 </p>
                 <span className='bg-pink-100 text-pink-700 px-2 py-1 rounded font-bold text-sm mb-1.5'>
-                  {discount}% OFF
+                  {discount}% {t('off')}
                 </span>
               </>
             )}
@@ -204,7 +206,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <div className='space-y-8 border-t border-gray-100 pt-8'>
           <div>
             <h3 className='text-xl font-bold text-gray-900 mb-4 flex items-center gap-2'>
-              Product Description
+              {t('description')}
             </h3>
             <div className='prose prose-gray prose-lg max-w-none text-gray-600 leading-relaxed'>
               {product.description?.split('\n').map((line: string, i: number) => (
@@ -219,20 +221,20 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             <div className='bg-pink-50/50 rounded-2xl p-6 border border-pink-100'>
               <h4 className='font-bold text-pink-900 mb-3 flex items-center gap-2'>
                 <span className='w-2 h-2 bg-pink-500 rounded-full' />
-                Why Agnipengal?
+                {t('whyAgnipengal')}
               </h4>
               <ul className='space-y-2 text-sm text-pink-800/80'>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>✨</span>
-                  <span>100% Authentic Handcrafted Products</span>
+                  <span>{t('authentic')}</span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>👩‍🎨</span>
-                  <span>Directly Supports Women Entrepreneurs</span>
+                  <span>{t('supportsWomen')}</span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>🇮🇳</span>
-                  <span>Proudly Made in India</span>
+                  <span>{t('madeInIndia')}</span>
                 </li>
               </ul>
             </div>
@@ -240,20 +242,20 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             <div className='bg-orange-50/50 rounded-2xl p-6 border border-orange-100'>
               <h4 className='font-bold text-orange-900 mb-3 flex items-center gap-2'>
                 <span className='w-2 h-2 bg-orange-500 rounded-full' />
-                Product Highlights
+                {t('highlights')}
               </h4>
               <ul className='space-y-2 text-sm text-orange-800/80'>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>🚀</span>
-                  <span>Fast & Reliable Shipping</span>
+                  <span>{t('fastReliableShipping')}</span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>🛡️</span>
-                  <span>Quality Assured by Agnipengal</span>
+                  <span>{t('qualityAssured')}</span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='mt-1'>🤝</span>
-                  <span>Transparent & Ethical Sourcing</span>
+                  <span>{t('transparentSourcing')}</span>
                 </li>
               </ul>
             </div>
@@ -337,20 +339,20 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                       }`}
                     />
                     {remainingStock > 10
-                      ? 'In Stock'
+                      ? t('inStock')
                       : remainingStock > 0
-                        ? `Only ${remainingStock} left`
-                        : 'Out of Stock (Max in Cart)'}
+                        ? t('onlyLeft', { count: remainingStock })
+                        : t('outOfStockMax')}
                   </span>
                   {currentVariant.sku && (
                     <span className='text-xs text-gray-400 font-mono'>
-                      SKU: {currentVariant.sku}
+                      {t('sku')} {currentVariant.sku}
                     </span>
                   )}
                 </>
               ) : (
                 <p className='text-sm text-red-500 font-medium'>
-                  ⚠ This combination is not available
+                  {t('combinationNotAvailable')}
                 </p>
               )}
             </div>
@@ -386,19 +388,19 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             <div className='w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-green-600'>
               <ShieldCheck className='w-5 h-5' />
             </div>
-            <span className='text-xs font-medium text-gray-600'>Secure Payment</span>
+            <span className='text-xs font-medium text-gray-600'>{t('securePayment')}</span>
           </div>
           <div className='flex flex-col items-center text-center gap-2'>
             <div className='w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600'>
               <Truck className='w-5 h-5' />
             </div>
-            <span className='text-xs font-medium text-gray-600'>Fast Shipping</span>
+            <span className='text-xs font-medium text-gray-600'>{t('fastShipping')}</span>
           </div>
           <div className='flex flex-col items-center text-center gap-2'>
             <div className='w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600'>
               <RotateCcw className='w-5 h-5' />
             </div>
-            <span className='text-xs font-medium text-gray-600'>Easy Returns</span>
+            <span className='text-xs font-medium text-gray-600'>{t('easyReturns')}</span>
           </div>
         </div>
       </div>

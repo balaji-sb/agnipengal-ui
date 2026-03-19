@@ -2,6 +2,7 @@ import React from 'react';
 
 import CategoryCard from '@/components/shop/CategoryCard';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,12 +20,13 @@ async function getCategories() {
 }
 
 export default async function CategoryPage() {
+  const t = await getTranslations('Collections');
   const categories = await getCategories();
 
   return (
     <div className='container mx-auto px-4 py-12'>
       <h1 className='text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600'>
-        All Categories
+        {t('title')}
       </h1>
 
       {categories.length > 0 ? (
@@ -35,7 +37,7 @@ export default async function CategoryPage() {
         </div>
       ) : (
         <div className='text-center py-20'>
-          <p className='text-gray-500 text-lg'>No categories found.</p>
+          <p className='text-gray-500 text-lg'>{t('noCategories')}</p>
         </div>
       )}
     </div>

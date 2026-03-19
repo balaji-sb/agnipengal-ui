@@ -7,10 +7,12 @@ import Link from 'next/link';
 import { LogOut, Package, Star, MapPin, ArrowRight, Clock, ShieldCheck, User } from 'lucide-react';
 import api from '@/lib/api';
 import FeaturedShops from '@/components/sections/FeaturedShops';
+import { useTranslations } from 'next-intl';
 
 export default function ProfilePage() {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
+  const t = useTranslations('Profile');
 
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -71,7 +73,7 @@ export default function ProfilePage() {
       <div className='min-h-[60vh] flex items-center justify-center'>
         <div className='text-center'>
           <div className='w-16 h-16 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4'></div>
-          <p className='text-gray-500 font-medium'>Loading your dashboard...</p>
+          <p className='text-gray-500 font-medium'>{t('loading')}</p>
         </div>
       </div>
     );
@@ -84,20 +86,20 @@ export default function ProfilePage() {
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4'>
         <div>
           <h1 className='text-4xl font-black text-gray-900 mb-2'>
-            Welcome back,{' '}
+            {t('welcomeBack')}{' '}
             <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600'>
               {user.name.split(' ')[0]}
             </span>
             !
           </h1>
-          <p className='text-gray-500 text-lg'>Here's what's happening with your account today.</p>
+          <p className='text-gray-500 text-lg'>{t('whatsHappening')}</p>
         </div>
         <button
           onClick={logout}
           className='flex items-center text-gray-500 hover:text-red-600 font-medium px-5 py-2.5 hover:bg-red-50 rounded-full transition-all border border-gray-200 hover:border-red-100 bg-white shadow-sm'
         >
           <LogOut className='w-4 h-4 mr-2' />
-          Sign Out
+          {t('signOut')}
         </button>
       </div>
 
@@ -109,7 +111,7 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className='text-gray-500 font-medium text-sm uppercase tracking-wider'>
-              Total Orders
+              {t('totalOrders')}
             </p>
             <p className='text-3xl font-black text-gray-900'>{stats.totalOrders}</p>
           </div>
@@ -121,7 +123,7 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className='text-gray-500 font-medium text-sm uppercase tracking-wider'>
-              Pending Orders
+              {t('pendingOrders')}
             </p>
             <p className='text-3xl font-black text-gray-900'>{stats.activeOrders}</p>
           </div>
@@ -132,7 +134,7 @@ export default function ProfilePage() {
             <Star className='w-7 h-7' />
           </div>
           <div>
-            <p className='text-gray-500 font-medium text-sm uppercase tracking-wider'>My Reviews</p>
+            <p className='text-gray-500 font-medium text-sm uppercase tracking-wider'>{t('myReviews')}</p>
             <p className='text-3xl font-black text-gray-900'>{stats.totalReviews}</p>
           </div>
         </div>
@@ -143,13 +145,13 @@ export default function ProfilePage() {
         <div className='lg:col-span-2 space-y-8'>
           <div className='bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden'>
             <div className='p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50'>
-              <h2 className='text-xl font-bold text-gray-900'>Recent Order</h2>
+              <h2 className='text-xl font-bold text-gray-900'>{t('recentOrder')}</h2>
               {recentOrder && (
                 <Link
                   href='/profile/orders'
                   className='text-sm font-bold text-pink-600 hover:text-pink-700 hover:underline'
                 >
-                  View All Orders
+                  {t('viewAllOrders')}
                 </Link>
               )}
             </div>
@@ -187,7 +189,7 @@ export default function ProfilePage() {
                     </div>
                     <p className='text-gray-500 flex items-center gap-2 text-sm'>
                       <Clock className='w-4 h-4' />
-                      Placed on{' '}
+                      {t('placedOn')}
                       {new Date(recentOrder.createdAt).toLocaleDateString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
@@ -197,7 +199,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                   <div className='text-right'>
-                    <p className='text-sm text-gray-500 mb-1'>Total Amount</p>
+                    <p className='text-sm text-gray-500 mb-1'>{t('totalAmount')}</p>
                     <p className='text-2xl font-bold text-gray-900'>₹{recentOrder.totalAmount}</p>
                   </div>
                 </div>
@@ -221,7 +223,7 @@ export default function ProfilePage() {
                           <p className='font-bold text-gray-900'>
                             {item.product?.name || item.name}
                           </p>
-                          <p className='text-sm text-gray-500'>Qty: {item.quantity}</p>
+                          <p className='text-sm text-gray-500'>{t('qty')}: {item.quantity}</p>
                         </div>
                       </div>
                       <p className='font-bold text-gray-900'>₹{item.price}</p>
@@ -229,7 +231,7 @@ export default function ProfilePage() {
                   ))}
                   {recentOrder.items.length > 2 && (
                     <p className='text-center text-sm text-gray-500 italic'>
-                      + {recentOrder.items.length - 2} more items
+                      + {recentOrder.items.length - 2} {t('moreItems')}
                     </p>
                   )}
                 </div>
@@ -238,7 +240,7 @@ export default function ProfilePage() {
                   href={`/profile/orders/${recentOrder._id}`}
                   className='block w-full py-3 text-center font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors'
                 >
-                  View Order Details
+                  {t('viewOrderDetails')}
                 </Link>
               </div>
             ) : (
@@ -246,15 +248,15 @@ export default function ProfilePage() {
                 <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400'>
                   <Package className='w-8 h-8' />
                 </div>
-                <h3 className='text-lg font-bold text-gray-900 mb-2'>No orders yet</h3>
+                <h3 className='text-lg font-bold text-gray-900 mb-2'>{t('noOrdersYet')}</h3>
                 <p className='text-gray-500 mb-6'>
-                  Start shopping to see your recent activity here.
+                  {t('startShoppingMessage')}
                 </p>
                 <Link
                   href='/products'
                   className='inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5'
                 >
-                  Start Shopping
+                  {t('startShopping')}
                 </Link>
               </div>
             )}
@@ -277,12 +279,12 @@ export default function ProfilePage() {
             <div className='space-y-2'>
               <div className='flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg'>
                 <ShieldCheck className='w-4 h-4 text-green-600' />
-                <span>Verified Customer</span>
+                <span>{t('verifiedCustomer')}</span>
               </div>
             </div>
           </div>
 
-          <h3 className='text-lg font-bold text-gray-900 px-1'>Quick Actions</h3>
+          <h3 className='text-lg font-bold text-gray-900 px-1'>{t('quickActions')}</h3>
           <div className='grid grid-cols-1 gap-4'>
             <Link
               href='/profile/orders'
@@ -293,8 +295,8 @@ export default function ProfilePage() {
                   <Package className='w-5 h-5' />
                 </div>
                 <div>
-                  <p className='font-bold text-gray-900'>My Orders</p>
-                  <p className='text-xs text-gray-500'>Track, return, or buy things again</p>
+                  <p className='font-bold text-gray-900'>{t('myOrders')}</p>
+                  <p className='text-xs text-gray-500'>{t('myOrdersDesc')}</p>
                 </div>
               </div>
               <ArrowRight className='w-5 h-5 text-gray-400 group-hover:text-pink-600 transform group-hover:translate-x-1 transition-all' />
@@ -309,8 +311,8 @@ export default function ProfilePage() {
                   <MapPin className='w-5 h-5' />
                 </div>
                 <div>
-                  <p className='font-bold text-gray-900'>My Addresses</p>
-                  <p className='text-xs text-gray-500'>Edit addresses for orders</p>
+                  <p className='font-bold text-gray-900'>{t('myAddresses')}</p>
+                  <p className='text-xs text-gray-500'>{t('myAddressesDesc')}</p>
                 </div>
               </div>
               <ArrowRight className='w-5 h-5 text-gray-400 group-hover:text-pink-600 transform group-hover:translate-x-1 transition-all' />
@@ -323,8 +325,8 @@ export default function ProfilePage() {
                   <User className='w-5 h-5' />
                 </div>
                 <div className='text-left'>
-                  <p className='font-bold text-gray-900'>Account Settings</p>
-                  <p className='text-xs text-gray-500'>Coming soon</p>
+                  <p className='font-bold text-gray-900'>{t('accountSettings')}</p>
+                  <p className='text-xs text-gray-500'>{t('comingSoon')}</p>
                 </div>
               </div>
             </button>

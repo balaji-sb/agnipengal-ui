@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { MapPin, Plus, Edit2, Trash2, X, Home, Briefcase, Map as MapIcon } from 'lucide-react';
 import { Country, State, City } from 'country-state-city';
 import api from '@/lib/api';
+import { useTranslations } from 'next-intl';
 
 interface Address {
   _id: string;
@@ -21,6 +22,7 @@ interface Address {
 export default function AddressesPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const t = useTranslations('Addresses');
 
   // Address State
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -89,12 +91,12 @@ export default function AddressesPage() {
       fetchAddresses();
     } catch (error) {
       console.error('Failed to save address', error);
-      alert('Failed to save address');
+      alert(t('failedToSave'));
     }
   };
 
   const handleDeleteAddress = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this address?')) return;
+    if (!confirm(t('deleteConfirmation'))) return;
     try {
       await api.delete(`/addresses/${id}`);
       fetchAddresses();
@@ -180,28 +182,28 @@ export default function AddressesPage() {
 
   return (
     <div className='max-w-4xl mx-auto px-4 py-8'>
-      <h1 className='text-3xl font-bold text-gray-800 mb-8'>My Addresses</h1>
+      <h1 className='text-3xl font-bold text-gray-800 mb-8'>{t('myAddresses')}</h1>
 
       <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8'>
         <div className='flex justify-between items-center mb-6'>
           <h2 className='text-xl font-bold flex items-center'>
             <MapPin className='w-6 h-6 mr-2 text-pink-600' />
-            Saved Addresses
+            {t('savedAddresses')}
           </h2>
           <button
             onClick={openAddAddress}
             className='flex items-center text-sm font-medium text-pink-600 hover:text-pink-700 hover:bg-pink-50 px-3 py-2 rounded-lg transition'
           >
             <Plus className='w-4 h-4 mr-1' />
-            Add New
+            {t('addNew')}
           </button>
         </div>
 
         {loadingAddresses ? (
-          <div className='text-center py-4 text-gray-500'>Loading addresses...</div>
+          <div className='text-center py-4 text-gray-500'>{t('loadingAddresses')}</div>
         ) : addresses.length === 0 ? (
           <div className='text-center py-8 bg-gray-50 rounded-lg text-gray-500'>
-            No saved addresses found.
+            {t('noAddressesFound')}
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -212,14 +214,16 @@ export default function AddressesPage() {
               >
                 {addr.isDefault && (
                   <span className='absolute top-2 right-2 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase'>
-                    Default
+                    {t('defaultBadge')}
                   </span>
                 )}
                 <p className='font-medium text-gray-900 flex items-center gap-2'>
                   {addr.type === 'Home' && <Home className='w-4 h-4 text-gray-500' />}
                   {addr.type === 'Work' && <Briefcase className='w-4 h-4 text-gray-500' />}
                   {addr.type === 'Other' && <MapIcon className='w-4 h-4 text-gray-500' />}
-                  <span className='capitalize'>{addr.type}</span> - {addr.street}
+                  <span className='capitalize'>
+                    {addr.type === 'Home' ? t('home') : addr.type === 'Work' ? t('work') : addr.type === 'Other' ? t('other') : addr.type}
+                  </span> - {addr.street}
                 </p>
                 <p className='text-sm text-gray-600'>
                   {addr.city}, {addr.state} {addr.zipCode}
@@ -230,14 +234,14 @@ export default function AddressesPage() {
                   <button
                     onClick={() => openEditAddress(addr)}
                     className='p-1.5 text-blue-600 hover:bg-blue-50 rounded'
-                    title='Edit'
+                    title={t('edit')}
                   >
                     <Edit2 className='w-4 h-4' />
                   </button>
                   <button
                     onClick={() => handleDeleteAddress(addr._id)}
                     className='p-1.5 text-red-600 hover:bg-red-50 rounded'
-                    title='Delete'
+                    title={t('delete')}
                   >
                     <Trash2 className='w-4 h-4' />
                   </button>
@@ -259,7 +263,7 @@ export default function AddressesPage() {
               <X className='w-5 h-5' />
             </button>
             <h2 className='text-xl font-bold mb-4'>
-              {editingAddress ? 'Edit Address' : 'Add New Address'}
+              {editingAddress ? t('editAddress') : t('addNewAddress')}
             </h2>
 
             <form onSubmit={handleAddressSubmit} className='space-y-4'>
@@ -278,14 +282,14 @@ export default function AddressesPage() {
                     {type === 'Home' && <Home className='w-3.5 h-3.5' />}
                     {type === 'Work' && <Briefcase className='w-3.5 h-3.5' />}
                     {type === 'Other' && <MapIcon className='w-3.5 h-3.5' />}
-                    {type}
+                    {type === 'Home' ? t('home') : type === 'Work' ? t('work') : t('other')}
                   </button>
                 ))}
               </div>
 
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Street Address
+                  {t('streetAddress')}
                 </label>
                 <input
                   type='text'
@@ -299,14 +303,14 @@ export default function AddressesPage() {
               </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Country</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('country')}</label>
                   <select
                     required
                     value={selectedCountry}
                     onChange={handleCountryChange}
                     className='w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-white'
                   >
-                    <option value=''>Select Country</option>
+                    <option value=''>{t('selectCountry')}</option>
                     {Country.getAllCountries().map((c) => (
                       <option key={c.isoCode} value={c.isoCode}>
                         {c.name}
@@ -315,7 +319,7 @@ export default function AddressesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>State</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('state')}</label>
                   <select
                     required
                     value={selectedState}
@@ -323,7 +327,7 @@ export default function AddressesPage() {
                     disabled={!selectedCountry}
                     className='w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-white disabled:bg-gray-100'
                   >
-                    <option value=''>Select State</option>
+                    <option value=''>{t('selectState')}</option>
                     {selectedCountry
                       ? State.getStatesOfCountry(selectedCountry).map((s) => (
                           <option key={s.isoCode} value={s.isoCode}>
@@ -336,7 +340,7 @@ export default function AddressesPage() {
               </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>City</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('city')}</label>
                   <select
                     required
                     value={selectedCity}
@@ -344,7 +348,7 @@ export default function AddressesPage() {
                     disabled={!selectedState}
                     className='w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-white disabled:bg-gray-100'
                   >
-                    <option value=''>Select City</option>
+                    <option value=''>{t('selectCity')}</option>
                     {selectedState
                       ? City.getCitiesOfState(selectedCountry, selectedState).map((c) => (
                           <option key={c.name} value={c.name}>
@@ -355,7 +359,7 @@ export default function AddressesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>ZIP Code</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('zipCode')}</label>
                   <input
                     type='text'
                     required
@@ -378,7 +382,7 @@ export default function AddressesPage() {
                   className='w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500'
                 />
                 <label htmlFor='isDefault' className='ml-2 text-sm text-gray-700'>
-                  Set as default address
+                  {t('setAsDefault')}
                 </label>
               </div>
 
@@ -386,7 +390,7 @@ export default function AddressesPage() {
                 type='submit'
                 className='w-full bg-orange-600 text-white font-bold py-3 rounded-lg hover:bg-orange-700 transition'
               >
-                Save Address
+                {t('saveAddress')}
               </button>
             </form>
           </div>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Users, Zap, Award } from 'lucide-react';
 import api from '@/lib/api';
+import { useTranslations } from 'next-intl';
 
 interface Stats {
   orderCount: number;
@@ -14,6 +15,7 @@ interface Stats {
 export default function StatsSection() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const t = useTranslations('Homepage');
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -35,25 +37,25 @@ export default function StatsSection() {
 
   const statItems = [
     {
-      label: 'Orders Placed',
+      label: t('ordersPlaced'),
       value: stats?.orderCount || 0,
       icon: <ShoppingBag className='w-6 h-6 text-orange-600' />,
       suffix: '+',
     },
     {
-      label: 'Total Visits',
+      label: t('totalVisits'),
       value: stats?.visitorCount || 0,
       icon: <Users className='w-6 h-6 text-blue-600' />,
       suffix: '',
     },
     {
-      label: 'Live Visitors',
+      label: t('liveVisitors'),
       value: stats?.activeUsers || 0,
       icon: <Zap className='w-6 h-6 text-yellow-500 animate-pulse' />,
       suffix: '',
     },
     {
-      label: 'Happy Customers',
+      label: t('happyCustomers'),
       value: (stats?.orderCount || 0) + 150, // Simulated based on orders
       icon: <Award className='w-6 h-6 text-green-600' />,
       suffix: '+',

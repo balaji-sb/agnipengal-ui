@@ -6,10 +6,12 @@ import ProductCard from '@/components/shop/ProductCard';
 import { Heart, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/context/AuthContext';
+import { useTranslations } from 'next-intl';
 
 export default function WishlistPage() {
   const { wishlist, loading } = useWishlist();
   const { user } = useAuth();
+  const t = useTranslations('Wishlist');
 
   // Need to fetch full product details for the wishlist items
   // The context currently stores IDs (or we need to update context to store objects)
@@ -30,32 +32,32 @@ export default function WishlistPage() {
     <div className='container mx-auto px-4 py-12'>
       <h1 className='text-3xl font-bold mb-8 flex items-center gap-3'>
         <Heart className='w-8 h-8 text-pink-600 fill-pink-600' />
-        My Wishlist
+        {t('myWishlist')}
       </h1>
 
       {!user ? (
         <div className='text-center py-20 bg-gray-50 rounded-2xl'>
-          <p className='text-xl text-gray-600 mb-4'>Please login to view your wishlist</p>
+          <p className='text-xl text-gray-600 mb-4'>{t('loginRequired')}</p>
           <Link
             href='/login'
             className='inline-block bg-gray-900 text-white px-6 py-3 rounded-full font-bold'
           >
-            Login
+            {t('loginButton')}
           </Link>
         </div>
       ) : loading ? (
-        <div className='text-center py-20'>Loading...</div>
+        <div className='text-center py-20'>{t('loading')}</div>
       ) : wishlist.length === 0 ? (
         <div className='text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200'>
           <Heart className='w-16 h-16 mx-auto text-gray-300 mb-4' />
-          <h2 className='text-2xl font-bold text-gray-400 mb-2'>Your wishlist is empty</h2>
-          <p className='text-gray-500 mb-6'>Start saving items you love!</p>
+          <h2 className='text-2xl font-bold text-gray-400 mb-2'>{t('emptyWishlist')}</h2>
+          <p className='text-gray-500 mb-6'>{t('startSaving')}</p>
           <Link
             href='/products'
             className='inline-flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition'
           >
             <ShoppingBag className='w-5 h-5' />
-            Browse Products
+            {t('browseProducts')}
           </Link>
         </div>
       ) : (

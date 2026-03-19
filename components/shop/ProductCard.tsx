@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ShoppingCart, Eye, Heart, Sparkles, Store } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
+import { useTranslations } from 'next-intl';
 
 interface ProductCardProps {
   product: {
@@ -29,6 +30,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem, items: cartItems } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const t = useTranslations('ProductCard');
 
   const totalStock =
     product.variants && product.variants.length > 0
@@ -45,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className='relative aspect-[4/5] bg-gray-50 overflow-hidden'>
         {isOutOfStock && (
           <div className='absolute top-3 right-3 z-20 bg-gray-900/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider'>
-            Out of Stock
+            {t('outOfStock')}
           </div>
         )}
         {!isOutOfStock && product.activeDeal && (
@@ -122,7 +124,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   title='Max Stock Reached'
                 >
                   <ShoppingCart className='w-5 h-5 opacity-50' />
-                  <span className='text-sm font-bold truncate max-w-[80px]'>Maxed</span>
+                  <span className='text-sm font-bold truncate max-w-[80px]'>{t('maxed')}</span>
                 </button>
               ) : (
                 <button
@@ -134,7 +136,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   title='Add to Cart'
                 >
                   <ShoppingCart className='w-5 h-5' />
-                  <span className='text-sm font-bold'>Add</span>
+                  <span className='text-sm font-bold'>{t('add')}</span>
                 </button>
               );
             })()}
@@ -169,7 +171,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className='flex items-center gap-1 mb-2 mt-[-4px]'>
             <Store className='w-2.5 h-2.5 md:w-3 md:h-3 text-gray-400' />
             <span className='text-[10px] md:text-xs font-medium text-gray-500 line-clamp-1'>
-              Sold by: <span className='text-gray-700'>{product.vendor.storeName}</span>
+              {t('soldBy')} <span className='text-gray-700'>{product.vendor.storeName}</span>
             </span>
           </div>
         )}

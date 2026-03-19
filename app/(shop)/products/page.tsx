@@ -5,6 +5,7 @@ import ProductSort from '@/components/shop/ProductSort';
 import ProductFilter from '@/components/shop/ProductFilter';
 import ProductListingLayout from '@/components/shop/ProductListingLayout';
 import api from '@/lib/api';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,6 +79,7 @@ export default async function AllProductsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const t = await getTranslations('Products');
   const resolvedSearchParams = await searchParams;
 
   const sort = (resolvedSearchParams.sort as string) || 'newest';
@@ -142,7 +144,7 @@ export default async function AllProductsPage({
       <ProductListingLayout sidebar={<ProductFilter />}>
         <div className='flex flex-col sm:flex-row items-center justify-between mb-6'>
           <h1 className='text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0'>
-            All Products <span className='text-gray-400 text-lg'>({pagination.total})</span>
+            {t('title')} <span className='text-gray-400 text-lg'>({pagination.total})</span>
           </h1>
           <ProductSort />
         </div>
@@ -155,7 +157,7 @@ export default async function AllProductsPage({
           />
         ) : (
           <div className='text-center py-20 bg-white rounded-xl border border-dashed border-gray-300'>
-            <p className='text-gray-500 text-lg'>No products found matching your criteria.</p>
+            <p className='text-gray-500 text-lg'>{t('noProducts')}</p>
           </div>
         )}
       </ProductListingLayout>

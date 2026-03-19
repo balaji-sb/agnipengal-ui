@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import Carousel from '@/components/shop/Carousel';
 import ProductGridSection from '@/components/shop/sections/ProductGridSection';
 import HomeCategories from '@/components/shop/sections/HomeCategories';
@@ -163,6 +164,7 @@ async function getData() {
 }
 
 export default async function Home() {
+  const t = await getTranslations('Homepage');
   const {
     sections,
     carouselItems,
@@ -182,14 +184,14 @@ export default async function Home() {
       : [
           {
             id: '1',
-            title: 'Handcrafted Elegance',
+            title: t('handcraftedElegance'),
             image:
               'https://images.unsplash.com/photo-1605369651713-33e10bdcecfd?auto=format&fit=crop&q=80',
             link: '/products',
           },
           {
             id: '2',
-            title: 'Support Women Makers',
+            title: t('supportWomenMakers'),
             image:
               'https://images.unsplash.com/photo-1594981441668-d4c38d22ddba?auto=format&fit=crop&q=80',
             link: '/category',
@@ -278,11 +280,11 @@ export default async function Home() {
             <div className='container mx-auto px-4 mb-4 flex items-center gap-2'>
               <Sparkles className='w-6 h-6 text-yellow-500 animate-pulse' />
               <span className='text-sm font-bold text-yellow-600 uppercase tracking-widest'>
-                {section.label || 'Limited Time Offers'}
+                {section.label || t('limitedTimeOffers')}
               </span>
             </div>
             <ProductGridSection
-              title={section.label || 'Deals of the Day'}
+              title={section.label || t('dealsOfTheDay')}
               products={uniqueDealProducts}
               link='/deals'
             />
@@ -310,7 +312,7 @@ export default async function Home() {
         return (
           <div key={section._id} className='relative z-10 py-8'>
             <ProductGridSection
-              title={section.label || 'Super Saver Combos'}
+              title={section.label || t('superSaverCombos')}
               products={combosAsProducts}
               link='/combos'
             />
@@ -353,9 +355,9 @@ export default async function Home() {
         <div className='container mx-auto px-4 py-20 text-center relative z-10'>
           <div className='bg-orange-50/50 backdrop-blur-sm p-12 rounded-3xl inline-block border border-orange-100 shadow-xl'>
             <Package className='w-20 h-20 mx-auto text-orange-300 mb-6' />
-            <h2 className='text-2xl font-bold text-gray-800'>Igniting Soon...</h2>
+            <h2 className='text-2xl font-bold text-gray-800'>{t('ignitingSoon')}</h2>
             <p className='text-gray-600 mt-2'>
-              We are curating amazing handcrafted products for you.
+              {t('curatingMessage')}
             </p>
           </div>
         </div>

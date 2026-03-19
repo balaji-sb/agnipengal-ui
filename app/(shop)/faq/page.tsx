@@ -1,6 +1,7 @@
 import React from 'react';
 import api from '@/lib/api-server';
 import { HelpCircle, ChevronDown } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 async function getFAQs() {
     try {
@@ -22,6 +23,7 @@ export const metadata = {
 
 export default async function FAQPage() {
     const faqs = await getFAQs();
+    const t = await getTranslations('FAQ');
 
     // Group FAQs by category
     const groupedFaqs: Record<string, any[]> = {};
@@ -42,17 +44,17 @@ export default async function FAQPage() {
                         </div>
                     </div>
                     <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                        Frequently Asked Questions
+                        {t('title')}
                     </h1>
                     <p className="mt-4 text-lg text-gray-600">
-                        Can't find the answer you're looking for? Reach out to our customer support.
+                        {t('description')}
                     </p>
                 </div>
 
                 <div className="space-y-8">
                     {Object.keys(groupedFaqs).length === 0 ? (
                         <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-                            <p className="text-gray-500">No FAQs available at the moment.</p>
+                            <p className="text-gray-500">{t('noFaqs')}</p>
                         </div>
                     ) : (
                         Object.entries(groupedFaqs).map(([category, items]) => (
