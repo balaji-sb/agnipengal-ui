@@ -105,7 +105,7 @@ export default async function PartnershipPage() {
           Zero setup fees · Cancel anytime · Join our community of empowered women entrepreneurs
         </p>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center pt-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center pt-8'>
           {plans.map((plan: Plan) => {
             const paidPlans = plans.filter((p: Plan) => !p.isFreeTrialPlan);
             const bestPlanId =
@@ -158,7 +158,10 @@ export default async function PartnershipPage() {
                       <>
                         <span className='text-4xl font-extrabold text-green-600'>Free</span>
                         <p className='text-sm text-gray-500 mt-1'>
-                          {plan.isFreeTrialPlan ? `${plan.trialPeriodDays} days trial` : 'No renewal fees'} · no credit card required
+                          {plan.isFreeTrialPlan
+                            ? `${plan.trialPeriodDays} days trial`
+                            : 'No renewal fees'}{' '}
+                          · no credit card required
                         </p>
                       </>
                     ) : (
@@ -170,9 +173,7 @@ export default async function PartnershipPage() {
                         >
                           ₹{plan.price}
                         </span>
-                        <span className='text-gray-400 text-sm'>
-                          / {plan.durationInMonths} Mo
-                        </span>
+                        <span className='text-gray-400 text-sm'>/ {plan.durationInMonths} Mo</span>
                       </div>
                     )}
                   </div>
@@ -215,6 +216,12 @@ export default async function PartnershipPage() {
                       <li className='flex items-center text-sm text-gray-600 gap-2'>
                         <Star className='w-4 h-4 shrink-0 text-yellow-500' />
                         Featured Listing
+                      </li>
+                    )}
+                    {plan.durationInMonths > 6 && (
+                      <li className='flex items-center text-sm text-gray-600 gap-2'>
+                        <Star className='w-4 h-4 shrink-0 text-yellow-500' />
+                        Agnipengal based website
                       </li>
                     )}
                   </ul>
