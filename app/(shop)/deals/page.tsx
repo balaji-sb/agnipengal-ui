@@ -6,36 +6,40 @@ import { Sparkles, Timer, AlertCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Deals of the Day | Agnipengal – Limited Time Offers',
-  description:
-    'Shop exclusive limited-time deals and offers on handmade products, Aari embroidery supplies, and more from women entrepreneurs across India. Save big on Agnipengal.',
-  keywords: [
-    'deals of the day India',
-    'limited time offers women business',
-    'Agnipengal deals',
-    'discount handmade products India',
-    'women entrepreneur sale',
-    'Aari embroidery deals',
-    'online shopping deals India',
-  ],
-  openGraph: {
-    title: 'Deals of the Day | Agnipengal',
-    description: 'Exclusive limited-time offers on handmade and artisan products from women-owned businesses.',
-    url: 'https://agnipengal.com/deals',
-    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@agnipengal',
-    title: 'Deals of the Day | Agnipengal',
-    description: 'Limited-time offers from women-owned businesses on Agnipengal.',
-    images: ['https://agnipengal.com/og-image.jpg'],
-  },
-  alternates: {
-    canonical: 'https://agnipengal.com/deals',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+
+  return {
+    title: 'Deals of the Day | Agnipengal – Limited Time Offers',
+    description:
+      'Shop exclusive limited-time deals and offers on handmade products, Aari embroidery supplies, and more from women entrepreneurs across India. Save big on Agnipengal.',
+    keywords: [
+      'deals of the day India',
+      'limited time offers women business',
+      'Agnipengal deals',
+      'discount handmade products India',
+      'women entrepreneur sale',
+      'Aari embroidery deals',
+      'online shopping deals India',
+    ],
+    openGraph: {
+      title: 'Deals of the Day | Agnipengal',
+      description: 'Exclusive limited-time offers on handmade and artisan products from women-owned businesses.',
+      url: `${siteUrl}/deals`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@agnipengal',
+      title: 'Deals of the Day | Agnipengal',
+      description: 'Limited-time offers from women-owned businesses on Agnipengal.',
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/deals`,
+    },
+  };
+}
 
 async function getDeals() {
   try {
@@ -49,9 +53,53 @@ async function getDeals() {
 
 export default async function DealsPage() {
   const deals = await getDeals();
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Deals of the Day',
+                item: `${siteUrl}/deals`,
+              },
+            ],
+          }),
+        }}
+      />
+      {/* ItemList Schema */}
+      {deals.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: 'Today\'s Deals on Agnipengal',
+              itemListElement: deals.map((d: any, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `${siteUrl}/products?search=${encodeURIComponent(d.name)}`, // Deals usually point to search or specific products
+                name: d.name,
+              })),
+            }),
+          }}
+        />
+      )}
       {/* Header */}
       <div className='bg-gradient-to-r from-pink-600 to-rose-600 text-white py-12 mb-8 relative overflow-hidden'>
         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />

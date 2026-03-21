@@ -19,6 +19,11 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const pathname = usePathname();
 
   const { config } = useConfig();
@@ -152,7 +157,7 @@ export default function Header() {
               className='p-2.5 text-gray-600 hover:bg-red-50 hover:text-red-700 rounded-full transition-all relative group'
             >
               <ShoppingCart className='h-5 w-5 group-hover:scale-110 transition-transform' />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className='absolute top-0 right-0 inline-flex items-center justify-center h-5 w-5 text-[10px] font-bold leading-none text-white bg-gradient-to-r from-orange-500 to-red-600 rounded-full shadow-md transform translate-x-1/4 -translate-y-1/4 border-2 border-white animate-bounce-short'>
                   {totalItems}
                 </span>

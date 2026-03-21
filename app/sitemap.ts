@@ -3,7 +3,7 @@ import api from '@/lib/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com';
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
     // Static routes
     const routes = [

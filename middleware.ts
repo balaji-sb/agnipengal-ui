@@ -48,7 +48,7 @@ export function middleware(req: NextRequest) {
       '^/search/?$',
       '^/profile(/.*)?$',
       '^/refer-and-earn/?$',
-      '^/partnership/?$',
+      '^/partnership(/.*)/?$',
       '^/pages(/.*)?$', // Dynamic CMS pages wildcard
       '^/faq/?$',
       '^/account/support/?$',
@@ -86,7 +86,8 @@ export function middleware(req: NextRequest) {
 
   // Protect /vendor routes
   if (path.startsWith('/vendor') && !path.startsWith('/vendor/login')) {
-    const vendorToken = req.cookies.get('vendor_token')?.value || req.cookies.get('vendorToken')?.value;
+    const vendorToken =
+      req.cookies.get('vendor_token')?.value || req.cookies.get('vendorToken')?.value;
 
     if (!vendorToken) {
       return NextResponse.redirect(new URL('/vendor/login', req.url));

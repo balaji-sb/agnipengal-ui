@@ -1,10 +1,44 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import api from '@/lib/api';
+import React from 'react';
+import type { Metadata } from 'next';
+import api from '@/lib/api-server';
 import Link from 'next/link';
-import { Store, MapPin } from 'lucide-react';
-import Image from 'next/image';
+import { Store } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+
+  return {
+    title: 'Women-Owned Shops | Agnipengal – Support Local Entrepreneurs',
+    description:
+      'Discover unique shops and businesses owned by women entrepreneurs across India. Browse artisanal products, specialized services, and support local empowerment on Agnipengal.',
+    keywords: [
+      'women owned shops India',
+      'female entrepreneur businesses',
+      'Agnipengal vendors',
+      'support women businesses online',
+      'artisanal shops India',
+      'local women entrepreneurs marketplace',
+    ],
+    openGraph: {
+      title: 'Women-Owned Shops | Agnipengal',
+      description: 'Explore unique shops from our community of women entrepreneurs across India.',
+      url: `${siteUrl}/shops`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@agnipengal',
+      title: 'Women-Owned Shops | Agnipengal',
+      description: 'Discover businesses owned by women entrepreneurs on Agnipengal.',
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/shops`,
+    },
+  };
+}
 
 interface Vendor {
   _id: string;
@@ -18,38 +52,71 @@ interface Vendor {
     name: string;
     email: string;
   };
-  logo?: string; // Assuming future logo support
+  logo?: string;
 }
 
-export default function ShopsPage() {
-  const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchVendors = async () => {
-      try {
-        const response = await api.get('/vendors/public');
-        setVendors(response.data.data);
-      } catch (error) {
-        console.error('Error fetching vendors:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVendors();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600'></div>
-      </div>
-    );
+async function getVendors() {
+  try {
+    const res = await api.get('/vendors/public');
+    // api-server returns { data: ... } where data is the JSON body
+    // and based on vendor public endpoint, it's usually { success: true, data: [...] }
+    return res.data?.data || [];
+  } catch (error) {
+    console.error('Error fetching vendors:', error);
+    return [];
   }
+}
+
+export default async function ShopsPage() {
+  const vendors = await getVendors();
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='bg-gray-50 min-h-screen py-12'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Shops',
+                item: `${siteUrl}/shops`,
+              },
+            ],
+          }),
+        }}
+      />
+      {/* ItemList Schema */}
+      {vendors.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: 'Women-Owned Businesses on Agnipengal',
+              itemListElement: vendors.map((v: Vendor, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `${siteUrl}/shops/${v._id}`,
+                name: v.storeName,
+              })),
+            }),
+          }}
+        />
+      )}
+
       <div className='container mx-auto px-4'>
         <div className='text-center mb-12'>
           <h1 className='text-4xl font-bold text-gray-900 mb-4'>Discover Our Shops</h1>
@@ -66,10 +133,9 @@ export default function ShopsPage() {
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {vendors.map((vendor) => (
+            {vendors.map((vendor: Vendor) => (
               <Link key={vendor._id} href={`/shops/${vendor._id}`} className='group block h-full'>
                 <div className='bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-full border border-gray-100 flex flex-col'>
-                  {/* Banner/Cover Area - Using a gradient placeholder for now as vendor images aren't fully set up */}
                   <div className='h-32 bg-gradient-to-r from-orange-500 to-red-600 relative'>
                     <div className='absolute -bottom-8 left-6'>
                       <div className='w-16 h-16 rounded-xl bg-white p-1 shadow-lg'>
@@ -101,11 +167,6 @@ export default function ShopsPage() {
                         <Store className='w-4 h-4 mr-1' />
                         <span>{vendor.user.name}</span>
                       </div>
-                      {/* Location Placeholder if added later */}
-                      {/* <div className="flex items-center ml-4">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            <span>City</span>
-                         </div> */}
                     </div>
                   </div>
                 </div>

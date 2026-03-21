@@ -1,11 +1,11 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import api from '@/lib/api';
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import React from 'react';
+import type { Metadata } from 'next';
+import api from '@/lib/api-server';
+import { notFound } from 'next/navigation';
 import { MapPin, Phone, Mail, Grid, Store, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 interface Product {
   _id: string;
@@ -26,7 +26,7 @@ interface Vendor {
   phone: string;
   category: { name: string } | null;
   user: {
-    _id: string; // User ID needed for product fetch
+    _id: string;
     name: string;
     email: string;
     avatar?: string;
@@ -34,76 +34,123 @@ interface Vendor {
   status: string;
 }
 
-export default function ShopDetailsPage() {
-  const { id } = useParams();
-  const [vendor, setVendor] = useState<Vendor | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+async function getVendor(id: string) {
+  try {
+    const res = await api.get(`/vendors/public/${id}`);
+    if (res.data.success) return res.data.data;
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!id) return;
+async function getVendorProducts(userId: string) {
+  try {
+    const res = await api.get(`/products?vendor=${userId}`);
+    if (res.data.success) return res.data.data;
+    return [];
+  } catch (error) {
+    return [];
+  }
+}
 
-        // 1. Fetch Vendor Details
-        const vendorRes = await api.get(`/vendors/public/${id}`);
-        if (vendorRes.data.success) {
-          const vendorData = vendorRes.data.data;
-          setVendor(vendorData);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const vendor = await getVendor(id);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
-          // 2. Fetch Vendor Products using User ID
-          // We use the Main Product Filter API with `vendor=USER_ID`
-          // Note: vendorData.user._id is the User ID
-          if (vendorData.user && vendorData.user._id) {
-            const productRes = await api.get(`/products?vendor=${vendorData.user._id}`);
-            if (productRes.data.success) {
-              setProducts(productRes.data.data);
-            }
-          }
-        }
-      } catch (err: any) {
-        console.error('Error fetching shop details:', err);
-        setError(err.response?.data?.error || 'Failed to load shop details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600'></div>
-      </div>
-    );
+  if (!vendor) {
+    return { title: 'Shop Not Found | Agnipengal' };
   }
 
-  if (error || !vendor) {
-    return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-        <div className='text-center p-8 bg-white rounded-2xl shadow-sm max-w-md'>
-          <AlertCircle className='w-16 h-16 text-red-400 mx-auto mb-4' />
-          <h2 className='text-2xl font-bold text-gray-900 mb-2'>Shop Not Found</h2>
-          <p className='text-gray-500 mb-6'>
-            {error || "This shop doesn't exist or is currently unavailable."}
-          </p>
-          <Link
-            href='/shops'
-            className='px-6 py-2 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition'
-          >
-            Browse All Shops
-          </Link>
-        </div>
-      </div>
-    );
+  return {
+    title: `${vendor.storeName} | Agnipengal – Women Owned Business`,
+    description: vendor.storeDescription || `Browse products from ${vendor.storeName} on Agnipengal.`,
+    keywords: [
+      vendor.storeName,
+      vendor.category?.name || 'Women Boutique',
+      'women owned business India',
+      'Agnipengal shop',
+    ],
+    openGraph: {
+      title: `${vendor.storeName} | Agnipengal`,
+      description: vendor.storeDescription,
+      url: `${siteUrl}/shops/${id}`,
+      type: 'website',
+    },
+    alternates: {
+      canonical: `${siteUrl}/shops/${id}`,
+    },
+  };
+}
+
+export default async function ShopDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const vendor = await getVendor(id);
+
+  if (!vendor) {
+    notFound();
   }
+
+  const products = await getVendorProducts(vendor.user._id);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
-      {/* Search Header placeholder if needed later */}
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Shops',
+                item: `${siteUrl}/shops`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: vendor.storeName,
+                item: `${siteUrl}/shops/${id}`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* LocalBusiness Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Store',
+            name: vendor.storeName,
+            description: vendor.storeDescription,
+            url: `${siteUrl}/shops/${id}`,
+            telephone: vendor.phone || '',
+            image: vendor.logo || `${siteUrl}/logo.jpg`,
+            address: {
+              '@type': 'PostalAddress',
+              addressCountry: 'IN',
+            },
+          }),
+        }}
+      />
 
       {/* Shop Header / Banner */}
       <div className='bg-gradient-to-r from-pink-600 to-violet-700 text-white pt-20 pb-20 md:pt-24 md:pb-32 relative'>
@@ -140,7 +187,6 @@ export default function ShopDetailsPage() {
                     {vendor.phone}
                   </span>
                 )}
-                {/* Email might be private, check requirements. Showing for now if public contact. */}
                 <span className='flex items-center gap-2'>
                   <Mail className='w-4 h-4' />
                   Contact Vendor
@@ -159,8 +205,6 @@ export default function ShopDetailsPage() {
             Store Products{' '}
             <span className='text-gray-400 text-lg font-normal'>({products.length})</span>
           </h2>
-
-          {/* Sort/Filter Controls could go here */}
         </div>
 
         {products.length === 0 ? (
@@ -171,7 +215,7 @@ export default function ShopDetailsPage() {
           </div>
         ) : (
           <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-            {products.map((product) => (
+            {products.map((product: Product) => (
               <Link
                 key={product._id}
                 href={`/product/${product.slug}?id=${product._id}`}
@@ -180,8 +224,8 @@ export default function ShopDetailsPage() {
                 <div className='bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300'>
                   <div className='aspect-square relative flex items-center justify-center bg-gray-50 p-4'>
                     <div className='relative w-full h-full'>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       {product.images && product.images[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={product.images[0]}
                           alt={product.name}

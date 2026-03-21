@@ -1,32 +1,50 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import api from '@/lib/api';
+import api from '@/lib/api-server';
 import { Metadata } from 'next';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Blog | Agnipengal – Stories of Women Entrepreneurs',
-  description:
-    'Read the latest stories, tips, and updates from Agnipengal. Empowering women entrepreneurs through knowledge and community.',
-  keywords: [
-    'blog agnipengal',
-    'women entrepreneur stories',
-    'embroidery tips',
-    'tailoring business india',
-    'made in india marketplace',
-    'women entrepreneur blog',
-  ],
-  alternates: {
-    canonical: 'https://agnipengal.com/blog',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+
+  return {
+    title: 'Blog | Agnipengal – Stories of Women Entrepreneurs',
+    description:
+      'Read the latest stories, tips, and updates from Agnipengal. Empowering women entrepreneurs through knowledge and community.',
+    keywords: [
+      'blog agnipengal',
+      'women entrepreneur stories',
+      'embroidery tips',
+      'tailoring business india',
+      'made in india marketplace',
+      'women entrepreneur blog',
+    ],
+    openGraph: {
+      title: 'Blog | Agnipengal – Stories of Women Entrepreneurs',
+      description: 'Insights and stories from the heart of our women entrepreneur community.',
+      url: `${siteUrl}/blog`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@agnipengal',
+      title: 'Blog | Agnipengal',
+      description: 'Stories of women entrepreneurs on Agnipengal.',
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/blog`,
+    },
+  };
+}
 
 async function getBlogs() {
   try {
-    const res = await api.get('/blogs', { params: { isPublic: 'true' } });
+    const res = await api.get('/blogs?isPublic=true');
+    // api-server returns { data: ... }
     return res.data || [];
   } catch (error) {
     console.error('Failed to fetch blogs:', error);
@@ -36,9 +54,35 @@ async function getBlogs() {
 
 export default async function BlogPage() {
   const blogs = await getBlogs();
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: `${siteUrl}/blog`,
+              },
+            ],
+          }),
+        }}
+      />
+
       {/* Hero Section */}
       <div className='bg-white border-b border-gray-100 mb-12'>
         <div className='container mx-auto px-4 py-16 text-center'>
@@ -69,7 +113,7 @@ export default async function BlogPage() {
                     />
                   ) : (
                     <div className='w-full h-full flex items-center justify-center text-gray-300'>
-                      <span className='font-bold text-4xl'>{blog.title[0]}</span>
+                      <span className='font-bold text-4xl'>{blog.title?.[0]}</span>
                     </div>
                   )}
                   <div className='absolute top-4 left-4 z-10'>
@@ -101,7 +145,7 @@ export default async function BlogPage() {
                   <div
                     className='text-gray-500 text-sm line-clamp-3 mb-6'
                     dangerouslySetInnerHTML={{
-                      __html: blog.content.replace(/<[^>]*>?/gm, '').slice(0, 150) + '...',
+                      __html: blog.content ? blog.content.replace(/<[^>]*>?/gm, '').slice(0, 150) + '...' : '',
                     }}
                   />
                   <div className='flex items-center text-pink-600 font-bold text-sm'>

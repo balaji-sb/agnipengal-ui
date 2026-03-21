@@ -110,7 +110,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </button>
             {(() => {
               const currentCartItem = cartItems.find(
-                (item) => item.product._id === product._id && !item.variant,
+                (item) => item.product._id?.toString() === product._id?.toString() && !item.variant,
               );
               const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;
               const isMaxedOut = cartQuantity >= totalStock;

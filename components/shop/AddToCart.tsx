@@ -17,9 +17,8 @@ export default function AddToCart({ product, variant, disabled = false }: AddToC
   // CartContext stores items as { product, quantity, variant } — so we access item.product._id
   const currentCartItem = cart.find(
     (item) =>
-      item.product._id ===
-        (typeof product._id === 'string' ? product._id : product._id?.toString()) &&
-      (variant ? item.variant?._id === variant._id : !item.variant),
+      item.product._id?.toString() === product._id?.toString() &&
+      (variant ? item.variant?._id?.toString() === variant._id?.toString() : !item.variant),
   );
   const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;
 

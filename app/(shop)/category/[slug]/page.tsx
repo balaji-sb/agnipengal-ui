@@ -1,24 +1,21 @@
 import React from 'react';
-
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import api from '@/lib/api-server';
+import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
-
-import api from '@/lib/api';
-
-// ...
 
 async function getCategory(slug: string) {
   try {
     const res = await api.get('/categories');
-    return res.data.data.find((c: any) => c.slug === slug) || null;
+    // api-server returns { data: ... }
+    return res.data.data.find((c: any) => (c.slug === slug || c._id === slug)) || null;
   } catch (error) {
+    console.error('Error fetching category:', error);
     return null;
   }
 }
-
-import { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
@@ -27,10 +24,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategory(slug);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   if (!category) {
     return { title: 'Category Not Found | Agnipengal' };
   }
+
+  const categoryUrl = `${siteUrl}/category/${slug}`;
 
   return {
     title: `${category.name} | Agnipengal – Women Entrepreneur Marketplace`,
@@ -43,20 +43,28 @@ export async function generateMetadata({
       'women marketplace India',
       'made in india',
     ],
-    alternates: {
-      canonical: `https://agnipengal.com/category/${slug}`,
-    },
     openGraph: {
       title: `${category.name} | Agnipengal`,
       description: `Buy ${category.name} from women-owned businesses on Agnipengal.`,
-      url: `https://agnipengal.com/category/${slug}`,
+      url: categoryUrl,
+      images: [{ url: `${siteUrl}/og-image.jpg` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${category.name} | Agnipengal`,
+      description: `Discover ${category.name} on Agnipengal.`,
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: categoryUrl,
     },
   };
 }
 
-export default async function SubCategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = await getCategory(slug);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   if (!category) {
     notFound();
@@ -64,6 +72,51 @@ export default async function SubCategoryPage({ params }: { params: Promise<{ sl
 
   return (
     <div className='container mx-auto px-4 py-12'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: category.name,
+                item: `${siteUrl}/category/${category.slug || category._id}`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* ItemList Schema for Subcategories */}
+      {category.subcategories && category.subcategories.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: `${category.name} Subcategories`,
+              itemListElement: category.subcategories.map((sub: any, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `${siteUrl}/category/${category.slug || category._id}/${sub.slug || sub._id}`,
+                name: sub.name,
+              })),
+            }),
+          }}
+        />
+      )}
+
       <div className='text-center mb-12'>
         <h1 className='text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 mb-4'>
           {category.name}
@@ -88,7 +141,7 @@ export default async function SubCategoryPage({ params }: { params: Promise<{ sl
                     className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500'
                   />
                 ) : (
-                  <span className='text-3xl text-pink-500 font-bold'>{sub.name[0]}</span>
+                  <span className='text-3xl text-pink-500 font-bold'>{sub.name?.[0]}</span>
                 )}
               </div>
               <h3 className='text-xl font-semibold text-gray-900 group-hover:text-pink-600 transition-colors'>

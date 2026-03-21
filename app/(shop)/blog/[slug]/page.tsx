@@ -1,9 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
-import api from '@/lib/api';
+import api from '@/lib/api-server';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { Calendar, User, Tag, ChevronLeft } from 'lucide-react';
+import { Calendar, Tag, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +11,7 @@ export const dynamic = 'force-dynamic';
 async function getBlog(slug: string) {
   try {
     const res = await api.get(`/blogs/slug/${slug}`);
+    // api-server returns { data: ... }
     return res.data;
   } catch (error) {
     return null;
@@ -24,34 +25,40 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlog(slug);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   if (!blog) {
     return { title: 'Blog Not Found' };
   }
 
+  const plainContent = blog.content ? blog.content.replace(/<[^>]*>?/gm, '').slice(0, 160) : '';
+
   return {
     title: `${blog.title} | Agnipengal Blog`,
-    description: blog.content.replace(/<[^>]*>?/gm, '').slice(0, 160),
+    description: plainContent,
     alternates: {
-      canonical: `https://agnipengal.com/blog/${slug}`,
+      canonical: `${siteUrl}/blog/${slug}`,
     },
     openGraph: {
       title: blog.title,
-      description: blog.content.replace(/<[^>]*>?/gm, '').slice(0, 200),
-      images: blog.image ? [blog.image] : [],
+      description: plainContent,
+      url: `${siteUrl}/blog/${slug}`,
+      images: blog.image ? [{ url: blog.image }] : [],
       type: 'article',
       publishedTime: blog.publishedAt || blog.createdAt,
       authors: [blog.author],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.title,
+      description: plainContent,
+      images: blog.image ? [blog.image] : [],
+    },
     keywords: [
       blog.title,
-      'blog agnipengal',
+      blog.category,
       'women entrepreneur stories',
-      'embroidery tips',
-      'tailoring business india',
-      'made in india marketplace',
-      'women entrepreneur blog',
-      'marketplace stories',
+      'Agnipengal blog',
     ],
   };
 }
@@ -64,8 +71,76 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+  const publishDate = blog.publishedAt || blog.createdAt;
+
   return (
     <article className='bg-white min-h-screen overflow-x-hidden'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: `${siteUrl}/blog`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: blog.title,
+                item: `${siteUrl}/blog/${slug}`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* BlogPosting Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: blog.title,
+            image: blog.image ? [blog.image] : [],
+            datePublished: publishDate,
+            dateModified: blog.updatedAt || publishDate,
+            author: [
+              {
+                '@type': 'Person',
+                name: blog.author,
+              },
+            ],
+            publisher: {
+              '@type': 'Organization',
+              name: 'Agnipengal',
+              logo: {
+                '@type': 'ImageObject',
+                url: `${siteUrl}/logo.png`,
+              },
+            },
+            description: blog.content ? blog.content.replace(/<[^>]*>?/gm, '').slice(0, 160) : '',
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `${siteUrl}/blog/${slug}`,
+            },
+          }),
+        }}
+      />
+
       {/* Blog Hero */}
       <div className='bg-gray-900 py-16 md:py-24 relative overflow-hidden'>
         <div className='absolute inset-0 bg-pink-600/10 mix-blend-overlay' />
@@ -84,7 +159,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               </span>
               <span className='text-gray-400 text-sm flex items-center gap-1'>
                 <Calendar className='w-3 h-3' />
-                {new Date(blog.publishedAt || blog.createdAt).toLocaleDateString(undefined, {
+                {new Date(publishDate).toLocaleDateString(undefined, {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
@@ -97,7 +172,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             <div className='flex items-center text-gray-300 gap-4 border-t border-gray-800 pt-8'>
               <div className='flex items-center gap-2'>
                 <div className='w-10 h-10 rounded-full bg-pink-600 flex items-center justify-center text-white font-bold'>
-                  {blog.author[0]}
+                  {blog.author?.[0]}
                 </div>
                 <div>
                   <div className='text-sm font-bold text-white'>{blog.author}</div>
@@ -134,25 +209,6 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <span>
                 Categorized in: <span className='text-gray-900 font-medium'>{blog.category}</span>
               </span>
-            </div>
-
-            {/* Share placeholder if needed */}
-            <div className='flex items-center gap-4'>
-              <span className='text-xs font-bold text-gray-400 uppercase tracking-widest'>
-                Share
-              </span>
-              <div className='flex gap-2'>
-                {/* Simplified social icons */}
-                <div className='w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer'>
-                  F
-                </div>
-                <div className='w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer'>
-                  X
-                </div>
-                <div className='w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer'>
-                  L
-                </div>
-              </div>
             </div>
           </div>
         </div>

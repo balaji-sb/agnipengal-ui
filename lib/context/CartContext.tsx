@@ -22,6 +22,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from local storage on mount
   useEffect(() => {
@@ -33,27 +34,33 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to parse cart', e);
       }
     }
+    setIsLoaded(true);
   }, []);
 
   // Save to local storage on change
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-  }, [items]);
+    if (isLoaded) {
+      localStorage.setItem('cart', JSON.stringify(items));
+    }
+  }, [items, isLoaded]);
+
+  const normalizeId = (id: any) => (typeof id === 'string' ? id : id?.toString());
 
   const addItem = (product: any, quantity = 1, variant?: any) => {
+    const productId = normalizeId(product._id);
+    const variantId = variant ? normalizeId(variant._id) : null;
+
     setItems((prev) => {
       const existing = prev.find((item) => {
-        const sameProduct = item.product._id === product._id;
-        const sameVariant = variant ? item.variant?._id === variant._id : !item.variant;
-        // Note: using _id for variant might be tricky if we don't have it generated yet.
-        // Mongo subdocs have _id by default.
+        const sameProduct = normalizeId(item.product._id) === productId;
+        const sameVariant = variantId ? normalizeId(item.variant?._id) === variantId : !item.variant;
         return sameProduct && sameVariant;
       });
 
       if (existing) {
         return prev.map((item) => {
-          const sameProduct = item.product._id === product._id;
-          const sameVariant = variant ? item.variant?._id === variant._id : !item.variant;
+          const sameProduct = normalizeId(item.product._id) === productId;
+          const sameVariant = variantId ? normalizeId(item.variant?._id) === variantId : !item.variant;
           return sameProduct && sameVariant
             ? { ...item, quantity: item.quantity + quantity }
             : item;
@@ -64,15 +71,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeItem = (productId: string, variantId?: string) => {
+    const pId = normalizeId(productId);
+    const vId = variantId ? normalizeId(variantId) : null;
+
     setItems((prev) =>
       prev.filter((item) => {
-        if (item.product._id !== productId) return true; // keep items of other products
-        // Same product — decide whether to remove based on variant
-        if (variantId) {
-          // Remove only the specific variant
-          return item.variant?._id !== variantId;
-        }
-        // No variantId given — remove the base (non-variant) entry
+        if (normalizeId(item.product._id) !== pId) return true;
+        if (vId) return normalizeId(item.variant?._id) !== vId;
         return !!item.variant;
       }),
     );
@@ -83,11 +88,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeItem(productId, variantId);
       return;
     }
+
+    const pId = normalizeId(productId);
+    const vId = variantId ? normalizeId(variantId) : null;
+
     setItems((prev) =>
       prev.map((item) => {
-        if (item.product._id !== productId) return item;
-        if (variantId) {
-          if (item.variant?._id === variantId) return { ...item, quantity };
+        if (normalizeId(item.product._id) !== pId) return item;
+        if (vId) {
+          if (normalizeId(item.variant?._id) === vId) return { ...item, quantity };
           return item;
         }
         if (!item.variant) return { ...item, quantity };

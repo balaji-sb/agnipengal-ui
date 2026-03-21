@@ -1,59 +1,98 @@
-'use client';
+import React from 'react';
+import type { Metadata } from 'next';
+import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import ContactForm from './ContactForm';
 
-import React, { useState } from 'react';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  MessageSquare,
-  User,
-  Tag,
-  PhoneCall,
-  Loader2,
-} from 'lucide-react';
-import api from '@/lib/api';
-import toast from 'react-hot-toast';
+export const dynamic = 'force-dynamic';
 
-export default function ContactPage() {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    mobile: '',
-    subject: '',
-    message: '',
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  return {
+    title: 'Contact Us | Agnipengal – Support for Women Entrepreneurs',
+    description:
+      'Have questions? Contact Agnipengal for support, partnership inquiries, or general feedback. We are here to empower your business journey.',
+    keywords: [
+      'contact Agnipengal',
+      'women entrepreneur support India',
+      'Agnipengal customer service',
+      'partnership inquiries Agnipengal',
+      'contact female entrepreneurs marketplace',
+    ],
+    openGraph: {
+      title: 'Contact Us | Agnipengal',
+      description: 'Get in touch with the Agnipengal team for support and inquiries.',
+      url: `${siteUrl}/contact`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Contact Us | Agnipengal',
+      description: 'Reach out to us for any assistance or partnership details.',
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/contact`,
+    },
   };
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await api.post('/contacts', formData);
-      if (res.data.success) {
-        toast.success(res.data.message || 'Message sent successfully!');
-        setFormData({
-          name: '',
-          email: '',
-          mobile: '',
-          subject: '',
-          message: '',
-        });
-      }
-    } catch (error: any) {
-      console.error('Contact error:', error);
-      toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+export default async function ContactPage() {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Contact',
+                item: `${siteUrl}/contact`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* ContactPage Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ContactPage',
+            name: 'Contact Agnipengal',
+            description: 'Contact information and form for Agnipengal - Women Owned Marketplace.',
+            url: `${siteUrl}/contact`,
+            mainEntity: {
+              '@type': 'Organization',
+              name: 'Agnipengal',
+              email: 'agnipengal16@gmail.com',
+              telephone: '+91 8088663116',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Chennai',
+                addressRegion: 'Tamil Nadu',
+                addressCountry: 'IN',
+              },
+            },
+          }),
+        }}
+      />
+
       {/* Hero Section */}
       <div className='bg-white border-b border-gray-100'>
         <div className='container mx-auto px-4 py-20 text-center relative overflow-hidden'>
@@ -194,174 +233,13 @@ export default function ContactPage() {
                     YT
                   </span>
                 </a>
-                <a
-                  href='https://x.com/agnipengal'
-                  target='_blank'
-                  className='flex flex-col items-center gap-2 p-3 bg-white/5 rounded-2xl hover:bg-gray-600/20 transition-all border border-white/10'
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='18'
-                    height='18'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='text-white'
-                  >
-                    <path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.63 5.907-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z' />
-                  </svg>
-                  <span className='text-[10px] uppercase tracking-wider font-bold opacity-60'>
-                    X
-                  </span>
-                </a>
-                <a
-                  href='https://www.pinterest.com/agnipengaldotcom/'
-                  target='_blank'
-                  className='flex flex-col items-center gap-2 p-3 bg-white/5 rounded-2xl hover:bg-red-700/20 transition-all border border-white/10'
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='20'
-                    height='20'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='text-red-600'
-                  >
-                    <path d='M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z' />
-                  </svg>
-                  <span className='text-[10px] uppercase tracking-wider font-bold opacity-60'>
-                    Pinterest
-                  </span>
-                </a>
-                <a
-                  href='https://www.reddit.com/user/Aggravating_Award787/'
-                  target='_blank'
-                  className='flex flex-col items-center gap-2 p-3 bg-white/5 rounded-2xl hover:bg-orange-500/20 transition-all border border-white/10'
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='20'
-                    height='20'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='text-orange-500'
-                  >
-                    <path d='M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z' />
-                  </svg>
-                  <span className='text-[10px] uppercase tracking-wider font-bold opacity-60'>
-                    Reddit
-                  </span>
-                </a>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className='lg:col-span-8'>
-            <div className='bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-gray-100'>
-              <div className='mb-10'>
-                <h2 className='text-3xl font-bold text-gray-900 mb-2'>Send us a Message</h2>
-                <p className='text-gray-500'>We usually respond within 24 hours.</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className='space-y-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <User className='w-4 h-4' /> Full Name
-                    </label>
-                    <input
-                      required
-                      type='text'
-                      name='name'
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder='Auroshi Sen'
-                      className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
-                    />
-                  </div>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <Mail className='w-4 h-4' /> Email Address
-                    </label>
-                    <input
-                      required
-                      type='email'
-                      name='email'
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder='hello@example.com'
-                      className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
-                    />
-                  </div>
-                </div>
-
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <PhoneCall className='w-4 h-4' /> Mobile Number
-                    </label>
-                    <input
-                      required
-                      type='tel'
-                      name='mobile'
-                      value={formData.mobile}
-                      onChange={handleChange}
-                      placeholder='+91 XXXXX XXXXX'
-                      className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
-                    />
-                  </div>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                      <Tag className='w-4 h-4' /> Subject
-                    </label>
-                    <input
-                      required
-                      type='text'
-                      name='subject'
-                      value={formData.subject}
-                      onChange={handleChange}
-                      placeholder='How can we help?'
-                      className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all'
-                    />
-                  </div>
-                </div>
-
-                <div className='space-y-2'>
-                  <label className='text-sm font-bold text-gray-700 flex items-center gap-2'>
-                    <MessageSquare className='w-4 h-4' /> Message
-                  </label>
-                  <textarea
-                    required
-                    name='message'
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={6}
-                    placeholder='Tell us more about your inquiry...'
-                    className='w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:bg-white outline-none transition-all resize-none'
-                  />
-                </div>
-
-                <div className='pt-4'>
-                  <button
-                    disabled={loading}
-                    type='submit'
-                    className='w-full md:w-auto px-12 py-4 bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:pointer-events-none'
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className='w-5 h-5 animate-spin' />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Send className='w-5 h-5' />
-                        Send Message
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
+            <ContactForm />
           </div>
         </div>
       </div>

@@ -1,15 +1,12 @@
 import React from 'react';
-
 import ProductCard from '@/components/shop/ProductCard';
 import ProductSort from '@/components/shop/ProductSort';
 import ProductFilter from '@/components/shop/ProductFilter';
 import { notFound } from 'next/navigation';
+import api from '@/lib/api-server';
+import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
-
-import api from '@/lib/api';
-
-// ...
 
 async function getProducts(categorySlug: string, subCategory: string, sort: string, filters: any) {
   const params: any = { subcategory: subCategory };
@@ -22,14 +19,15 @@ async function getProducts(categorySlug: string, subCategory: string, sort: stri
   if (filters.vendorCategory) params.vendorCategory = filters.vendorCategory;
 
   try {
-    const res = await api.get('/products', { params });
+    const queryString = new URLSearchParams(params).toString();
+    const res = await api.get(`/products?${queryString}`);
+    // api-server returns { data: ... }
     return res.data.data || [];
   } catch (error) {
+    console.error('Error fetching products:', error);
     return [];
   }
 }
-
-import { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
@@ -39,6 +37,7 @@ export async function generateMetadata({
   const { slug, subSlug } = await params;
   const subCategoryName = subSlug.replace(/-/g, ' ');
   const categoryName = slug.replace(/-/g, ' ');
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return {
     title: `${subCategoryName} - ${categoryName} | Agnipengal`,
@@ -53,12 +52,19 @@ export async function generateMetadata({
       'made in india',
     ],
     alternates: {
-      canonical: `https://agnipengal.com/category/${slug}/${subSlug}`,
+      canonical: `${siteUrl}/category/${slug}/${subSlug}`,
     },
     openGraph: {
       title: `${subCategoryName} - ${categoryName} | Agnipengal`,
       description: `Find the best ${subCategoryName} from women artisans on Agnipengal.`,
-      url: `https://agnipengal.com/category/${slug}/${subSlug}`,
+      url: `${siteUrl}/category/${slug}/${subSlug}`,
+      images: [{ url: `${siteUrl}/og-image.jpg` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${subCategoryName} - ${categoryName} | Agnipengal`,
+      description: `Shop for ${subCategoryName} on Agnipengal.`,
+      images: [`${siteUrl}/og-image.jpg`],
     },
   };
 }
@@ -83,10 +89,65 @@ export default async function ProductListingPage({
     vendorCategory: resolvedSearchParams.vendorCategory,
   };
 
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
   const products = await getProducts(categorySlug, subCategorySlug, sort, filters);
+
+  const categoryName = categorySlug.replace(/-/g, ' ');
+  const subCategoryName = subCategorySlug.replace(/-/g, ' ');
 
   return (
     <div className='container mx-auto px-4 py-8'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: categoryName,
+                item: `${siteUrl}/category/${categorySlug}`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: subCategoryName,
+                item: `${siteUrl}/category/${categorySlug}/${subCategorySlug}`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* ItemList Schema for Products */}
+      {products.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: `${subCategoryName} Products`,
+              itemListElement: products.map((p: any, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `${siteUrl}/product/${p.slug || p._id}`,
+                name: p.name,
+              })),
+            }),
+          }}
+        />
+      )}
+
       <div className='flex flex-col md:flex-row gap-8'>
         {/* Sidebar */}
         <div className='w-full md:w-64 flex-shrink-0'>
@@ -100,8 +161,7 @@ export default async function ProductListingPage({
         <div className='flex-1'>
           <div className='flex flex-col sm:flex-row items-center justify-between mb-6'>
             <h1 className='text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0'>
-              {subCategorySlug.replace(/-/g, ' ')}{' '}
-              <span className='text-gray-400 text-lg'>({products.length})</span>
+              {subCategoryName} <span className='text-gray-400 text-lg'>({products.length})</span>
             </h1>
             <ProductSort />
           </div>

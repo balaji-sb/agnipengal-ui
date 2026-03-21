@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import ProductReviews from '@/components/shop/ProductReviews';
 import ProductViewTracker from '@/components/shop/ProductViewTracker';
-import api from '@/lib/api';
+import api from '@/lib/api-server';
+import { Metadata, ResolvingMetadata } from 'next';
 
 // ISR: revalidate every 10 minutes so Googlebot gets fast cached HTML
 export const revalidate = 600;
@@ -22,14 +23,33 @@ export async function generateStaticParams() {
   }
 }
 
-import { Metadata, ResolvingMetadata } from 'next';
-
 async function getProduct(slug: string) {
   try {
     const res = await api.get(`/products/${slug}`);
     return res.data.data;
   } catch (error) {
+    console.error('Error fetching product:', error);
     return null;
+  }
+}
+
+async function getProductReviews(productId: string) {
+  try {
+    const res = await api.get(`/reviews/product/${productId}`);
+    return res.data.data || [];
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return [];
+  }
+}
+
+async function getRelatedProducts(category: string, currentId: string) {
+  try {
+    const res = await api.get(`/products?category=${category}`);
+    const products = res.data.data || [];
+    return products.filter((p: any) => p._id !== currentId).slice(0, 4);
+  } catch (error) {
+    return [];
   }
 }
 
@@ -42,84 +62,59 @@ export async function generateMetadata(
 
   if (!product) {
     return {
-      title: 'Product Not Found',
+      title: 'Product Not Found | Agnipengal',
     };
   }
 
-  const previousImages = (await parent).openGraph?.images || [];
-
-  const siteUrl = 'https://agnipengal.com';
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
   const productUrl = `${siteUrl}/product/${productSlug}`;
+  
+  // Ensure images are absolute
+  const images = (product.images || []).map((img: string) => 
+    img.startsWith('http') ? img : `${siteUrl}${img.startsWith('/') ? '' : '/'}${img}`
+  );
+
+  const title = `${product.name} | Agnipengal`;
+  const description = product.description?.slice(0, 160) || 
+    `Buy ${product.name} on Agnipengal – high-quality products from women entrepreneurs across India.`;
 
   return {
     metadataBase: new URL(siteUrl),
-    title: `${product.name} | Agnipengal`,
-    description:
-      product.description?.slice(0, 160) ||
-      `Buy ${product.name} from women-owned businesses on Agnipengal - Empowering Women Entrepreneurs across India.`,
+    title,
+    description,
     keywords: [
       product.name,
       product.category?.name,
-      'women entrepreneurs',
-      'handmade India',
       'Agnipengal',
-      'women marketplace India',
-      'made in india',
-      'buy from women owned businesses',
-      'Agnipengal shop',
-      'handmade products India',
-      'artisan products India',
-      'sustainable products India',
-      'ethical shopping India',
-      'support women entrepreneurs',
-      'Indian crafts',
-      'unique gifts India',
-      'made in india marketplace',
-      'women entrepreneur marketplace',
+      'women entrepreneurs India',
+      'handmade products',
+      'buy from women',
     ].filter(Boolean),
     alternates: {
       canonical: productUrl,
     },
     openGraph: {
-      type: 'website' as const,
-      title: `${product.name} | Agnipengal`,
-      description:
-        product.description?.slice(0, 200) ||
-        `Shop ${product.name} on Agnipengal – India's marketplace for handmade and artisan products by women entrepreneurs.`,
+      type: 'website',
+      title,
+      description,
       url: productUrl,
       siteName: 'Agnipengal',
-      images: [
-        ...(product.images || []).map((imgUrl: string) => ({
-          url: imgUrl,
-          width: 800,
-          height: 600,
-          alt: `${product.name} – available on Agnipengal`,
-        })),
-        ...previousImages,
-      ],
+      images: images.map((url: string) => ({
+        url,
+        width: 1200,
+        height: 630,
+        alt: product.name,
+      })),
     },
     twitter: {
       card: 'summary_large_image',
-      site: '@agnipengal',
-      title: `${product.name} | Agnipengal`,
-      description:
-        product.description?.slice(0, 160) ||
-        `Buy ${product.name} on Agnipengal – Empowering Women Entrepreneurs.`,
-      images: product.images?.[0] ? [product.images[0]] : [],
+      title,
+      description,
+      images: images.slice(0, 1),
     },
   };
 }
 
-async function getRelatedProducts(category: string, currentId: string) {
-  try {
-    const res = await api.get('/products', { params: { category } });
-    return res.data.data.filter((p: any) => p._id !== currentId).slice(0, 4) || [];
-  } catch (error) {
-    return [];
-  }
-}
-
-// Ensure params is treated as a Promise in Next.js 15
 export default async function ProductDetailPage({
   params,
 }: {
@@ -132,11 +127,30 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  const relatedProducts = await getRelatedProducts(product.category._id, product._id);
+  const reviews = await getProductReviews(product._id);
+  const relatedProducts = product.category?._id 
+    ? await getRelatedProducts(product.category._id, product._id)
+    : [];
+
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+  const productUrl = `${siteUrl}/product/${productSlug}`;
+
+  // Calculate rating for schema
+  const avgRating = reviews.length > 0 
+    ? reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length 
+    : 0;
+
+  // Format images for schema
+  const schemaImages = (product.images || []).map((img: string) => 
+    img.startsWith('http') ? img : `${siteUrl}${img.startsWith('/') ? '' : '/'}${img}`
+  );
 
   return (
     <div className='container mx-auto px-4 py-12'>
+      {/* Product View Tracker for Analytics */}
       <ProductViewTracker product={product} />
+      
+      {/* Product Details Component */}
       <ProductDetails product={product} />
 
       {/* Combo Includes Section */}
@@ -180,7 +194,8 @@ export default async function ProductDetailPage({
           </div>
         </section>
       )}
-      {/* Product JSON-LD Schema */}
+
+      {/* Product JSON-LD Schema – Advanced for URL Inspection & Rich Results */}
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
@@ -188,36 +203,77 @@ export default async function ProductDetailPage({
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: product.name,
-            image: product.images?.length > 0 ? product.images : [product.image].filter(Boolean),
-            description: product.description,
-            sku: product.slug || product._id,
+            image: schemaImages,
+            description: product.description || `Buy ${product.name} on Agnipengal`,
+            sku: product._id,
+            mpn: product.slug || product._id,
             brand: {
               '@type': 'Brand',
               name: 'Agnipengal',
             },
-            category: product.category?.name,
+            ...(avgRating > 0 && {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: avgRating.toFixed(1),
+                reviewCount: reviews.length,
+                bestRating: '5',
+                worstRating: '1',
+              },
+            }),
+            ...(reviews.length > 0 && {
+              review: reviews.slice(0, 5).map((r: any) => ({
+                '@type': 'Review',
+                author: { '@type': 'Person', name: r.user?.name || 'Anonymous' },
+                datePublished: r.createdAt?.split('T')[0],
+                reviewBody: r.comment,
+                reviewRating: {
+                  '@type': 'Rating',
+                  ratingValue: r.rating,
+                  bestRating: '5',
+                  worstRating: '1',
+                },
+              })),
+            }),
             offers: {
               '@type': 'Offer',
-              url: `https://agnipengal.com/product/${productSlug}`,
+              url: productUrl,
               priceCurrency: 'INR',
               price: product.offerPrice || product.price,
-              priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split('T')[0],
+              priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
               itemCondition: 'https://schema.org/NewCondition',
-              availability:
-                product.stock > 0
-                  ? 'https://schema.org/InStock'
-                  : 'https://schema.org/OutOfStock',
+              availability: (product.countInStock > 0 || product.stock > 0)
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
               seller: {
                 '@type': 'Organization',
                 name: 'Agnipengal',
-                url: 'https://agnipengal.com',
+                url: siteUrl,
+              },
+              shippingDetails: {
+                '@type': 'OfferShippingDetails',
+                shippingRate: {
+                  '@type': 'MonetaryAmount',
+                  value: '0',
+                  currency: 'INR',
+                },
+                shippingDestination: {
+                  '@type': 'DefinedRegion',
+                  addressCountry: 'IN',
+                },
+              },
+              hasMerchantReturnPolicy: {
+                '@type': 'MerchantReturnPolicy',
+                applicableCountry: 'IN',
+                returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnPeriod',
+                merchantReturnDays: 7,
+                returnMethod: 'https://schema.org/ReturnByMail',
+                returnFees: 'https://schema.org/FreeReturn',
               },
             },
           }),
         }}
       />
+
       {/* BreadcrumbList Schema */}
       <script
         type='application/ld+json'
@@ -230,13 +286,13 @@ export default async function ProductDetailPage({
                 '@type': 'ListItem',
                 position: 1,
                 name: 'Home',
-                item: 'https://agnipengal.com',
+                item: siteUrl,
               },
               {
                 '@type': 'ListItem',
                 position: 2,
                 name: 'Products',
-                item: 'https://agnipengal.com/products',
+                item: `${siteUrl}/products`,
               },
               ...(product.category
                 ? [
@@ -244,13 +300,13 @@ export default async function ProductDetailPage({
                       '@type': 'ListItem',
                       position: 3,
                       name: product.category.name,
-                      item: `https://agnipengal.com/category/${product.category.slug || product.category._id}`,
+                      item: `${siteUrl}/category/${product.category.slug || product.category._id}`,
                     },
                     {
                       '@type': 'ListItem',
                       position: 4,
                       name: product.name,
-                      item: `https://agnipengal.com/product/${productSlug}`,
+                      item: productUrl,
                     },
                   ]
                 : [
@@ -258,7 +314,7 @@ export default async function ProductDetailPage({
                       '@type': 'ListItem',
                       position: 3,
                       name: product.name,
-                      item: `https://agnipengal.com/product/${productSlug}`,
+                      item: productUrl,
                     },
                   ]),
             ],

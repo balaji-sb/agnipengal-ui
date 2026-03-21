@@ -6,36 +6,40 @@ import { Sparkles, Package, AlertCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Curated Value Combos | Agnipengal – Bundle & Save',
-  description:
-    'Explore hand-picked combo bundles with maximum savings. Shop Aari embroidery kits, sewing combos, and artisan product bundles from women-owned businesses on Agnipengal.',
-  keywords: [
-    'combo bundles India',
-    'Aari embroidery kit combo',
-    'handmade product bundles',
-    'Agnipengal combos',
-    'women artisan bundles India',
-    'sewing kit bundle online',
-    'buy combo pack India',
-  ],
-  openGraph: {
-    title: 'Curated Value Combos | Agnipengal',
-    description: 'Hand-picked combo bundles from women-owned businesses. Maximum value, maximum savings.',
-    url: 'https://agnipengal.com/combos',
-    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@agnipengal',
-    title: 'Curated Value Combos | Agnipengal',
-    description: 'Hand-picked artisan combo bundles from women-owned businesses on Agnipengal.',
-    images: ['https://agnipengal.com/og-image.jpg'],
-  },
-  alternates: {
-    canonical: 'https://agnipengal.com/combos',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+
+  return {
+    title: 'Curated Value Combos | Agnipengal – Bundle & Save',
+    description:
+      'Explore hand-picked combo bundles with maximum savings. Shop Aari embroidery kits, sewing combos, and artisan product bundles from women-owned businesses on Agnipengal.',
+    keywords: [
+      'combo bundles India',
+      'Aari embroidery kit combo',
+      'handmade product bundles',
+      'Agnipengal combos',
+      'women artisan bundles India',
+      'sewing kit bundle online',
+      'buy combo pack India',
+    ],
+    openGraph: {
+      title: 'Curated Value Combos | Agnipengal',
+      description: 'Hand-picked combo bundles from women-owned businesses. Maximum value, maximum savings.',
+      url: `${siteUrl}/combos`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@agnipengal',
+      title: 'Curated Value Combos | Agnipengal',
+      description: 'Hand-picked artisan combo bundles from women-owned businesses on Agnipengal.',
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/combos`,
+    },
+  };
+}
 
 async function getCombos() {
   try {
@@ -49,6 +53,7 @@ async function getCombos() {
 
 export default async function CombosPage() {
   const combos = await getCombos();
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   // Map deals to product structure for card reuse if needed,
   // but Combos usually have their own structure.
@@ -74,6 +79,49 @@ export default async function CombosPage() {
 
   return (
     <div className='bg-gray-50 min-h-screen pb-20'>
+      {/* BreadcrumbList Schema */}
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: siteUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Value Combos',
+                item: `${siteUrl}/combos`,
+              },
+            ],
+          }),
+        }}
+      />
+      {/* ItemList Schema */}
+      {combos.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              name: 'Value Combos on Agnipengal',
+              itemListElement: combos.map((c: any, idx: number) => ({
+                '@type': 'ListItem',
+                position: idx + 1,
+                url: `${siteUrl}/product/${c._id}`,
+                name: c.name,
+              })),
+            }),
+          }}
+        />
+      )}
       {/* Header */}
       {/* Hero Section */}
       <div className='relative bg-gradient-to-br from-violet-900 via-purple-800 to-fuchsia-900 text-white py-20 px-4 mb-12 overflow-hidden'>

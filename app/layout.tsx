@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error('Error fetching config for metadata', e);
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com';
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
   const title = `${appName} - Empowering Women Entrepreneurs`;
   const description =
     'Agnipengal is a community-driven platform empowering women entrepreneurs across India. Discover handmade products, support women-owned businesses, and join a movement that celebrates creativity, resilience, and financial independence for women.';

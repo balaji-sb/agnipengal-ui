@@ -4,48 +4,58 @@ import ProductCard from '@/components/shop/ProductCard';
 import ProductSort from '@/components/shop/ProductSort';
 import ProductFilter from '@/components/shop/ProductFilter';
 import ProductListingLayout from '@/components/shop/ProductListingLayout';
-import api from '@/lib/api';
+import api from '@/lib/api-server';
+import ProductInfiniteScroll from '@/components/shop/ProductInfiniteScroll';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Shop Products | Agnipengal – Women Entrepreneur Marketplace',
-  description:
-    'Browse handmade products, Aari embroidery supplies, sewing kits, and decoration items crafted by women entrepreneurs and artisans across India. Every purchase empowers a woman-owned business on Agnipengal.',
-  keywords: [
-    'women entrepreneur products India',
-    'buy from women owned businesses',
-    'Agnipengal shop',
-    'handmade products women India',
-    'Aari embroidery materials online',
-    'women artisan marketplace',
-    'empowering women through shopping',
-    'support women business India',
-    'made in india marketplace',
-    'women entrepreneur marketplace',
-    'handcrafted in India',
-  ],
-  openGraph: {
-    title: 'Shop Products | Agnipengal – Empowering Women Entrepreneurs',
-    description:
-      "Buy handmade and artisan products from women-owned businesses on Agnipengal – India's women empowerment marketplace.",
-    url: 'https://agnipengal.com/products',
-    images: [{ url: 'https://agnipengal.com/og-image.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@agnipengal',
-    title: 'Shop Products | Agnipengal',
-    description: 'Buy from women-owned businesses on Agnipengal – Empowering Women Entrepreneurs.',
-    images: ['https://agnipengal.com/og-image.jpg'],
-  },
-  alternates: {
-    canonical: 'https://agnipengal.com/products',
-  },
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const search = resolvedSearchParams.search as string;
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
+
+  const title = search
+    ? `Search results for "${search}" | Agnipengal`
+    : 'Shop Products | Agnipengal – Women Entrepreneur Marketplace';
+  
+  const description = search
+    ? `Discover products matching "${search}" on Agnipengal. Support women entrepreneurs with every purchase.`
+    : 'Browse handmade products, Aari embroidery supplies, sewing kits, and decoration items crafted by women entrepreneurs and artisans across India.';
+
+  return {
+    title,
+    description,
+    keywords: [
+      'women entrepreneur products India',
+      'buy from women owned businesses',
+      'Agnipengal shop',
+      'handmade products women India',
+      'Aari embroidery materials online',
+    ],
+    openGraph: {
+      title,
+      description,
+      url: search ? `${siteUrl}/products?search=${encodeURIComponent(search)}` : `${siteUrl}/products`,
+      images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [`${siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: `${siteUrl}/products`,
+    },
+  };
+}
 
 async function getAllProducts(sort: string, filters: any) {
-  const params: any = { limit: 15, page: 1 }; // Default initial load
+  const params: any = { limit: 15, page: 1 };
   if (sort) params.sort = sort;
   if (filters.minPrice) params.minPrice = filters.minPrice;
   if (filters.maxPrice) params.maxPrice = filters.maxPrice;
@@ -57,9 +67,11 @@ async function getAllProducts(sort: string, filters: any) {
   if (filters.vendorCategory) params.vendorCategory = filters.vendorCategory;
 
   try {
-    console.log('[getAllProducts] Calling API with params:', params);
-    const res = await api.get('/products', { params });
-    console.log(`[getAllProducts] Response received. Found ${res.data?.data?.length} products.`);
+    // Construct query string for api-server
+    const queryString = new URLSearchParams(params).toString();
+    const res = await api.get(`/products?${queryString}`);
+    
+    // api-server returns { data: ... }
     return {
       products: res.data.data || [],
       pagination: res.data.pagination || { page: 1, totalPages: 1, total: 0 },
@@ -69,9 +81,6 @@ async function getAllProducts(sort: string, filters: any) {
     return { products: [], pagination: { page: 1, totalPages: 1, total: 0 } };
   }
 }
-
-// ... (existing imports and functions)
-import ProductInfiniteScroll from '@/components/shop/ProductInfiniteScroll';
 
 export default async function AllProductsPage({
   searchParams,
@@ -93,6 +102,7 @@ export default async function AllProductsPage({
   };
 
   const { products, pagination } = await getAllProducts(sort, filters);
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://agnipengal.com').replace(/\/$/, '');
 
   return (
     <div className='container mx-auto px-4 py-4'>
@@ -108,19 +118,19 @@ export default async function AllProductsPage({
                 '@type': 'ListItem',
                 position: 1,
                 name: 'Home',
-                item: 'https://agnipengal.com',
+                item: siteUrl,
               },
               {
                 '@type': 'ListItem',
                 position: 2,
                 name: 'All Products',
-                item: 'https://agnipengal.com/products',
+                item: `${siteUrl}/products`,
               },
             ],
           }),
         }}
       />
-      {/* ItemList Schema – helps Google surface individual products */}
+      {/* ItemList Schema */}
       {products.length > 0 && (
         <script
           type='application/ld+json'
@@ -132,7 +142,7 @@ export default async function AllProductsPage({
               itemListElement: products.map((p: any, idx: number) => ({
                 '@type': 'ListItem',
                 position: idx + 1,
-                url: `https://agnipengal.com/product/${p.slug || p._id}`,
+                url: `${siteUrl}/product/${p.slug || p._id}`,
                 name: p.name,
               })),
             }),
@@ -142,7 +152,8 @@ export default async function AllProductsPage({
       <ProductListingLayout sidebar={<ProductFilter />}>
         <div className='flex flex-col sm:flex-row items-center justify-between mb-6'>
           <h1 className='text-2xl font-bold capitalize text-gray-900 mb-4 sm:mb-0'>
-            All Products <span className='text-gray-400 text-lg'>({pagination.total})</span>
+            {resolvedSearchParams.search ? `Search: ${resolvedSearchParams.search}` : 'All Products'}{' '}
+            <span className='text-gray-400 text-lg'>({pagination.total})</span>
           </h1>
           <ProductSort />
         </div>

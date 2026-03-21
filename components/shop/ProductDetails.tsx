@@ -113,8 +113,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
   const currentCartItem = cart.find(
     (item) =>
-      item.product._id === product._id &&
-      (currentVariant ? item.variant?._id === currentVariant._id : !item.variant),
+      item.product._id?.toString() === product._id?.toString() &&
+      (currentVariant ? item.variant?._id?.toString() === currentVariant._id?.toString() : !item.variant),
   );
 
   const cartQuantity = currentCartItem ? currentCartItem.quantity : 0;

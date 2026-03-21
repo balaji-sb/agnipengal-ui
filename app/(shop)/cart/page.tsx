@@ -78,14 +78,14 @@ export default function CartPage() {
 
                 <div className='flex items-center border border-gray-300 rounded-lg'>
                   <button
-                    onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                    onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.variant?._id)}
                     className='p-2 hover:bg-gray-50 transition'
                   >
                     <Minus className='w-4 h-4' />
                   </button>
                   <span className='w-10 text-center font-medium'>{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.variant?._id)}
                     className='p-2 hover:bg-gray-50 transition'
                     disabled={
                       item.quantity >= (item.variant ? item.variant.stock : item.product.stock)
