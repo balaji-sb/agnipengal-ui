@@ -112,7 +112,8 @@ export default async function PartnershipPage() {
               paidPlans.length >= 3
                 ? paidPlans[Math.floor(paidPlans.length / 2)]._id
                 : paidPlans[paidPlans.length - 1]?._id;
-            const isHighlight = !plan.isFreeTrialPlan && plan._id === bestPlanId;
+            // const isHighlight = !plan.isFreeTrialPlan && plan._id === bestPlanId;
+            const isHighlight = false;
 
             return (
               <div

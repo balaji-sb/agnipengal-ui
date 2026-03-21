@@ -257,13 +257,13 @@ export default function HowItWorksClient() {
             Works
           </h1>
           <p className='text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed mb-10'>
-            From sign-up to your first sale — here&apos;s everything you need to know about launching
-            your store and reaching thousands of buyers.
+            From sign-up to your first sale — here&apos;s everything you need to know about
+            launching your store and reaching thousands of buyers.
           </p>
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <Link href='/partnership/register'>
               <button className='px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 transition-all flex items-center gap-2'>
-                Start Now <ArrowRight className='w-5 h-5' />
+                Start Free Now <ArrowRight className='w-5 h-5' />
               </button>
             </Link>
             <Link href='/partnership'>
@@ -517,7 +517,8 @@ export default function HowItWorksClient() {
             Join Thousands of Women Selling on Agnipengal
           </h2>
           <p className='text-gray-400 text-lg mb-10 max-w-xl mx-auto'>
-            Your store. Your prices. Your customers. Get started today by choosing a subscription plan.
+            Your store. Your prices. Your customers. Get started today by choosing a subscription
+            plan.
           </p>
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <Link href='/partnership/register'>
