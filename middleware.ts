@@ -1,9 +1,28 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Toggle this to true to enable maintenance mode
+const MAINTENANCE_MODE = true;
+
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const path = url.pathname;
+
+  // ─── MAINTENANCE MODE REDIRECTION ────────────────────────────────────────
+  if (MAINTENANCE_MODE) {
+    const isMaintenancePage = path.startsWith('/maintenance');
+    const isAdminPath = path.startsWith('/mahisadminpanel');
+    const isStaticAsset = 
+      path.startsWith('/_next') || 
+      path.startsWith('/images') || 
+      path.startsWith('/favicon.ico') || 
+      path.startsWith('/api');
+
+    if (!isMaintenancePage && !isAdminPath && !isStaticAsset) {
+      return NextResponse.redirect(new URL('/maintenance', req.url));
+    }
+  }
+
   const hostname = req.headers.get('host') || '';
 
   // ─── SUBDOMAIN ROUTING ──────────────────────────────────────────────────
@@ -28,6 +47,7 @@ export function middleware(req: NextRequest) {
     'shop',
     'vendor',
     'www',
+    'maintenance',
   ];
 
   // If a valid custom subdomain is detected, rewrite the URL
@@ -56,10 +76,10 @@ export function middleware(req: NextRequest) {
 
     const isSharedRoute = sharedRoutesPatterns.some((pattern) => new RegExp(pattern).test(path));
 
-    if (path === '/' || (!isSharedRoute && !path.startsWith('/_next'))) {
+    if (path === '/' || (!isSharedRoute && !path.startsWith('/_next') && !path.startsWith('/maintenance'))) {
       url.pathname = `/vendor-store/${subdomain}${path}`;
       return NextResponse.rewrite(url);
-    } else if (isSharedRoute) {
+    } else if (isSharedRoute && !path.startsWith('/maintenance')) {
       // For shared routes like /product, /category, we append the storeSlug as a query parameter
       // so the page can filter the data for this specific vendor while reusing the same UI.
       console.log(`[Middleware] Subdomain detected: ${subdomain} on route ${path}`);
